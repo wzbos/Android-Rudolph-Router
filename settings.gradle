@@ -1,0 +1,1 @@
+include ':app', ':rudolph-compiler', ':rudolph-annotations', ':rudolph', ':module-a', ':module-a-api', ':module-b', ':module-b-api'

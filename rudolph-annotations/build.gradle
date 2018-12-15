@@ -1,0 +1,20 @@
+apply plugin: 'java'
+
+
+
+ext {
+    bintrayName = 'rudolph-annotations'
+    artifact = bintrayName
+    libraryName = 'rudolph annotations'
+    libraryDescription = 'The annotations used in rudolph'
+    libraryVersion = rudolph_version
+}
+
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+apply from: '../install.gradle'
+apply from: '../bintray.gradle'

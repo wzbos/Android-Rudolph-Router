@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+
+
+ext {
+    bintrayName = 'rudolph'
+    artifact = bintrayName
+    libraryName = 'rudolph'
+    libraryDescription = 'rudolph runtime'
+    libraryVersion = rudolph_version
+}
+
+android {
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        versionName = rudolph_version
+        versionCode = 1
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions { abortOnError false }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly "com.android.support:appcompat-v7:${versions.supportLib}"
+    api "com.google.code.gson:gson:${versions.gson}"
+
+//    api "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
+    api project(':rudolph-annotations')
+}
+
+apply from: '../install.gradle'
+apply from: '../bintray.gradle'
+//apply from: 'publish.gradle'
+
