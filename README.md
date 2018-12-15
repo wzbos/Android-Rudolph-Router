@@ -19,7 +19,7 @@ Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
 - 加载更快，更稳定，无需dex扫描方式加载；
 - 无需指定模块名，接入更简单；
-- 显式跳转与URI跳转融为一体，更方便快捷；
+- 显式跳转与URL路由地址跳转融为一体，更方便快捷；
 - 通过Builder方式传参，无需手动写参数名，从而减少参数传错和修改带来的Bug隐患；
 - 支持所有Intent的参数类型；
 - 支持Activity 、Fragment、Service、Method四种路由类型
@@ -61,7 +61,7 @@ dependencies {
 ```
 ### 3.代码混淆
 
-如果开启了代码混淆，值需要在混淆配置文件中添加如下配置
+如果开启了代码混淆，只需要在混淆配置文件中添加如下配置
 
 ```
 -keep class * implements cn.wzbos.rudolph.IRouteTable{*;}
