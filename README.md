@@ -3,11 +3,11 @@
 Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
 <p>
-   <img src="rudolph.png" height="230" alt="Screenshot"/>
+   <img src="Rudolph.png" height="230"/>
 </p>
 
 ### 目录
-- [1.框架特性](#1.框架特性)
+- [1.框架特性](#1框架特性)
 - [2.依赖方式](#2依赖方式)
 - [3.代码混淆](#3代码混淆)
 - [4.调用方式](#4调用方式)
