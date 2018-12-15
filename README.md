@@ -55,8 +55,8 @@ apply plugin: 'kotlin-kapt'
 ...
 
 dependencies {
-  implementation 'rudolphx:rudolph:1.0.0'
-  kapt 'rudolphx:rudolph-compiler:1.0.0'
+  implementation 'cn.wzbos.rudolph:rudolph:1.0.0'
+  kapt 'cn.wzbos.rudolph:rudolph-compiler:1.0.0'
 }
 ```
 ### 3.代码混淆
@@ -101,6 +101,8 @@ public class TestActivity extends AppCompatActivity {
             
 }
 ```
+
+调用Activity
 
 ``` java
 UserActivityRouter.builder().userId(11).userName("John").build().start(context);
