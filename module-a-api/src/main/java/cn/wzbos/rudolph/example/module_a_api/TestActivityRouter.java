@@ -25,7 +25,7 @@ public class TestActivityRouter {
     }
 
     public TestActivityRouter.Builder stringArg(String val) {
-      super.arg("string",val);
+      super.arg("stringArg",val);
       return this;
     }
 

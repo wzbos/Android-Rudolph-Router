@@ -86,17 +86,16 @@ dependencies {
 ``` java
 @Route("/activity/test")
 public class TestActivity extends AppCompatActivity {
-    @Arg("user_id")
+    @Arg("userId")
     int userId;
     
-    @Arg("user_name")
+    @Arg("userName")
     String userName;
     
      @Override
      protected void onCreate(Bundle savedInstanceState) { 
         super.onCreate(savedInstanceState);
-        
-        rudolph.bind(this);
+        Rudolph.bind(this);
      }
             
 }
@@ -121,18 +120,17 @@ Rudolph.builder("/user?userId=11&userName=John").build().open(context);
 ``` java
 @Route("/fragment/test")
 public class TestFragment extends Fragment {
-    @Arg("user_id")
+    @Arg("userId")
     int userId;
 
-    @Arg("user_name")
+    @Arg("userName")
     String userName;
     
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        rudolph.bind(this);
+        Rudolph.bind(this);
     }
 }
 ```
@@ -347,10 +345,10 @@ public class TestComponent implements IRouteTable {
 ``` java
 @Route(value = "/activity/test",export = true)
 public class TestActivity extends AppCompatActivity {
-    @Arg(RAW_URI)
+  @Arg(RAW_URI)
     String routeUri;
 
-    @Arg("string")
+    @Arg("stringArg")
     String stringArg;
 
     @Arg(value = "string64", base64 = true)
@@ -359,57 +357,59 @@ public class TestActivity extends AppCompatActivity {
     @Arg("stringArray")
     String[] stringArrayArg;
 
-    @Arg("bool")
+
+    @Arg("boolArg")
     boolean boolArg;
 
     @Arg("booleanArray")
     boolean[] booleanArrayArg;
 
-    @Arg("byte")
+    @Arg("byteArg")
     byte byteArg;
 
     @Arg("byteArray")
     byte[] byteArrayArg;
 
-    @Arg("short")
+    @Arg("shortArg")
     short shortArg;
 
     @Arg("shortArray")
     short[] shortArrayArg;
 
-    @Arg("int")
+    @Arg("intArg")
     int intArg;
 
-    @Arg("intArray")
+    @Arg("intArrayArg")
     int[] intArrayArg;
 
-    @Arg("long")
+    @Arg("longArg")
     long longArg;
 
     @Arg("longArray")
     long[] longArrayArg;
 
-    @Arg("char")
+    @Arg("charArg")
     char charArg;
 
     @Arg("charArray")
     char[] charArrayArg;
 
-    @Arg("float")
+    @Arg("floatArg")
     float floatArg;
 
     @Arg("floatArray")
     float[] floatArrayArg;
 
-    @Arg("double")
+    @Arg("doubleArg")
     double doubleArg;
 
     @Arg("doubleArray")
     double[] doubleArrayArg;
 
-    @Arg("character")
+    @Arg("characterArg")
     Character characterArg;
 
+    //ArrayList
     @Arg
     ArrayList<String> stringArrayListArg;
 
@@ -425,18 +425,18 @@ public class TestActivity extends AppCompatActivity {
     @Arg(value = "serialized")
     Broker serializedParam;
 
+    //json
     @Arg(value = "json", json = true)
     User<Broker> jsonParam;
 
     //encode：json->base64，decode：base64->json
     @Arg(value = "base64json", json = true, base64 = true)
     User<Broker> base64jsonParam;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        rudolph.bind(this);
+        Rudolph.bind(this);
     }
 }
 ```

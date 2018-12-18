@@ -21,7 +21,7 @@ public class TestActivity extends AppCompatActivity {
     @Arg(RAW_URI)
     String routeUri;
 
-    @Arg("string")
+    @Arg("stringArg")
     String stringArg;
 
     @Arg(value = "string64", base64 = true)
