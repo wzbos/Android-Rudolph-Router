@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.wzbos.rudolph.example.module_b">
+    package="cn.wzbos.android.rudolph.example.module_b">
 
     <application
         android:allowBackup="true"

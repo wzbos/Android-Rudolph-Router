@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion versions.compileSdk
     defaultConfig {
-        applicationId "cn.wzbos.rudolph.example"
+        applicationId "cn.wzbos.android.rudolph.example"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
         versionName "0.0.1"

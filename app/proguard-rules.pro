@@ -17,8 +17,8 @@
 #}
 
 ############# Rudolph #############
--keep class * implements cn.wzbos.rudolph.IRouteTable{*;}
--keep class * implements cn.wzbos.rudolph.IRouteBinder{*;}
+-keep class * implements cn.wzbos.android.rudolph.IRouteTable{*;}
+-keep class * implements cn.wzbos.android.rudolph.IRouteBinder{*;}
 -keepclassmembers class ** {
-    @cn.wzbos.rudolph.annotation.Route <methods>;
+    @cn.wzbos.android.rudolph.annotation.Route <methods>;
 }

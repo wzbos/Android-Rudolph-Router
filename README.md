@@ -17,6 +17,8 @@ Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
 ### 1.框架特性
 
+- 支持组件API模块自动生成
+- 自动生成路由Builder类与服务类的接口层；
 - 加载更快，更稳定，无需dex扫描方式加载；
 - 无需指定模块名，接入更简单；
 - 显式跳转与URL路由地址跳转融为一体，更方便快捷；
@@ -42,8 +44,8 @@ Java:
 
 ``` groovy
 dependencies {
-  implementation 'cn.wzbos.rudolph:rudolph:1.0.0'
-  annotationProcessor 'cn.wzbos.rudolph:rudolph-compiler:1.0.0'
+  implementation 'cn.wzbos.rudolph:rudolph:1.0.1'
+  annotationProcessor 'cn.wzbos.rudolph:rudolph-compiler:1.0.1'
 }
 ```
 Kotlin:
@@ -55,8 +57,8 @@ apply plugin: 'kotlin-kapt'
 ...
 
 dependencies {
-  implementation 'cn.wzbos.rudolph:rudolph:1.0.0'
-  kapt 'cn.wzbos.rudolph:rudolph-compiler:1.0.0'
+  implementation 'cn.wzbos.rudolph:rudolph:1.0.1'
+  kapt 'cn.wzbos.rudolph:rudolph-compiler:1.0.1'
 }
 ```
 ### 3.代码混淆
@@ -64,10 +66,10 @@ dependencies {
 如果开启了代码混淆，只需要在混淆配置文件中添加如下配置
 
 ```
--keep class * implements cn.wzbos.rudolph.IRouteTable{*;}
--keep class * implements cn.wzbos.rudolph.IRouteBinder{*;}
+-keep class * implements cn.wzbos.android.rudolph.IRouteTable{*;}
+-keep class * implements cn.wzbos.android.rudolph.IRouteBinder{*;}
 -keepclassmembers class ** {
-    @cn.wzbos.rudolph.annotation.Route <methods>;
+    @cn.wzbos.android.rudolph.annotations.Route <methods>;
 }
 ```
 
@@ -309,7 +311,13 @@ defaultConfig {
 }
 ```
 
-第二步：需要在`A模块`和`B模块`中增加依赖
+第二步：点击重新编译，然后就能看到生成的API工程，看到API工程后再到settings.gradle中增加以下依赖
+
+``` groovy
+include ':module_b_api'
+```
+
+第三步：需要在`A模块`和`B模块`中增加依赖
 
 ``` groovy
 dependencies {

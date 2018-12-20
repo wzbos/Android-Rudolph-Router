@@ -15,7 +15,7 @@ android {
             annotationProcessorOptions {
                 arguments = [
                         export_api_name   : project.getName() + "-api",
-                        export_api_package: "cn.wzbos.rudolph.example.module_b_api"
+                        export_api_package: "cn.wzbos.android.rudolph.example.module_b_api"
                 ]
                 includeCompileClasspath = true
             }
