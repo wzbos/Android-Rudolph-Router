@@ -44,8 +44,8 @@ Java:
 
 ``` groovy
 dependencies {
-  implementation 'cn.wzbos.rudolph:rudolph:1.0.1'
-  annotationProcessor 'cn.wzbos.rudolph:rudolph-compiler:1.0.1'
+  implementation 'cn.wzbos.android:rudolph:1.0.1'
+  annotationProcessor 'cn.wzbos.android:rudolph-compiler:1.0.1'
 }
 ```
 Kotlin:
@@ -57,8 +57,8 @@ apply plugin: 'kotlin-kapt'
 ...
 
 dependencies {
-  implementation 'cn.wzbos.rudolph:rudolph:1.0.1'
-  kapt 'cn.wzbos.rudolph:rudolph-compiler:1.0.1'
+  implementation 'cn.wzbos.android:rudolph:1.0.1'
+  kapt 'cn.wzbos.android:rudolph-compiler:1.0.1'
 }
 ```
 ### 3.代码混淆
