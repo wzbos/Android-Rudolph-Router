@@ -34,9 +34,14 @@ Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 Build.gradle
 
 ``` groovy
-repositories {
-    jcenter()
-    ...
+buildscript {
+    ext {
+        rudolph_version = '1.0.2'
+    }
+    repositories {
+        jcenter()
+        ...
+    }
 }
 ```
 
@@ -44,8 +49,8 @@ Java:
 
 ``` groovy
 dependencies {
-  implementation 'cn.wzbos.android:rudolph:1.0.1'
-  annotationProcessor 'cn.wzbos.android:rudolph-compiler:1.0.1'
+  implementation "cn.wzbos.android:rudolph:$rudolph_version"
+  annotationProcessor "cn.wzbos.android:rudolph-compiler:$rudolph_version"
 }
 ```
 Kotlin:
@@ -57,8 +62,8 @@ apply plugin: 'kotlin-kapt'
 ...
 
 dependencies {
-  implementation 'cn.wzbos.android:rudolph:1.0.1'
-  kapt 'cn.wzbos.android:rudolph-compiler:1.0.1'
+  implementation "cn.wzbos.android:rudolph:$rudolph_version"
+  kapt "cn.wzbos.android:rudolph-compiler:$rudolph_version"
 }
 ```
 ### 3.代码混淆

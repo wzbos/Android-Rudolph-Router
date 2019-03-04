@@ -23,7 +23,7 @@ public class Rudolph {
 
     private final static String TAG = "Rudolph";
     private static List<Interceptor> mInterceptors;
-    private static List<cn.wzbos.android.rudolph.RouteInfo> routes = new ArrayList<>();
+    private static List<RouteInfo> routes = new ArrayList<>();
     private static Application app;
     private static String scheme;
 
@@ -94,7 +94,7 @@ public class Rudolph {
         }
     }
 
-    public static cn.wzbos.android.rudolph.RouteInfo getRouter(String path) {
+    public static RouteInfo getRouter(String path) {
         RouteInfo meta;
         int count = routes.size();
         for (int i = 0; i < count; i++) {

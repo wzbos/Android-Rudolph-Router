@@ -79,7 +79,7 @@ class AndroidModuleUtil {
                             "}\n\n" +
                             "dependencies {\n" +
                             "    implementation fileTree(dir: 'libs', include: ['*.jar'])\n" +
-                            "    implementation project('cn.wzbos.android.rudolph:rudolph:1.0.1')\n" +
+                            "    implementation \"cn.wzbos.android:rudolph:$rudolph_version\"\n" +
                             "}");
                     fileWriter.close();
                 }
