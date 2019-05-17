@@ -2,6 +2,8 @@
 
 Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
+[ ![Download](https://api.bintray.com/packages/wuzongbo/maven/rudolph/images/download.svg) ](https://bintray.com/wuzongbo/maven/rudolph/_latestVersion)
+[![Maven](https://img.shields.io/badge/Jcenter-Android--Rudolph--Router-green.svg?style=true)](http://jcenter.bintray.com/cn/wzbos/android)
 <p>
    <img src="Rudolph.png" height="230"/>
 </p>
