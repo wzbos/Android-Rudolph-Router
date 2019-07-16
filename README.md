@@ -2,7 +2,7 @@
 
 Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
-[ ![Download](https://api.bintray.com/packages/wuzongbo/maven/rudolph/images/download.svg) ](https://bintray.com/wuzongbo/maven/rudolph/_latestVersion)
+[![Download](https://api.bintray.com/packages/wuzongbo/maven/rudolph/images/download.svg)](https://bintray.com/wuzongbo/maven/rudolph/_latestVersion)
 [![Maven](https://img.shields.io/badge/Jcenter-Android--Rudolph--Router-green.svg?style=true)](http://jcenter.bintray.com/cn/wzbos/android)
 <p>
    <img src="Rudolph.png" height="230"/>
@@ -66,17 +66,6 @@ apply plugin: 'kotlin-kapt'
 dependencies {
   implementation "cn.wzbos.android:rudolph:$rudolph_version"
   kapt "cn.wzbos.android:rudolph-compiler:$rudolph_version"
-}
-```
-### 3.代码混淆
-
-如果开启了代码混淆，只需要在混淆配置文件中添加如下配置
-
-```
--keep class * implements cn.wzbos.android.rudolph.IRouteTable{*;}
--keep class * implements cn.wzbos.android.rudolph.IRouteBinder{*;}
--keepclassmembers class ** {
-    @cn.wzbos.android.rudolph.annotations.Route <methods>;
 }
 ```
 

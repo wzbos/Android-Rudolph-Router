@@ -17,6 +17,7 @@ android {
         targetSdkVersion versions.targetSdk
         versionName = rudolph_version
         versionCode = 1
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
     buildTypes {
