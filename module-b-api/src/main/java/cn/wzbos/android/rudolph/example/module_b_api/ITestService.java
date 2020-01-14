@@ -1,6 +1,7 @@
 package cn.wzbos.android.rudolph.example.module_b_api;
 
 import android.content.Context;
+import android.os.Bundle;
 import cn.wzbos.android.rudolph.IRouteService;
 import java.lang.String;
 
@@ -9,4 +10,6 @@ import java.lang.String;
  */
 public interface ITestService extends IRouteService {
   void showMessage(Context context, String msg);
+
+  void init(Bundle bundle);
 }

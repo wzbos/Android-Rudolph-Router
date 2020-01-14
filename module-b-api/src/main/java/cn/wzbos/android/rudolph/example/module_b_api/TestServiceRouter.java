@@ -1,29 +1,29 @@
 package cn.wzbos.android.rudolph.example.module_b_api;
 
-import cn.wzbos.android.rudolph.router.ServiceRouter;
-import java.lang.String;
+import cn.wzbos.android.rudolph.Rudolph;
 
 /**
  * Generated code from Rudolph. Do not modify!
  */
 public class TestServiceRouter {
-  public static TestServiceRouter.Builder builder() {
-    return new TestServiceRouter.Builder();
+  private static volatile ITestService instance;
+
+  public static ITestService get() {
+    if (instance == null) {
+      synchronized (TestServiceRouter.class) {
+        if (instance == null) {
+          instance = newInstance();
+        }
+        return instance;
+      }
+    }
+    return instance;
   }
 
-  public static class Builder extends ServiceRouter.Builder<TestServiceRouter.Builder, ITestService> {
-    Builder() {
-      super("/service/test");
-    }
-
-    public TestServiceRouter.Builder userId(int val) {
-      super.arg("userId",val);
-      return this;
-    }
-
-    public TestServiceRouter.Builder userName(String val) {
-      super.arg("userName",val);
-      return this;
-    }
+  /**
+   * create new instance
+   */
+  public static ITestService newInstance() {
+    return (ITestService)Rudolph.builder("/service/test").build().open();
   }
 }

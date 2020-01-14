@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+echo /--------------------------- Publish to JCenter Begin --------------------------/
+
+./gradlew install
+
+./gradlew bintrayUpload
+
+echo /---------------------------  Publish to JCenter End --------------------------/

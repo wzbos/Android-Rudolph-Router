@@ -144,8 +144,9 @@ public class MainActivity extends AppCompatActivity {
         array.put("ModuleA->ModuleB.TestService(Router)", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ITestService service = TestServiceRouter.builder().userId(1).userName("John").build().open();
-                service.showMessage(MainActivity.this, "Hello Provider!");
+                TestServiceRouter.get().showMessage(MainActivity.this, "Hello Provider!");
+//                ITestService service = TestServiceRouter.builder().userId(1).userName("John").build().open();
+//                service.showMessage(MainActivity.this, "Hello Provider!");
             }
         });
 
@@ -156,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 service.showMessage(MainActivity.this, "Hello Provider!");
             }
         });
-
 
         array.put("Invoke static method(URL)", new View.OnClickListener() {
             @Override

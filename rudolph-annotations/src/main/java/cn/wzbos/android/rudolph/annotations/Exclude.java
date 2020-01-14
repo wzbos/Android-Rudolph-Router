@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
  * Created by wuzongbo on 2018/12/11.
  */
 @Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Export {
+@Retention(RetentionPolicy.CLASS)
+public @interface Exclude {
 }

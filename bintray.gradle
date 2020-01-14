@@ -29,10 +29,14 @@ artifacts {
     archives sourcesJar
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 // bintray
 bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_API_KEY')
+    user = properties.getProperty('bintray.user')
+    key = properties.getProperty('bintray.apikey')
+//    userOrg = properties.getProperty("bintray.org")
 
     configurations = ['archives']
     override = true
@@ -43,6 +47,7 @@ bintray {
         desc = libraryDescription
         websiteUrl = siteUrl
         vcsUrl = gitUrl
+//        userOrg = userOrg
         licenses = ["Apache-2.0"]
         publish = true
         publicDownloadNumbers = true
@@ -54,8 +59,4 @@ bintray {
             vcsTag = libraryVersion
         }
     }
-}
-
-if (System.getenv("BINTRAY_ORG")) {
-    bintray.pkg.userOrg = System.getenv("BINTRAY_ORG")
 }

@@ -6,13 +6,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.IRouteService;
-import cn.wzbos.android.rudolph.annotations.Export;
 import cn.wzbos.android.rudolph.annotations.Arg;
 import cn.wzbos.android.rudolph.annotations.Route;
+import cn.wzbos.android.rudolph.example.module_b_api.ITestService;
 
-@Route(value = "/service/test", export = true)
-public class TestService implements IRouteService {
+@Route(value = "/service/test", export = true, singleton = true, clazz = ITestService.class)
+public class TestService implements ITestService {
 
     @Arg
     int userId;
@@ -20,7 +19,6 @@ public class TestService implements IRouteService {
     @Arg
     String userName;
 
-    @Export
     public void showMessage(Context context, String msg) {
         Toast.makeText(context, msg + "\nuserId:" + userId + ",userName:" + userName, Toast.LENGTH_SHORT).show();
     }

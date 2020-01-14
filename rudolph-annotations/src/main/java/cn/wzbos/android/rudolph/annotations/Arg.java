@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Created by wuzongbo on 2017/5/30.
  */
 @Target({ElementType.PARAMETER, ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 public @interface Arg {
     String value() default "";
 
