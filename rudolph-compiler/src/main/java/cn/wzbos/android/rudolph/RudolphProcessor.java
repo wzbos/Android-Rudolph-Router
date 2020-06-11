@@ -47,6 +47,7 @@ import javax.tools.StandardLocation;
 import cn.wzbos.android.rudolph.annotations.Arg;
 import cn.wzbos.android.rudolph.annotations.Component;
 import cn.wzbos.android.rudolph.annotations.Exclude;
+import cn.wzbos.android.rudolph.annotations.Export;
 import cn.wzbos.android.rudolph.annotations.Route;
 
 import static cn.wzbos.android.rudolph.Consts.RAW_URI;
@@ -84,7 +85,8 @@ public class RudolphProcessor extends AbstractProcessor {
     private TypeElement type_IBind;
 
     private TypeMirror fragmentTm;
-    private TypeMirror fragmentTmV4;
+    private TypeElement fragmentTmV4 = null;
+    private TypeElement fragmentAndroidX = null;
     private TypeMirror activityTm;
     private TypeMirror serviceTm;
     private TypeMirror parcelableTM;
@@ -112,7 +114,8 @@ public class RudolphProcessor extends AbstractProcessor {
         serializableTM = this.elements.getTypeElement("java.io.Serializable").asType();
         activityTm = elements.getTypeElement("android.app.Activity").asType();
         fragmentTm = elements.getTypeElement("android.app.Fragment").asType();
-        fragmentTmV4 = elements.getTypeElement("android.support.v4.app.Fragment").asType();
+        fragmentTmV4 = elements.getTypeElement("android.support.v4.app.Fragment");
+        fragmentAndroidX = elements.getTypeElement(" androidx.fragment.app.Fragment");
         serviceTm = elements.getTypeElement(Constant.ROUTE_SERVICE).asType();
 
 
@@ -152,6 +155,7 @@ public class RudolphProcessor extends AbstractProcessor {
                     RouteType routetype;
                     for (Element element : routers) {
                         Route route = element.getAnnotation(Route.class);
+
                         ElementKind kind = element.getKind();
                         ClassName target;
                         if (kind == ElementKind.CLASS) {
@@ -164,9 +168,12 @@ public class RudolphProcessor extends AbstractProcessor {
                             } else if (types.isSubtype(tm, fragmentTm)) {
                                 // Fragment
                                 routetype = RouteType.FRAGMENT;
-                            } else if (types.isSubtype(tm, fragmentTmV4)) {
+                            } else if (fragmentTmV4 != null && types.isSubtype(tm, fragmentTmV4.asType())) {
                                 // Fragment V4
                                 routetype = RouteType.FRAGMENT_V4;
+                            } else if (fragmentAndroidX != null && types.isSubtype(tm, fragmentAndroidX.asType())) {
+                                // Fragment AndroidX
+                                routetype = RouteType.FRAGMENT_AndroidX;
                             } else if (types.isSubtype(tm, serviceTm)) {
                                 routetype = RouteType.SERVICE;
                             } else {
@@ -303,6 +310,8 @@ public class RudolphProcessor extends AbstractProcessor {
      */
     private void generateRouterCls(TypeElement element, RouteType routeType, Route route) throws IllegalAccessException {
         logger.warning("generateRouterCls:" + element.getSimpleName() + "Router");
+        Export export = element.getAnnotation(Export.class);
+
         TypeName interfaceClsName = null;
 
         TypeMirror mirror = APUtils.getTypeMirrorFromAnnotationValue(route::clazz);
@@ -310,7 +319,13 @@ public class RudolphProcessor extends AbstractProcessor {
             interfaceClsName = ClassName.get(mirror);
         }
 
-        String clsName = element.getSimpleName() + "Router";
+        String clsName;
+        if (export == null || "".equals(export.value())) {
+            clsName = element.getSimpleName() + "Router";
+        } else {
+            clsName = export.value();
+        }
+
         TypeSpec.Builder clsRouterBuilder = TypeSpec.classBuilder(clsName)
                 //增加注释
                 .addJavadoc(Constant.WARNING_TIPS)
@@ -318,7 +333,7 @@ public class RudolphProcessor extends AbstractProcessor {
 
         //生成单例
         if (routeType == RouteType.SERVICE) {
-            if (route.singleton()) {
+            if (export != null && export.singleton()) {
                 clsRouterBuilder.addField(interfaceClsName, "instance", PRIVATE, VOLATILE, STATIC);
                 clsRouterBuilder.addMethod(MethodSpec.methodBuilder("get")
                         .returns(interfaceClsName)
@@ -360,10 +375,10 @@ public class RudolphProcessor extends AbstractProcessor {
 //        logger.error("getExportApiPackageName:"+getExportApiPackageName(element));
 
         try {
-            JavaFile file = JavaFile.builder(getExportApiPackageName(element, route.export()), clsRouterBuilder.build())
+            JavaFile file = JavaFile.builder(getExportApiPackageName(element, export != null), clsRouterBuilder.build())
                     .build();
             File out_directory;
-            if (route.export() && (out_directory = getOutputDirectory()) != null) {
+            if (export != null && (out_directory = getOutputDirectory()) != null) {
 //                logger.info(out_directory.getAbsolutePath() + "/" + clsName+".java");
                 file.writeTo(out_directory);
             } else {
@@ -425,7 +440,13 @@ public class RudolphProcessor extends AbstractProcessor {
             builder.superclass(ParameterizedTypeName.get(
                     ClassName.get(fragmentBuilderTm),
                     builderType,
-                    TypeName.get(fragmentTmV4)));
+                    TypeName.get(fragmentTmV4.asType())));
+        } else if (routeType == RouteType.FRAGMENT_AndroidX) {
+            // Fragment AndroidX
+            builder.superclass(ParameterizedTypeName.get(
+                    ClassName.get(fragmentBuilderTm),
+                    builderType,
+                    TypeName.get(fragmentAndroidX.asType())));
         } else if (routeType == RouteType.SERVICE) {
             // Provider
             builder.superclass(ParameterizedTypeName.get(

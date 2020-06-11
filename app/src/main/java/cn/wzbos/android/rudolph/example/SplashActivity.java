@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.example.module_a.MainActivityRouter;
+import cn.wzbos.samplea.MainActivityRouter;
 
 public class SplashActivity extends AppCompatActivity {
 

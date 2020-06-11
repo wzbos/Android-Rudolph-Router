@@ -9,6 +9,7 @@ public enum RouteType {
     METHOD,
     FRAGMENT,
     FRAGMENT_V4,
+    FRAGMENT_AndroidX,
     SERVICE,
     UNKNOWN,
 }

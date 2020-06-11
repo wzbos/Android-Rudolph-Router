@@ -12,8 +12,9 @@ buildscript {
     ]
 
     repositories {
-        jcenter()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
         google()
+        jcenter()
     }
 
     dependencies {
@@ -27,13 +28,9 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
         google()
-    }
-
-    configurations.all {
-        // check for updates every build
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+        jcenter()
     }
 }
 

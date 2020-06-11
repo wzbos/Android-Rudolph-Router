@@ -18,6 +18,7 @@ public class UriRouter extends Router {
                     break;
                 case FRAGMENT:
                 case FRAGMENT_V4:
+                case FRAGMENT_AndroidX:
                     router = new FragmentRouter(builder);
                     break;
                 case SERVICE:

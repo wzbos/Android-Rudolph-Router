@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion versions.compileSdk
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+
+        versionName "0.0.1"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        export_api_name   : project.getName() + "-protocol",
+                        export_api_package: "cn.wzbos.protocol.samplea"
+                ]
+                includeCompileClasspath = true
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:${versions.supportLib}"
+    implementation "com.google.code.gson:gson:${versions.gson}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+    implementation project(':sampleA-protocol')
+    implementation project(':sampleB-protocol')
+
+    //rudolph
+    implementation project(':rudolph')
+    kapt project(':rudolph-compiler')
+
+}
+repositories {
+    mavenCentral()
+}
+
+

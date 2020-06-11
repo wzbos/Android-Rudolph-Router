@@ -28,8 +28,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:${versions.supportLib}"
     implementation project(':rudolph')
-    implementation project(':module-a')
-    implementation project(':module-b')
+    implementation project(':sampleA')
+    implementation project(':sampleB')
 
 }
 repositories {
