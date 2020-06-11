@@ -331,7 +331,7 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
                     segments.add(URLDecoder.decode(val, "utf-8"));
                 }
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                Log.e("rudolph", "getSegments failed!", e);
             }
         }
         return segments;
@@ -385,7 +385,7 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
                         String value = URLDecoder.decode(kv[1], "utf-8");
                         params.put(name, value);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e("rudolph", "getUriAllParams failed!", e);
                     }
                 }
             }

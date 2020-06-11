@@ -26,6 +26,7 @@ public class Rudolph {
     private static List<RouteInfo> routes = new ArrayList<>();
     private static Application app;
     private static String scheme;
+    private static Boolean initialized = false;
 
     public static Application getApplication() {
         return app;
@@ -40,6 +41,9 @@ public class Rudolph {
      */
     public static void init(Application application) {
         Log.v(TAG, "init");
+        if (initialized)
+            return;
+
         app = application;
         AssetManager assetManager = application.getResources().getAssets();
         try {
@@ -53,14 +57,21 @@ public class Rudolph {
                             iGroupInstance.init(application);
                         }
                     } catch (ClassNotFoundException e) {
-                        Log.e(TAG, "初始化\"" + className + "\"组件失败，请检查包名是否正确！");
-                        e.printStackTrace();
+                        Log.e(TAG, "初始化\"" + className + "\"组件失败，请检查包名是否正确！", e);
                     }
                 }
             }
+            initialized = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "路由初始化异常！", e);
         }
+    }
+
+    /**
+     * 获取是否已初始化路由表
+     */
+    public static Boolean isInitialized() {
+        return initialized;
     }
 
     public static void setScheme(String schemeStr) {

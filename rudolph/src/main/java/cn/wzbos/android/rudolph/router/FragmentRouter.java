@@ -1,5 +1,7 @@
 package cn.wzbos.android.rudolph.router;
 
+import android.util.Log;
+
 import cn.wzbos.android.rudolph.exception.RudolphException;
 
 public class FragmentRouter<R> extends Router<R> {
@@ -34,7 +36,7 @@ public class FragmentRouter<R> extends Router<R> {
 
             return (R) instance;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("rudolph", "open fragment error!", e);
             if (callback != null)
                 callback.onFailed(e);
         }

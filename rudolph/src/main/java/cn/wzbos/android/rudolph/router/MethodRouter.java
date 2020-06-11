@@ -2,6 +2,7 @@ package cn.wzbos.android.rudolph.router;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import cn.wzbos.android.rudolph.Rudolph;
 import cn.wzbos.android.rudolph.Consts;
@@ -79,7 +80,7 @@ public class MethodRouter extends Router {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("rudolph", "方法调用异常!", e);
             if (null != callback)
                 callback.onFailed(e);
         }
