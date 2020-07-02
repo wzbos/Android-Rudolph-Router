@@ -2,7 +2,9 @@ package cn.wzbos.protocol.sampleb;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import cn.wzbos.android.rudolph.IRouteService;
+
 import java.lang.String;
 
 /**
@@ -18,6 +20,4 @@ public interface ITestService extends IRouteService {
     void setUserName(String userName);
 
     void showMessage(Context context, String msg);
-
-  void init(Bundle bundle);
 }

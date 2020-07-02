@@ -11,8 +11,8 @@ import cn.wzbos.android.rudolph.annotations.Export;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.protocol.sampleb.ITestService;
 
-@Route(value = "/service/test", clazz = ITestService.class)
-@Export(singleton = true)
+@Route(value = "/service/test", clazz = ITestService.class, singleton = true)
+@Export
 public class TestService implements ITestService {
 
     @Arg
@@ -30,10 +30,12 @@ public class TestService implements ITestService {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
     @Override
     public String getUserName() {
         return userName;
     }
+
     @Override
     public void setUserName(String userName) {
         this.userName = userName;

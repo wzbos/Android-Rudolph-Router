@@ -51,7 +51,7 @@ public class Rudolph {
             if (null != list && list.length > 0) {
                 for (String className : list) {
                     try {
-                        Class clazz = Class.forName("cn.wzbos.android.rudolph.routes." + className);
+                        Class<?> clazz = Class.forName("cn.wzbos.android.rudolph.routes." + className);
                         if (IRouteTable.class.isAssignableFrom(clazz)) {
                             IRouteTable iGroupInstance = (IRouteTable) clazz.newInstance();
                             iGroupInstance.init(application);

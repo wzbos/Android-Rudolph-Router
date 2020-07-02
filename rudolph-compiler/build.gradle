@@ -20,8 +20,8 @@ dependencies {
     annotationProcessor 'com.google.auto.service:auto-service:1.0-rc7'
     implementation 'org.apache.commons:commons-lang3:3.5'
     implementation 'org.apache.commons:commons-collections4:4.1'
-//    implementation project(':rudolph-annotations')
-    implementation "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
+    implementation project(':rudolph-annotations')
+//    implementation "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
 }
 
 apply from: '../install.gradle'

@@ -222,7 +222,14 @@ public class RudolphProcessor extends AbstractProcessor {
 
 
     /**
-     * 将路由表类名以文件名方式创建一个空文件
+     * 以文件名方式记录路由表名（assets/rudolph/xxxRoutes）
+     * <p>
+     * 生成路径：build/tmp/kapt3/classes/debug/assets/rudolph
+     * </p>
+     * <ul>
+     * <li>将路由表的类名以文件名方式创建一个空文件存于assets目录用于路由表初始化加载；</li>
+     * <li>此方式可以避免使用代码插装方式初始化路由表,相比更简单，更有效。</li>
+     * </ul>
      */
     private void writeClsNameToAssets(String filename) {
         Writer writer = null;
@@ -246,6 +253,11 @@ public class RudolphProcessor extends AbstractProcessor {
         }
     }
 
+    /**
+     * 获取协议层工程代码目录
+     *
+     * @return File
+     */
     private File getOutputDirectory() {
         if (buildInfo != null && StringUtils.isNotEmpty(buildInfo.export_api_name)) {
             return new File(buildInfo.projectPath + "/" + buildInfo.export_api_name + "/src/main/java");
@@ -256,7 +268,23 @@ public class RudolphProcessor extends AbstractProcessor {
 
 
     /**
-     * generate xxxRoutes.java
+     * 生成路由表类
+     * <pre>
+     * public class SampleARoutes implements IRouteTable {
+     *   {@literal @}Override
+     *   public void init(Application application) {
+     *     new TestComponent().init(application);
+     *
+     *     Rudolph.addRoute(new RouteInfo.Builder().routeType(RouteType.ACTIVITY)
+     *     .destination(KotlinActivity.class)
+     *     .path("/kotlin/test")
+     *     .tag("")
+     *     .putParam("d3V6b25nYm8",String.class)
+     *     .putParam("userId",int.class)
+     *     .putParam("userName",String.class).build());
+     *   }
+     * }
+     * </pre>
      */
     private void generateRouteTable(MethodSpec.Builder builder, Element element, ClassName target, Route route, RouteType routetype) {
 
@@ -306,7 +334,30 @@ public class RudolphProcessor extends AbstractProcessor {
     }
 
     /**
-     * generate xxxRouter Class
+     * 生成Router类 xxxRouter.java
+     * <pre>
+     * public class MainActivityRouter {
+     *   public static MainActivityRouter.Builder builder() {
+     *     return new MainActivityRouter.Builder();
+     *   }
+     *
+     *   public static class Builder extends ActivityRouter.Builder<MainActivityRouter.Builder> {
+     *     Builder() {
+     *       super("/cn.wzbos.samplea.mainactivity");
+     *     }
+     *
+     *     public MainActivityRouter.Builder index(int val) {
+     *       super.arg("index",val);
+     *       return this;
+     *     }
+     *
+     *     public MainActivityRouter.Builder name(String val) {
+     *       super.arg("name",val);
+     *       return this;
+     *     }
+     *   }
+     * }
+     * </pre>
      */
     private void generateRouterCls(TypeElement element, RouteType routeType, Route route) throws IllegalAccessException {
         logger.warning("generateRouterCls:" + element.getSimpleName() + "Router");
@@ -333,7 +384,11 @@ public class RudolphProcessor extends AbstractProcessor {
 
         //生成单例
         if (routeType == RouteType.SERVICE) {
-            if (export != null && export.singleton()) {
+            if (interfaceClsName == null) {
+                logger.error("@Route clazz:" + route.clazz().getName() + " 不存在！");
+                return;
+            }
+            if (route.singleton()) {
                 clsRouterBuilder.addField(interfaceClsName, "instance", PRIVATE, VOLATILE, STATIC);
                 clsRouterBuilder.addMethod(MethodSpec.methodBuilder("get")
                         .returns(interfaceClsName)
@@ -342,8 +397,7 @@ public class RudolphProcessor extends AbstractProcessor {
                                 .beginControlFlow("if (instance == null)")
                                 .beginControlFlow("synchronized (" + clsName + ".class)")
                                 .beginControlFlow("if (instance == null)")
-//                                .addStatement("instance = builder().build().open()")
-                                .addStatement("instance = newInstance()")
+                                .addStatement("instance = builder().build().open()")
                                 .endControlFlow()
                                 .addStatement("return instance")
                                 .endControlFlow()
@@ -352,26 +406,17 @@ public class RudolphProcessor extends AbstractProcessor {
                                 .build())
                         .build());
             }
-
-
-            clsRouterBuilder.addMethod(MethodSpec.methodBuilder("newInstance")
-                    .addJavadoc("create new instance\n")
-                    .returns(interfaceClsName)
-                    .addModifiers(PUBLIC, STATIC)
-                    .addStatement("return ($T)$T.builder($S).build().open()", interfaceClsName, rudolph, getRoutePath(element, route))
-                    .build());
-
-        } else {
-            ClassName routerBuilderClsName = ClassName.get(clsName, "Builder");
-            TypeSpec builderTypeSpec = generate(interfaceClsName, routerBuilderClsName, element, routeType);
-            clsRouterBuilder.addType(builderTypeSpec);
-            //构件构造方法(Context context, Class<?> clazz)
-            clsRouterBuilder.addMethod(MethodSpec.methodBuilder("builder")
-                    .addModifiers(PUBLIC, STATIC)
-                    .returns(routerBuilderClsName)
-                    .addStatement("return new $T()", routerBuilderClsName)
-                    .build());
         }
+
+        ClassName routerBuilderClsName = ClassName.get(clsName, "Builder");
+        TypeSpec builderTypeSpec = generate(interfaceClsName, routerBuilderClsName, element, routeType);
+        clsRouterBuilder.addType(builderTypeSpec);
+        //构件构造方法(Context context, Class<?> clazz)
+        clsRouterBuilder.addMethod(MethodSpec.methodBuilder("builder")
+                .addModifiers(PUBLIC, STATIC)
+                .returns(routerBuilderClsName)
+                .addStatement("return new $T()", routerBuilderClsName)
+                .build());
 //        logger.error("getExportApiPackageName:"+getExportApiPackageName(element));
 
         try {
@@ -532,8 +577,13 @@ public class RudolphProcessor extends AbstractProcessor {
         return qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
     }
 
+    /**
+     * 生成路由服务类的接口
+     */
     private ClassName generateServiceInterface(TypeElement element, boolean export) {
+
         String interfaceName = "I" + element.getSimpleName();
+
 
         TypeSpec.Builder clsRouterBuilder = TypeSpec.interfaceBuilder(interfaceName)
                 //增加注释
@@ -605,7 +655,26 @@ public class RudolphProcessor extends AbstractProcessor {
 
 
     /**
-     * generate xxxRouteBinder class
+     * 生成路由参数注入类 xxxRouteBinder.java
+     * <pre>
+     *   public class KotlinActivityBinder implements IRouteBinder {
+     *   private static final String userId = "userId";
+     *
+     *   {@literal @}Override
+     *   public void bind(Object target, Bundle args) {
+     *     KotlinActivity kotlinActivity = (KotlinActivity)target;
+     *     if (args != null) {
+     *       if (args.containsKey(cn.wzbos.android.rudolph.Consts.RAW_URI)) {
+     *         	kotlinActivity.setRouteUri(args.getString(cn.wzbos.android.rudolph.Consts.RAW_URI));
+     *       }
+     *       if (args.containsKey(userId)) {
+     *         	kotlinActivity.setUserId(args.getInt(userId));
+     *       }
+     *       ...
+     *     }
+     *   }
+     * }
+     * </pre>
      */
     private void generateRouteBinderCls(TypeElement element, ClassName target) throws IOException {
 
@@ -743,12 +812,20 @@ public class RudolphProcessor extends AbstractProcessor {
                 .writeTo(mFiler);
     }
 
+
+    /**
+     * 判断当前工程是否为kotlin工程
+     *
+     * @param element TypeElement
+     * @return true：kotlin 工程，false: Java工程
+     */
+    @SuppressWarnings("unchecked")
     private boolean isKotlin(TypeElement element) {
         boolean ret = false;
         try {
-            Class cls = Class.forName("kotlin.Metadata");
+            Class<?> cls = Class.forName("kotlin.Metadata");
             if (null != cls) {
-                Annotation annotation = element.getAnnotation(cls);
+                Object annotation = element.getAnnotation((Class<Annotation>) cls);
                 if (null != annotation) {
                     ret = true;
                 }

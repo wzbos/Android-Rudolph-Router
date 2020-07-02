@@ -34,6 +34,6 @@ public class UserActivity extends AppCompatActivity {
         Rudolph.bind(this);
 
         ((TextView) findViewById(R.id.tvMessage)).setText(String.format(Locale.getDefault(),
-                "RawUri:%s\nuserId:%d,userName:%s", routeUri, userId,userName));
+                "RawUri:%s\nuserId:%d,userName:%s", routeUri, userId, userName));
     }
 }
