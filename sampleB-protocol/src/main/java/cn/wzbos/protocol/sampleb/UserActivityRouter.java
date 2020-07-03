@@ -17,12 +17,12 @@ public class UserActivityRouter {
     }
 
     public UserActivityRouter.Builder userId(int val) {
-      super.arg("userId",val);
+      super.putExtra("userId",val);
       return this;
     }
 
     public UserActivityRouter.Builder userName(String val) {
-      super.arg("userName",val);
+      super.putExtra("userName",val);
       return this;
     }
   }

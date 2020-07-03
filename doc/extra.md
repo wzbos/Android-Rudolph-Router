@@ -1,6 +1,6 @@
-# @Arg
+# @Extra
  
-@Arg 注解所支持的数据类型以及使用方式
+@Extra 注解所支持的数据类型以及使用方式
 
 
 如：
@@ -17,14 +17,14 @@
 * 获取当前Activity、fragment、Service、Method的URL原始调用地址
 
 ```java
-    @Arg(RAW_URI)
+    @Extra(RAW_URI)
     String routeUri;
 ```
 
 * Serialized
 
 ```java
-    @Arg(value = "serialized")
+    @Extra(value = "serialized")
     Broker serializedParam;
 ```
 
@@ -32,7 +32,7 @@
 
 ```java
     //json
-    @Arg(value = "json", json = true)
+    @Extra(value = "json", json = true)
     User<Broker> jsonParam;
 ```
 
@@ -41,7 +41,7 @@
 
 ```java
     //encode：json->base64，decode：base64->json
-    @Arg(value = "base64json", json = true, base64 = true)
+    @Extra(value = "base64json", json = true, base64 = true)
     User<Broker> base64jsonParam;
 ```
 
@@ -49,21 +49,21 @@
 * String
 
 ```java
-    @Arg("stringArg")
+    @Extra("stringArg")
     String stringArg;
 ```
 
 * base64String
 
 ```java
-    @Arg(value = "string64", base64 = true)
+    @Extra(value = "string64", base64 = true)
     String string64Arg;
 ```
 
 * String[]
 
 ```java
-    @Arg("stringArray")
+    @Extra("stringArray")
     String[] stringArrayArg;
 
 ```
@@ -71,119 +71,119 @@
 * boolean
 
 ```java
-    @Arg("boolArg")
+    @Extra("boolArg")
     boolean boolArg;
 ```
 
 * boolean[]
 
 ```java
-    @Arg("booleanArray")
+    @Extra("booleanArray")
     boolean[] booleanArrayArg;
 ```
 
 * byte
 
 ```java
-    @Arg("byteArg")
+    @Extra("byteArg")
     byte byteArg;
 ```
 
 * byte[]
 
 ```java
-    @Arg("byteArray")
+    @Extra("byteArray")
     byte[] byteArrayArg;
 ```
 
 * short
 
 ```java
-    @Arg("shortArg")
+    @Extra("shortArg")
     short shortArg;
 ```
 
 * short[]
 
 ```java
-    @Arg("shortArray")
+    @Extra("shortArray")
     short[] shortArrayArg;
 ```
 
 * int
 
 ```java
-    @Arg("intArg")
+    @Extra("intArg")
     int intArg;
 ```
 
 * int[]
 
 ```java
-    @Arg("intArrayArg")
+    @Extra("intArrayArg")
     int[] intArrayArg;
 ```
 
 * long
 
 ```java
-    @Arg("longArg")
+    @Extra("longArg")
     long longArg;
 ```
 
 * long[]
 
 ```java
-    @Arg("longArray")
+    @Extra("longArray")
     long[] longArrayArg;
 ```
 
 * char
 
 ```java
-    @Arg("charArg")
+    @Extra("charArg")
     char charArg;
 ```
 
 * char[]
 
 ```java
-    @Arg("charArray")
+    @Extra("charArray")
     char[] charArrayArg;
 ```
 
 * float
 
 ```java
-    @Arg("floatArg")
+    @Extra("floatArg")
     float floatArg;
 ```
 
 * float[]
 
 ```java
-    @Arg("floatArray")
+    @Extra("floatArray")
     float[] floatArrayArg;
 ```
 
 * double
 
 ```java
-    @Arg("doubleArg")
+    @Extra("doubleArg")
     double doubleArg;
 ```
 
 * double[]
 
 ```java
-    @Arg("doubleArray")
+    @Extra("doubleArray")
     double[] doubleArrayArg;
 ```
 
 * Character
 
 ```java
-    @Arg("characterArg")
+    @Extra("characterArg")
     Character characterArg;
 ```
 
@@ -191,28 +191,28 @@
 
 ```java
     //ArrayList
-    @Arg
+    @Extra
     ArrayList<String> stringArrayListArg;
 ```
 
 * ArrayList<Integer> 
 
 ```java
-    @Arg
+    @Extra
     ArrayList<Integer> integerArrayListArg;
 ```
 
 * ArrayList<CharSequence> 
 
 ```java
-    @Arg(value = "charSequenceArrayList")
+    @Extra(value = "charSequenceArrayList")
     ArrayList<CharSequence> charSequenceArrayListArg;
 ```
 
 * ArrayList<? extend Parcelable> 
 
 ```java
-    @Arg(value = "parcelableArrayList")
+    @Extra(value = "parcelableArrayList")
     ArrayList<Broker> parcelableArrayListArg;
 ```
 

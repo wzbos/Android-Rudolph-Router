@@ -5,14 +5,14 @@
 `注意：`
 `1.方法必须为静态方法`
 `2.context是获取open(context)传的上下文，如果调用的时候没context值则接收的值为ApplicationContext`
-`3.加上@Arg(RAW_URI) String rawUri 可以获取调用的URL字符串`
+`3.加上@Extra(RAW_URI) String rawUri 可以获取调用的URL字符串`
 
 如：
 
 ```java
 public class TestMethod {
     @Route("/method/test")
-    public static void Test(@Arg Context context, @Arg(RAW_URI) String rawUri, @Arg int userId, @Arg String userName) {
+    public static void Test(@Extra Context context, @Extra(RAW_URI) String rawUri, @Extra int userId, @Extra String userName) {
         Toast.makeText(context, "Hello Method!\nuserId:" + userId + ",userName:" + userName, Toast.LENGTH_SHORT).show();
     }
 }

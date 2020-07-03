@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import cn.wzbos.android.rudolph.Rudolph;
 import cn.wzbos.android.rudolph.Consts;
-import cn.wzbos.android.rudolph.annotations.Arg;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Route;
 
 import java.util.Locale;
@@ -18,13 +18,13 @@ import java.util.Locale;
 
 @Route("/fragment/test")
 public class TestFragment extends Fragment {
-    @Arg(Consts.RAW_URI)
+    @Extra(Consts.RAW_URI)
     String routeUri;
 
-    @Arg("userId")
+    @Extra("userId")
     int userId;
 
-    @Arg("userName")
+    @Extra("userName")
     String userName;
 
 

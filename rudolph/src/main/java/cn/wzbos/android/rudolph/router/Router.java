@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import cn.wzbos.android.rudolph.Interceptor;
-import cn.wzbos.android.rudolph.RouteCallback;
+import cn.wzbos.android.rudolph.OnRouteListener;
 import cn.wzbos.android.rudolph.Rudolph;
 import cn.wzbos.android.rudolph.RouteType;
 
@@ -16,10 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Router<T> {
+
     String rawUrl;
     Bundle bundle;
     Class<?> target;
-    RouteCallback callback;
+    OnRouteListener callback;
     String routePath;
     RouteType routeType;
     String routeTag;
@@ -65,7 +66,7 @@ public abstract class Router<T> {
         return Uri.EMPTY;
     }
 
-    Router(RouteBuilder builder) {
+    Router(RouteBuilder<?,?> builder) {
         this.rawUrl = builder.rawUrl;
         this.callback = builder.callback;
         this.bundle = builder.args;

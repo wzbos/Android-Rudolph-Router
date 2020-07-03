@@ -2,27 +2,31 @@ package cn.wzbos.android.rudolph.router;
 
 import android.util.Log;
 
+import cn.wzbos.android.rudolph.exception.ErrorCode;
+import cn.wzbos.android.rudolph.exception.ErrorMessage;
 import cn.wzbos.android.rudolph.exception.RudolphException;
 
 public class FragmentRouter<R> extends Router<R> {
 
-    FragmentRouter(RouteBuilder builder) {
+    FragmentRouter(RouteBuilder<?, ?> builder) {
         super(builder);
     }
 
-    private FragmentRouter(Builder builder) {
+    private FragmentRouter(Builder<?, ?> builder) {
         super(builder);
     }
 
+    @Override
     public R open() {
         if (super.intercept(null))
             return null;
 
         if (target == null) {
             if (callback != null)
-                callback.onFailed(new RudolphException("Not found!"));
+                callback.onError(this, new RudolphException(ErrorCode.NOT_FOUND, ErrorMessage.NOT_FOUND_ERROR));
             return null;
         }
+
         try {
             Object instance = target.getConstructor().newInstance();
             if (instance instanceof android.app.Fragment) {
@@ -32,13 +36,15 @@ public class FragmentRouter<R> extends Router<R> {
             }
 
             if (callback != null)
-                callback.onSucceed();
+                callback.onSuccess(this);
 
             return (R) instance;
         } catch (Exception e) {
-            Log.e("rudolph", "open fragment error!", e);
-            if (callback != null)
-                callback.onFailed(e);
+            if (callback != null) {
+                callback.onError(this, new RudolphException(ErrorCode.FRAGMENT_CREATE_FAILED, "Fragment 创建失败！", e));
+            } else {
+                Log.e("rudolph", "Fragment 创建失败！", e);
+            }
         }
         return null;
     }

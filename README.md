@@ -29,7 +29,7 @@ Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 - [Method](./doc/method.md)
 - [组件化设计](doc/design.md)
 
-### 组件引入
+### 1、组件引入
 
 1.添加依赖(1.x.x为[版本号](https://github.com/wzbos/Android-Rudolph-Router/releases))
 
@@ -62,8 +62,96 @@ dependencies {
 }
 ```
 
-### 3.代码混淆
+### 2、代码混淆
 
 所需混淆配置都已经打包到组件内，无需新增额外混淆配置
 
+### 3、初始化
 
+建议放到application中
+
+```java
+Rudolph.init(this);
+```
+
+### 4、拦截器
+
+* 添加拦截器
+
+```java
+Rudolph.addInterceptor(new Interceptor() {
+    @Override
+    public boolean intercept(Context context, Router routeInfo) {
+        if ("/test4".equalsIgnoreCase(routeInfo.getRawUrl())) {
+            Toast.makeText(MyApplication.this, "intercept,path:" + routeInfo.getRawUrl(), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+});
+```
+
+* 移除拦截器
+
+```java
+Rudolph.removeInterceptor(interceptor);
+```
+
+### 5、设置scheme
+
+设置当前APP的scheme用于支持其他APP程序跳转到当前APP
+
+```java
+Rudolph.setScheme("myApp")
+```
+
+> scheme值需要于AndroidManifest.xml文件中的值相同，例如下面的scheme为"myApp"
+
+```java
+<activity
+    android:name=".MainActivity"
+    android:configChanges="keyboardHidden|orientation"
+    android:screenOrientation="portrait">
+    <intent-filter>
+        <data android:scheme="myApp" />
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+    </intent-filter>
+
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+```
+
+### 6、bind
+
+给@Extra注解的变量赋值，一般用在Activity的create 或者 Service的init方法内
+
+```java
+Rudolph.bind(this)
+```
+
+### 7、onNewIntent
+
+用于在Activity的onNewIntent生命周期内重新赋值
+
+```java
+Rudolph.onNewIntent("myApp")
+```
+
+### 8、addRoute
+
+添加一条路由记录，一般场景下不需要用，此方法主要是路由表类自行调用
+
+```java
+Rudolph.addRoute(new RouteInfo.Builder().routeType(RouteType.ACTIVITY)
+    .destination(KotlinActivity.class)
+    .path("/kotlin/test")
+    .tag("")
+    .putParam("userId",int.class)
+    .putParam("userName",String.class).build());
+```

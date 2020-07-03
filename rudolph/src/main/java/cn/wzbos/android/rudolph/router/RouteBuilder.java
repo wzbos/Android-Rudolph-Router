@@ -7,14 +7,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
-import cn.wzbos.android.rudolph.RouteCallback;
-import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.Consts;
-import cn.wzbos.android.rudolph.IRouteBuilder;
-import cn.wzbos.android.rudolph.RouteInfo;
-import cn.wzbos.android.rudolph.RouteType;
-import cn.wzbos.android.rudolph.utils.TypeUtils;
-
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -25,17 +17,25 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.wzbos.android.rudolph.Consts;
+import cn.wzbos.android.rudolph.IRouteBuilder;
+import cn.wzbos.android.rudolph.OnRouteListener;
+import cn.wzbos.android.rudolph.RouteInfo;
+import cn.wzbos.android.rudolph.RouteType;
+import cn.wzbos.android.rudolph.Rudolph;
+import cn.wzbos.android.rudolph.utils.TypeUtils;
+
 /**
  * Bundle IBuilder
  * Created by wuzongbo on 2017/9/13.
  */
 @SuppressWarnings("unchecked")
-public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Router> implements IRouteBuilder<RouteBuilder<B, R>, R> {
+public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Router<?>> implements IRouteBuilder<RouteBuilder<B, R>, R> {
 
 
     Bundle args;
 
-    RouteCallback callback;
+    OnRouteListener callback;
 
     Class<?> target;
 
@@ -51,202 +51,195 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
 
 
     @Override
-    public B arg(Bundle map) {
+    public B putExtra(Bundle map) {
         args.putAll(map);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, String value) {
+    public B putExtra(String key, String value) {
         args.putString(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, boolean value) {
+    public B putExtra(String key, boolean value) {
         args.putBoolean(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, short value) {
+    public B putExtra(String key, short value) {
         args.putShort(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, int value) {
+    public B putExtra(String key, int value) {
         args.putInt(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, long value) {
+    public B putExtra(String key, long value) {
         args.putLong(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, double value) {
+    public B putExtra(String key, double value) {
         args.putDouble(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, byte value) {
+    public B putExtra(String key, byte value) {
         args.putByte(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, char value) {
+    public B putExtra(String key, char value) {
         args.putChar(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, float value) {
+    public B putExtra(String key, float value) {
         args.putFloat(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, CharSequence value) {
+    public B putExtra(String key, CharSequence value) {
         args.putCharSequence(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, Parcelable value) {
+    public B putExtra(String key, Parcelable value) {
         args.putParcelable(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, Parcelable[] value) {
+    public B putExtra(String key, Parcelable[] value) {
         args.putParcelableArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B parcelableArrayListArg(String key, ArrayList<? extends Parcelable> value) {
+    public B putParcelableArrayListExtra(String key, ArrayList<? extends Parcelable> value) {
         args.putParcelableArrayList(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, SparseArray<? extends Parcelable> value) {
+    public B putExtra(String key, SparseArray<? extends Parcelable> value) {
         args.putSparseParcelableArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B integerArrayListArg(String key, ArrayList<Integer> value) {
+    public B putIntegerArrayListExtra(String key, ArrayList<Integer> value) {
         args.putIntegerArrayList(key, value);
         return (B) this;
     }
 
     @Override
-    public B stringArrayListArg(String key, ArrayList<String> value) {
+    public B putStringArrayListExtra(String key, ArrayList<String> value) {
         args.putStringArrayList(key, value);
         return (B) this;
     }
 
     @Override
-    public B charSequenceArrayListArg(String key, ArrayList<CharSequence> value) {
+    public B putCharSequenceArrayListExtra(String key, ArrayList<CharSequence> value) {
         args.putCharSequenceArrayList(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, Serializable value) {
+    public B putExtra(String key, Serializable value) {
         args.putSerializable(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String name, boolean[] value) {
+    public B putExtra(String name, boolean[] value) {
         args.putBooleanArray(name, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, byte[] value) {
+    public B putExtra(String key, byte[] value) {
         args.putByteArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, short[] value) {
+    public B putExtra(String key, short[] value) {
         args.putShortArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, char[] value) {
+    public B putExtra(String key, char[] value) {
         args.putCharArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, int[] value) {
+    public B putExtra(String key, int[] value) {
         args.putIntArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, long[] value) {
+    public B putExtra(String key, long[] value) {
         args.putLongArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, float[] value) {
+    public B putExtra(String key, float[] value) {
         args.putFloatArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, double[] value) {
+    public B putExtra(String key, double[] value) {
         args.putDoubleArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, String[] value) {
+    public B putExtra(String key, String[] value) {
         args.putStringArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, CharSequence[] value) {
+    public B putExtra(String key, CharSequence[] value) {
         args.putCharSequenceArray(key, value);
         return (B) this;
     }
 
     @Override
-    public B arg(String key, Bundle value) {
+    public B putExtra(String key, Bundle value) {
         args.putBundle(key, value);
         return (B) this;
     }
 
     @Override
-    public Bundle args() {
+    public Bundle getExtras() {
         return args;
     }
 
     @Override
-    public B callback(RouteCallback callback) {
+    public B onListener(OnRouteListener callback) {
         this.callback = callback;
         return (B) this;
     }
-
-    @Override
-    public B url(String url) {
-        this.rawUrl = url;
-        return (B) this;
-    }
-
 
     private RouteBuilder() {
         this.args = new Bundle();
@@ -265,7 +258,11 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
         if (!TextUtils.isEmpty(rawUrl)) {
             RouteInfo routeInfo = Rudolph.getRouter(getPath());
             if (null == routeInfo) {
-                Log.e("Rudolph", "没有匹配到相关路由,Path:" + rawUrl);
+                if (Rudolph.getRouters() == null || Rudolph.getRouters().size() == 0) {
+                    Log.e("Rudolph", "错误：没有匹配到相关路由:" + rawUrl + ",当前路由表为空,请确认是否已进行 Rudolph.init() 初始化操作！");
+                } else {
+                    Log.e("Rudolph", "错误：没有匹配到相关路由:" + rawUrl);
+                }
                 return;
             }
 
@@ -289,8 +286,7 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
         }
     }
 
-
-    public B addParams(String key, String val) {
+    private void addParams(String key, String val) {
         if (queryParameters != null && !queryParameters.isEmpty() && queryParameters.containsKey(key)) {
             Type type = queryParameters.get(key);
             if (!android.text.TextUtils.isEmpty(val)) {
@@ -299,7 +295,6 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
         } else {
             args.putString(key, val);
         }
-        return (B) this;
     }
 
     String getPath() {
@@ -346,6 +341,11 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
         }
     }
 
+    /**
+     * 获取当前URL地址的所有参数
+     *
+     * @return 返回参数kv集合
+     */
     Map<String, String> getUriAllParams() {
         HashMap<String, String> params = new LinkedHashMap<>();
 

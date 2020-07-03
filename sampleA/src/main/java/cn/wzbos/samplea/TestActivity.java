@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.annotations.Arg;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Export;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.protocol.samplea.bean.Broker;
@@ -20,92 +20,92 @@ import static cn.wzbos.android.rudolph.Consts.RAW_URI;
 @Route(value = "/activity/test")
 @Export
 public class TestActivity extends AppCompatActivity {
-    @Arg(RAW_URI)
+    @Extra(RAW_URI)
     String routeUri;
 
-    @Arg("stringArg")
+    @Extra("stringArg")
     String stringArg;
 
-    @Arg(value = "string64", base64 = true)
+    @Extra(value = "string64", base64 = true)
     String string64Arg;
 
-    @Arg("stringArray")
+    @Extra("stringArray")
     String[] stringArrayArg;
 
 
-    @Arg("boolArg")
+    @Extra("boolArg")
     boolean boolArg;
 
-    @Arg("booleanArray")
+    @Extra("booleanArray")
     boolean[] booleanArrayArg;
 
-    @Arg("byteArg")
+    @Extra("byteArg")
     byte byteArg;
 
-    @Arg("byteArray")
+    @Extra("byteArray")
     byte[] byteArrayArg;
 
-    @Arg("shortArg")
+    @Extra("shortArg")
     short shortArg;
 
-    @Arg("shortArray")
+    @Extra("shortArray")
     short[] shortArrayArg;
 
-    @Arg("intArg")
+    @Extra("intArg")
     int intArg;
 
-    @Arg("intArrayArg")
+    @Extra("intArrayArg")
     int[] intArrayArg;
 
-    @Arg("longArg")
+    @Extra("longArg")
     long longArg;
 
-    @Arg("longArray")
+    @Extra("longArray")
     long[] longArrayArg;
 
-    @Arg("charArg")
+    @Extra("charArg")
     char charArg;
 
-    @Arg("charArray")
+    @Extra("charArray")
     char[] charArrayArg;
 
-    @Arg("floatArg")
+    @Extra("floatArg")
     float floatArg;
 
-    @Arg("floatArray")
+    @Extra("floatArray")
     float[] floatArrayArg;
 
-    @Arg("doubleArg")
+    @Extra("doubleArg")
     double doubleArg;
 
-    @Arg("doubleArray")
+    @Extra("doubleArray")
     double[] doubleArrayArg;
 
-    @Arg("characterArg")
+    @Extra("characterArg")
     Character characterArg;
 
     //ArrayList
-    @Arg
+    @Extra
     ArrayList<String> stringArrayListArg;
 
-    @Arg
+    @Extra
     ArrayList<Integer> integerArrayListArg;
 
-    @Arg(value = "charSequenceArrayList")
+    @Extra(value = "charSequenceArrayList")
     ArrayList<CharSequence> charSequenceArrayListArg;
 
-    @Arg(value = "parcelableArrayList")
+    @Extra(value = "parcelableArrayList")
     ArrayList<Broker> parcelableArrayListArg;
 
-    @Arg(value = "serialized")
+    @Extra(value = "serialized")
     Broker serializedParam;
 
     //json
-    @Arg(value = "json", json = true)
+    @Extra(value = "json", json = true)
     User<Broker> jsonParam;
 
     //encode：json->base64，decode：base64->json
-    @Arg(value = "base64json", json = true, base64 = true)
+    @Extra(value = "base64json", json = true, base64 = true)
     User<Broker> base64jsonParam;
 
     @Override

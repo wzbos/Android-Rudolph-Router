@@ -8,9 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 
 import cn.wzbos.android.rudolph.Rudolph;
+import cn.wzbos.android.rudolph.exception.ErrorMessage;
 import cn.wzbos.android.rudolph.exception.RudolphException;
 
-public class ActivityRouter extends Router {
+public class ActivityRouter extends Router<Object> {
     private Bundle options;
     private int flags = -1;
     private int enterAnim = -1;
@@ -32,13 +33,11 @@ public class ActivityRouter extends Router {
         return exitAnim;
     }
 
-
-    ActivityRouter(RouteBuilder builder) {
+    ActivityRouter(RouteBuilder<?,?> builder) {
         super(builder);
     }
 
-
-    private ActivityRouter(Builder builder) {
+    private ActivityRouter(Builder<?> builder) {
         super(builder);
         this.options = builder.options;
         this.flags = builder.flags;
@@ -52,7 +51,7 @@ public class ActivityRouter extends Router {
             Uri data = getUriData();
             if (data == Uri.EMPTY) {
                 if (callback != null)
-                    callback.onFailed(new RudolphException("Not found!"));
+                    callback.onError(this, new RudolphException(ErrorMessage.NOT_FOUND_ERROR));
                 return null;
             } else {
                 intent = new Intent(Intent.ACTION_VIEW);
@@ -84,7 +83,6 @@ public class ActivityRouter extends Router {
     public void start(Context context) {
         if (super.intercept(context))
             return;
-
         Intent intent = getIntent(context);
         if (null == intent)
             return;
@@ -155,7 +153,7 @@ public class ActivityRouter extends Router {
         }
 
         if (callback != null)
-            callback.onSucceed();
+            callback.onSuccess(this);
     }
 
     /**

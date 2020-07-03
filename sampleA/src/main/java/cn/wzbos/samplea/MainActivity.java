@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.annotations.Arg;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.protocol.samplea.TestActivityRouter;
 import cn.wzbos.protocol.samplea.bean.Broker;
@@ -30,10 +30,10 @@ import java.util.Map;
 @Route
 public class MainActivity extends AppCompatActivity {
 
-    @Arg("index")
+    @Extra("index")
     int index;
 
-    @Arg("name")
+    @Extra("name")
     String name;
 
     LinearLayout linearLayout;
@@ -108,14 +108,14 @@ public class MainActivity extends AppCompatActivity {
         array.put("ModuleA->ModuleB.UserActivity(Router)", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserActivityRouter.builder().userId(11).userName("John").build().start(MainActivity.this);
+                UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).build().start(MainActivity.this);
             }
         });
 
         array.put("ModuleA->ModuleB.UserActivity(URL)", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Rudolph.builder("/user?userId=11&userName=John").build().open(MainActivity.this);
+                Rudolph.builder("/user?userId=11&userName=John").build().open(MainActivity.this,1000);
             }
         });
 

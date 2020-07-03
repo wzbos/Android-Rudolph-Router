@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Arg {
+public @interface Extra {
     String value() default "";
 
     boolean export() default true;

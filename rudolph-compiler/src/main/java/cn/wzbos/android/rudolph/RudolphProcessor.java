@@ -44,7 +44,7 @@ import javax.lang.model.util.Types;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import cn.wzbos.android.rudolph.annotations.Arg;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Component;
 import cn.wzbos.android.rudolph.annotations.Exclude;
 import cn.wzbos.android.rudolph.annotations.Export;
@@ -313,7 +313,7 @@ public class RudolphProcessor extends AbstractProcessor {
         }
 
         for (Element field : arrays) {
-            Arg param = field.getAnnotation(Arg.class);
+            Extra param = field.getAnnotation(Extra.class);
             if (param == null)
                 continue;
 
@@ -347,12 +347,12 @@ public class RudolphProcessor extends AbstractProcessor {
      *     }
      *
      *     public MainActivityRouter.Builder index(int val) {
-     *       super.arg("index",val);
+     *       super.putExtra("index",val);
      *       return this;
      *     }
      *
      *     public MainActivityRouter.Builder name(String val) {
-     *       super.arg("name",val);
+     *       super.putExtra("name",val);
      *       return this;
      *     }
      *   }
@@ -449,7 +449,7 @@ public class RudolphProcessor extends AbstractProcessor {
         return StringUtils.isEmpty(route.value()) ? "/" + element.toString().toLowerCase() : route.value().toLowerCase();
     }
 
-    private String getArgName(Element element, Arg param) {
+    private String getArgName(Element element, Extra param) {
         return StringUtils.isEmpty(param.value()) ? element.getSimpleName().toString() : param.value();
     }
 
@@ -505,7 +505,7 @@ public class RudolphProcessor extends AbstractProcessor {
         //生成参数方法
         for (Element field : element.getEnclosedElements()) {
 
-            Arg param = field.getAnnotation(Arg.class);
+            Extra param = field.getAnnotation(Extra.class);
             if (param == null || !param.export())
                 continue;
 //            logger.error("field:"+field.getSimpleName().toString());
@@ -524,7 +524,7 @@ public class RudolphProcessor extends AbstractProcessor {
 //            TypeKind typeKind = typeMirror.getKind();
 //            logger.error(fieldName + " [Class:" + ClassName.get(typeMirror).toString() + ",Kind:" + typeKind + ",Primitive:" + typeKind.isPrimitive() + "]");
 
-            String methodName = "arg";
+            String methodName = "putExtra";
             if (typeName instanceof ParameterizedTypeName) {
                 ParameterizedTypeName parameterizedTypeName = (ParameterizedTypeName) typeName;
 //                logger.error("rawType:" + parameterizedTypeName.rawType);
@@ -533,13 +533,13 @@ public class RudolphProcessor extends AbstractProcessor {
 //                    logger.error("typeArguments:" + parameterizedTypeName.typeArguments.toString());
 
                     if ("[java.lang.CharSequence]".equals(strTypeArguments)) {
-                        methodName = "charSequenceArrayListArg";
+                        methodName = "putCharSequenceArrayListExtra";
                     } else if ("[java.lang.String]".equals(strTypeArguments)) {
-                        methodName = "stringArrayListArg";
+                        methodName = "putStringArrayListExtra";
                     } else if ("[java.lang.Integer]".equals(strTypeArguments)) {
-                        methodName = "integerArrayListArg";
+                        methodName = "putIntegerArrayListExtra";
                     } else {
-                        methodName = "parcelableArrayListArg";
+                        methodName = "putParcelableArrayListExtra";
                     }
                 }
             }
@@ -707,7 +707,7 @@ public class RudolphProcessor extends AbstractProcessor {
                 if (ele.getKind() != ElementKind.FIELD)
                     continue;
 
-                Arg field = ele.getAnnotation(Arg.class);
+                Extra field = ele.getAnnotation(Extra.class);
                 if (field == null)
                     continue;
 

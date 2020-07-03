@@ -5,7 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.annotations.Arg;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Export;
 import cn.wzbos.android.rudolph.annotations.Route;
 
@@ -16,13 +16,13 @@ import static cn.wzbos.android.rudolph.Consts.RAW_URI;
 @Route(value = "/user")
 @Export
 public class UserActivity extends AppCompatActivity {
-    @Arg(RAW_URI)
+    @Extra(RAW_URI)
     String routeUri;
 
-    @Arg("userId")
+    @Extra("userId")
     int userId;
 
-    @Arg("userName")
+    @Extra("userName")
     String userName;
 
     @Override

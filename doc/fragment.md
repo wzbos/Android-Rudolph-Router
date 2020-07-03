@@ -5,10 +5,10 @@
 ```java
 @Route("/fragment/test")
 public class TestFragment extends Fragment {
-    @Arg("userId")
+    @Extra("userId")
     int userId;
 
-    @Arg("userName")
+    @Extra("userName")
     String userName;
     
     @Nullable

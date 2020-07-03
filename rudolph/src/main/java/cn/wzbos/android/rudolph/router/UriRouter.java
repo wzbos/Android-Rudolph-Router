@@ -5,11 +5,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
-public class UriRouter extends Router {
 
-    private Router router;
+public class UriRouter extends Router<Object> {
 
-    private UriRouter(Builder builder) {
+    private Router<Object> router;
+
+    private UriRouter(Builder<?> builder) {
         super(builder);
         if (null != routeType) {
             switch (routeType) {
@@ -19,10 +20,10 @@ public class UriRouter extends Router {
                 case FRAGMENT:
                 case FRAGMENT_V4:
                 case FRAGMENT_AndroidX:
-                    router = new FragmentRouter(builder);
+                    router = new FragmentRouter<>(builder);
                     break;
                 case SERVICE:
-                    router = new ServiceRouter(builder);
+                    router = new ServiceRouter<>(builder);
                     break;
                 case METHOD:
                     router = new MethodRouter(builder);
@@ -138,6 +139,7 @@ public class UriRouter extends Router {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static class Builder<T extends Builder<T>> extends RouteBuilder<Builder<T>, UriRouter> {
         Bundle options;
         int flags = -1;

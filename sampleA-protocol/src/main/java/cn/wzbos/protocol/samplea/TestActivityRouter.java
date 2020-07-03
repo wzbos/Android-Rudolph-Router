@@ -25,141 +25,141 @@ public class TestActivityRouter {
     }
 
     public TestActivityRouter.Builder stringArg(String val) {
-      super.arg("stringArg",val);
+      super.putExtra("stringArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder string64Arg(String val) {
       String base64 = new String(Base64.encode(val.getBytes(),Base64.NO_PADDING|Base64.URL_SAFE));
-      super.arg("string64",base64);
+      super.putExtra("string64",base64);
       return this;
     }
 
     public TestActivityRouter.Builder stringArrayArg(String[] val) {
-      super.arg("stringArray",val);
+      super.putExtra("stringArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder boolArg(boolean val) {
-      super.arg("boolArg",val);
+      super.putExtra("boolArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder booleanArrayArg(boolean[] val) {
-      super.arg("booleanArray",val);
+      super.putExtra("booleanArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder byteArg(byte val) {
-      super.arg("byteArg",val);
+      super.putExtra("byteArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder byteArrayArg(byte[] val) {
-      super.arg("byteArray",val);
+      super.putExtra("byteArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder shortArg(short val) {
-      super.arg("shortArg",val);
+      super.putExtra("shortArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder shortArrayArg(short[] val) {
-      super.arg("shortArray",val);
+      super.putExtra("shortArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder intArg(int val) {
-      super.arg("intArg",val);
+      super.putExtra("intArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder intArrayArg(int[] val) {
-      super.arg("intArrayArg",val);
+      super.putExtra("intArrayArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder longArg(long val) {
-      super.arg("longArg",val);
+      super.putExtra("longArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder longArrayArg(long[] val) {
-      super.arg("longArray",val);
+      super.putExtra("longArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder charArg(char val) {
-      super.arg("charArg",val);
+      super.putExtra("charArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder charArrayArg(char[] val) {
-      super.arg("charArray",val);
+      super.putExtra("charArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder floatArg(float val) {
-      super.arg("floatArg",val);
+      super.putExtra("floatArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder floatArrayArg(float[] val) {
-      super.arg("floatArray",val);
+      super.putExtra("floatArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder doubleArg(double val) {
-      super.arg("doubleArg",val);
+      super.putExtra("doubleArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder doubleArrayArg(double[] val) {
-      super.arg("doubleArray",val);
+      super.putExtra("doubleArray",val);
       return this;
     }
 
     public TestActivityRouter.Builder characterArg(Character val) {
-      super.arg("characterArg",val);
+      super.putExtra("characterArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder stringArrayListArg(ArrayList<String> val) {
-      super.stringArrayListArg("stringArrayListArg",val);
+      super.putStringArrayListExtra("stringArrayListArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder integerArrayListArg(ArrayList<Integer> val) {
-      super.integerArrayListArg("integerArrayListArg",val);
+      super.putIntegerArrayListExtra("integerArrayListArg",val);
       return this;
     }
 
     public TestActivityRouter.Builder charSequenceArrayListArg(ArrayList<CharSequence> val) {
-      super.charSequenceArrayListArg("charSequenceArrayList",val);
+      super.putCharSequenceArrayListExtra("charSequenceArrayList",val);
       return this;
     }
 
     public TestActivityRouter.Builder parcelableArrayListArg(ArrayList<Broker> val) {
-      super.parcelableArrayListArg("parcelableArrayList",val);
+      super.putParcelableArrayListExtra("parcelableArrayList",val);
       return this;
     }
 
     public TestActivityRouter.Builder serializedParam(Broker val) {
-      super.arg("serialized",val);
+      super.putExtra("serialized",val);
       return this;
     }
 
     public TestActivityRouter.Builder jsonParam(User<Broker> val) {
       String json = new Gson().toJson(val);
-      super.arg("json",json);
+      super.putExtra("json",json);
       return this;
     }
 
     public TestActivityRouter.Builder base64jsonParam(User<Broker> val) {
       String json = new Gson().toJson(val);
       String base64 = new String(Base64.encode(json.getBytes(),Base64.NO_PADDING|Base64.URL_SAFE));
-      super.arg("base64json",base64);
+      super.putExtra("base64json",base64);
       return this;
     }
   }

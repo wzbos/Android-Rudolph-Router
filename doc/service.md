@@ -21,10 +21,10 @@ public interface ITestService extends IRouteService {
 @Route(value = "/service/test", clazz = ITestService.class, singleton = true)
 public class TestService implements ITestService{
 
-    @Arg
+    @Extra
     int userId;
 
-    @Arg
+    @Extra
     String userName;
     
     @Override

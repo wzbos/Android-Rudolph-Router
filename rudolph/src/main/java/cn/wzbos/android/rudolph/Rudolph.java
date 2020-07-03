@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.router.UriRouter;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
  * Rudolph
  * Created by wuzongbo on 17/4/10.
  */
+@SuppressWarnings("unused")
 public class Rudolph {
 
     private final static String TAG = "Rudolph";
@@ -36,8 +38,11 @@ public class Rudolph {
         return scheme;
     }
 
+
     /**
-     * 初始化
+     * Rudolph 初始化,建议方法application中
+     *
+     * @param application Application
      */
     public static void init(Application application) {
         Log.v(TAG, "init");
@@ -74,20 +79,32 @@ public class Rudolph {
         return initialized;
     }
 
+    /**
+     * 设置scheme
+     *
+     * @param schemeStr scheme
+     */
     public static void setScheme(String schemeStr) {
         scheme = schemeStr;
     }
 
-    public static void addRoute(cn.wzbos.android.rudolph.RouteInfo routeInfo) {
+    public static void addRoute(RouteInfo routeInfo) {
         routes.add(routeInfo);
     }
 
+    /**
+     * 获取所有拦截器
+     *
+     * @return Interceptor集合
+     */
     public static List<Interceptor> getInterceptors() {
         return mInterceptors;
     }
 
     /**
      * 添加拦截器
+     *
+     * @param interceptor 拦截器
      */
     public static void addInterceptor(Interceptor interceptor) {
         if (null == mInterceptors) {
@@ -96,8 +113,11 @@ public class Rudolph {
         mInterceptors.add(interceptor);
     }
 
+
     /**
      * 移除拦截器
+     *
+     * @param interceptor 通过 addInterceptor 添加的拦截器
      */
     public static void removeInterceptor(Interceptor interceptor) {
         if (null != mInterceptors) {
@@ -105,6 +125,21 @@ public class Rudolph {
         }
     }
 
+    /**
+     * 获取已加载所有路由信息
+     *
+     * @return RouteInfo 集合
+     */
+    public static List<RouteInfo> getRouters() {
+        return routes;
+    }
+
+    /**
+     * 根据路由地址获取一个路由信息
+     *
+     * @param path 路由地址（如：/user/info 或 demo://my.app.com/user/info）
+     * @return RouteInfo
+     */
     public static RouteInfo getRouter(String path) {
         RouteInfo meta;
         int count = routes.size();
@@ -117,49 +152,77 @@ public class Rudolph {
         return null;
     }
 
+
     /**
-     * bind activity
+     * 将 @Extra 注解的字段赋值
+     *
+     * @param activity Activity
+     * @see Extra
      */
     public static void bind(Activity activity) {
         RouteBinder.getInstance().bind(activity, activity.getIntent().getExtras());
     }
 
     /**
-     * onNewIntent activity
+     * 将 @Extra 注解的字段重新赋值（对应Activity的onNewIntent生命周期）
+     *
+     * @param activity Activity
+     * @param intent   Intent
+     * @see Extra
      */
     public static void onNewIntent(Activity activity, Intent intent) {
         RouteBinder.getInstance().bind(activity, intent.getExtras());
     }
 
     /**
-     * bind android.app.Fragment
+     * 将 @Extra 注解的字段赋值
+     *
+     * @param fragment Fragment
+     * @see Extra
      */
     public static void bind(Fragment fragment) {
         RouteBinder.getInstance().bind(fragment, fragment.getArguments());
     }
 
     /**
-     * bind android.support.v4.app.Fragment
+     * 将 @Extra 注解的字段赋值
+     *
+     * @param fragment Fragment
+     * @see Extra
      */
     public static void bind(android.support.v4.app.Fragment fragment) {
         RouteBinder.getInstance().bind(fragment, fragment.getArguments());
     }
 
     /**
-     * bind service
+     * 将 @Extra 注解的字段赋值
+     *
+     * @param service IRouteService
+     * @param bundle  Bundle
+     * @see Extra
      */
     public static void bind(IRouteService service, Bundle bundle) {
         RouteBinder.getInstance().bind(service, bundle);
     }
 
 
-    public static UriRouter.Builder builder(@NonNull Uri url) {
+    /**
+     * 通过路由地址获取一个路由构造器
+     *
+     * @param url 路由地址
+     * @return UriRouter.Builder
+     */
+    public static UriRouter.Builder<?> builder(@NonNull Uri url) {
         return builder(url.toString());
     }
 
-    public static UriRouter.Builder builder(@NonNull String url) {
-        return new UriRouter.Builder(url);
+    /**
+     * 通过路由地址获取一个路由构造器
+     *
+     * @param url 路由地址
+     * @return UriRouter.Builder
+     */
+    public static UriRouter.Builder<?> builder(@NonNull String url) {
+        return new UriRouter.Builder<>(url);
     }
-
-
 }

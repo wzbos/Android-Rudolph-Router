@@ -6,7 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.annotations.Arg;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Export;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.protocol.sampleb.ITestService;
@@ -15,10 +15,10 @@ import cn.wzbos.protocol.sampleb.ITestService;
 @Export
 public class TestService implements ITestService {
 
-    @Arg
+    @Extra
     int userId;
 
-    @Arg
+    @Extra
     String userName;
 
     @Override

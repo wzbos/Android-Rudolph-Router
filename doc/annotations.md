@@ -1,7 +1,7 @@
 # Annotations
 
 - [@Route](#route)
-- [@Arg](#arg)
+- [@Extra](#extra)
 - [@Component](#component)
 - [@Export](#export)
 
@@ -19,23 +19,23 @@ public class UserActivity extends AppCompatActivity {
 }
 ```
 
-#### @Arg
+#### @Extra
 
 此注解为标识路由的参数（注意如果注解到字段上，此字段不能为private）。
 
 - 参数：
-	- value：路由地址，可为空(默认取字段名)，例如@Arg("userId"),@Arg(RAW_URI)
+	- value：路由地址，可为空(默认取字段名)，例如@Extra("userId"),@Extra(RAW_URI)
 	- base64：标识此参数是否为base64方式编码
 	- json：标识此参数是否为json格式
 
 ```java
 @Route(value = "/user",export = true)
 public class UserActivity extends AppCompatActivity {
-	@Arg("userId")
+	@Extra("userId")
 	int userId;
-	@Arg
+	@Extra
 	String userName;
-	@Arg(value="userInfo",base64=true, json=true)
+	@Extra(value="userInfo",base64=true, json=true)
 	String userInfo;
 }
 ```

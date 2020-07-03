@@ -7,6 +7,9 @@ import android.util.Log;
 import cn.wzbos.android.rudolph.Rudolph;
 import cn.wzbos.android.rudolph.Consts;
 import cn.wzbos.android.rudolph.annotations.Route;
+import cn.wzbos.android.rudolph.exception.ErrorCode;
+import cn.wzbos.android.rudolph.exception.ErrorMessage;
+import cn.wzbos.android.rudolph.exception.RudolphException;
 import cn.wzbos.android.rudolph.utils.TypeUtils;
 
 import java.lang.reflect.Method;
@@ -15,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MethodRouter extends Router {
+public class MethodRouter extends Router<Object> {
 
     private Map<String, String> uriKvs;
 
-    MethodRouter(UriRouter.Builder builder) {
+    MethodRouter(UriRouter.Builder<?> builder) {
         super(builder);
         this.uriKvs = builder.getUriAllParams();
     }
@@ -31,6 +34,12 @@ public class MethodRouter extends Router {
     public Object open(Context context) {
         if (super.intercept(context))
             return null;
+
+        if (target == null) {
+            if (callback != null)
+                callback.onError(this, new RudolphException(ErrorCode.NOT_FOUND, ErrorMessage.NOT_FOUND_ERROR));
+            return null;
+        }
 
         try {
             Method[] methods = this.target.getMethods();
@@ -73,16 +82,17 @@ public class MethodRouter extends Router {
                     Object obj = method.invoke(null, values.toArray());
 
                     if (null != callback)
-                        callback.onSucceed();
+                        callback.onSuccess(this);
 
                     return obj;
                 }
             }
-
         } catch (Exception e) {
-            Log.e("rudolph", "方法调用异常!", e);
-            if (null != callback)
-                callback.onFailed(e);
+            if (null != callback) {
+                callback.onError(this, new RudolphException(ErrorCode.METHOD_INVOKE_FAILED, "方法调用异常!", e));
+            } else {
+                Log.e("rudolph", "方法调用异常!", e);
+            }
         }
         return null;
     }

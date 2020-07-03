@@ -5,10 +5,10 @@
 ```java
 @Route("/activity/test")
 public class TestActivity extends AppCompatActivity {
-    @Arg("userId")
+    @Extra("userId")
     int userId;
     
-    @Arg("userName")
+    @Extra("userName")
     String userName;
     
      @Override
@@ -35,3 +35,41 @@ UserActivityRouter.builder().userId(11).userName("John").build().start(context);
 ```java
 Rudolph.builder("/user?userId=11&userName=John").build().open(context);
 ```
+
+
+## 添加动画
+
+```java
+UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).build().start(context);
+```
+
+or
+
+```java
+Rudolph.builder("/user?userId=11&userName=John").transition(R.anim.in_left,R.anim.out_right).build().open(context);
+```
+
+## RequestCode
+
+```java
+UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).build().start(context);
+```
+
+or
+
+```java
+private static final int requestCode = 10001;
+Rudolph.builder("/user?userId=11&userName=John").build().open(context,requestCode);
+```
+
+## 传递扩展参数
+
+```java
+UserActivityRouter.builder().userId(11).userName("John").extra("extra1","hello").build().start(context);
+```
+
+```java
+Rudolph.builder("/user?userId=11&userName=John").extra("extra1","hello").build().open(context);
+```
+
+
