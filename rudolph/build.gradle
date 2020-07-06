@@ -1,5 +1,7 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 ext {
     bintrayName = 'rudolph'
@@ -10,11 +12,11 @@ ext {
 }
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdkVersion ANDROID_COMPILE_SDK
 
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
+        minSdkVersion ANDROID_MIN_SDK
+        targetSdkVersion ANDROID_TARGET_SDK
         versionName = rudolph_version
         versionCode = 1
         consumerProguardFiles 'proguard-rules.pro'
@@ -27,14 +29,16 @@ android {
         }
     }
 
-    lintOptions { abortOnError false }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    compileOnly "com.android.support:appcompat-v7:${versions.supportLib}"
-    api "com.google.code.gson:gson:${versions.gson}"
-
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "com.android.support:appcompat-v7:${appcompat_v7_version}"
+    api "com.google.code.gson:gson:${gson_version}"
 //    api "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
     api project(':rudolph-annotations')
 }

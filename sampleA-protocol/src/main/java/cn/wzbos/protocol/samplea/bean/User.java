@@ -15,4 +15,13 @@ public class User<T> implements Serializable {
         this.name = name;
         this.body = body;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", body=" + body +
+                '}';
+    }
 }

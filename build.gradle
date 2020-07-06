@@ -2,25 +2,26 @@
 
 buildscript {
 
-    ext.versions = [
-            'compileSdk': 28,
-            'minSdk'    : 16,
-            'targetSdk' : 28,
-            'supportLib': '28.0.0',
-            'kotlin'    : '1.3.11',
-            'gson'      : '2.8.2'
-    ]
+    ext {
+        kotlin_version = '1.3.72'
+        ANDROID_COMPILE_SDK = 28
+        ANDROID_MIN_SDK = 16
+        ANDROID_TARGET_SDK = 28
+        appcompat_v7_version = '28.0.0'
+        gson_version = '2.8.2'
+    }
 
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        mavenCentral()
         google()
         jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:4.0.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
@@ -29,11 +30,23 @@ buildscript {
 allprojects {
     repositories {
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+        mavenCentral()
         google()
         jcenter()
+    }
+
+
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            //Support @JvmDefault
+            freeCompilerArgs = ['-Xjvm-default=enable'] //enable or compatibility
+            jvmTarget = "1.8"
+        }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+

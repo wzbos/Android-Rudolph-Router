@@ -108,14 +108,14 @@ public class MainActivity extends AppCompatActivity {
         array.put("ModuleA->ModuleB.UserActivity(Router)", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).build().start(MainActivity.this);
+                UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left, R.anim.out_right).build().start(MainActivity.this);
             }
         });
 
         array.put("ModuleA->ModuleB.UserActivity(URL)", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Rudolph.builder("/user?userId=11&userName=John").build().open(MainActivity.this,1000);
+                Rudolph.builder("/user?userId=11&userName=John").build().open(MainActivity.this, 1000);
             }
         });
 
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         array.put("ModuleA->ModuleB.TestService(Router)", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TestServiceRouter.get().showMessage(MainActivity.this, "Hello Provider!");
+                TestServiceRouter.get().setUserId(11).setUserName("John").showMessage(MainActivity.this, "Hello Provider!");
             }
         });
 

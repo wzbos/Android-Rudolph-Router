@@ -149,9 +149,9 @@ Rudolph.onNewIntent("myApp")
 
 ```java
 Rudolph.addRoute(new RouteInfo.Builder().routeType(RouteType.ACTIVITY)
-    .destination(KotlinActivity.class)
+    .target(KotlinActivity.class)
     .path("/kotlin/test")
     .tag("")
-    .putParam("userId",int.class)
-    .putParam("userName",String.class).build());
+    .extra("userId",int.class)
+    .extra("userName",String.class).build());
 ```

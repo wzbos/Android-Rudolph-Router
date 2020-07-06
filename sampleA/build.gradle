@@ -4,10 +4,10 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdkVersion ANDROID_COMPILE_SDK
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
+        minSdkVersion ANDROID_MIN_SDK
+        targetSdkVersion ANDROID_TARGET_SDK
 
         versionName "0.0.1"
 
@@ -37,11 +37,11 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:${versions.supportLib}"
-    implementation "com.google.code.gson:gson:${versions.gson}"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
-    implementation project(':sampleA-protocol')
-    implementation project(':sampleB-protocol')
+    implementation "com.android.support:appcompat-v7:${appcompat_v7_version}"
+    implementation "com.google.code.gson:gson:${gson_version}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin_version}"
+    api project(':sampleA-protocol')
+    api project(':sampleB-protocol')
 
     //rudolph
     implementation project(':rudolph')

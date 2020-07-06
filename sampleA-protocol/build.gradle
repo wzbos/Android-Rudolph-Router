@@ -3,11 +3,11 @@ apply plugin: 'com.android.library'
 
 
 android {
-    compileSdkVersion versions.compileSdk
+    compileSdkVersion ANDROID_COMPILE_SDK
 
     defaultConfig {
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.targetSdk
+        minSdkVersion ANDROID_MIN_SDK
+        targetSdkVersion ANDROID_TARGET_SDK
         versionCode 1
         versionName "1.0"
 
@@ -20,13 +20,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:${versions.supportLib}"
+    implementation "com.android.support:appcompat-v7:${appcompat_v7_version}"
     implementation project(':rudolph')
 }
 

@@ -2,12 +2,11 @@ package cn.wzbos.sampleb;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Export;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.protocol.sampleb.ITestService;
 
@@ -27,8 +26,9 @@ public class TestService implements ITestService {
     }
 
     @Override
-    public void setUserId(int userId) {
+    public ITestService setUserId(int userId) {
         this.userId = userId;
+        return this;
     }
 
     @Override
@@ -37,8 +37,9 @@ public class TestService implements ITestService {
     }
 
     @Override
-    public void setUserName(String userName) {
+    public ITestService setUserName(String userName) {
         this.userName = userName;
+        return this;
     }
 
     public void showMessage(Context context, String msg) {

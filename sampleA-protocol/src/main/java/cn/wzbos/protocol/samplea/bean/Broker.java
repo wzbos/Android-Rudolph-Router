@@ -51,4 +51,12 @@ public class Broker implements Parcelable {
         dest.writeString(sex);
         dest.writeInt(age);
     }
+
+    @Override
+    public String toString() {
+        return "Broker{" +
+                "sex='" + sex + '\'' +
+                ", age=" + age +
+                '}';
+    }
 }

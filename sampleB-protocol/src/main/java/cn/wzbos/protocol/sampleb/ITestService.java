@@ -10,11 +10,11 @@ import java.lang.String;
 public interface ITestService extends IRouteService {
     int getUserId();
 
-    void setUserId(int userId);
+    ITestService setUserId(int userId);
 
     String getUserName();
 
-    void setUserName(String userName);
+    ITestService setUserName(String userName);
 
     void showMessage(Context context, String msg);
 }

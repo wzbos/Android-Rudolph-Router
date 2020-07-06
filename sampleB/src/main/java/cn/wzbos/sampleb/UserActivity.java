@@ -13,7 +13,7 @@ import java.util.Locale;
 
 import static cn.wzbos.android.rudolph.Consts.RAW_URI;
 
-@Route(value = "/user")
+@Route(value = "/user", tag = "isNeedLogin")
 @Export
 public class UserActivity extends AppCompatActivity {
     @Extra(RAW_URI)

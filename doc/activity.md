@@ -65,11 +65,11 @@ Rudolph.builder("/user?userId=11&userName=John").build().open(context,requestCod
 ## 传递扩展参数
 
 ```java
-UserActivityRouter.builder().userId(11).userName("John").extra("extra1","hello").build().start(context);
+UserActivityRouter.builder().userId(11).userName("John").putExtra("extra1","hello").build().start(context);
 ```
 
 ```java
-Rudolph.builder("/user?userId=11&userName=John").extra("extra1","hello").build().open(context);
+Rudolph.builder("/user?userId=11&userName=John").putExtra("extra1","hello").build().open(context);
 ```
 
 

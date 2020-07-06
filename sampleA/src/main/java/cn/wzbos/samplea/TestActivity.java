@@ -4,15 +4,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Export;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.protocol.samplea.bean.Broker;
 import cn.wzbos.protocol.samplea.bean.User;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 
 import static cn.wzbos.android.rudolph.Consts.RAW_URI;
 
@@ -115,16 +115,40 @@ public class TestActivity extends AppCompatActivity {
 
         Rudolph.bind(this);
 
-        StringBuffer stringBuffer = new StringBuffer();
-        for (Field filed : this.getClass().getDeclaredFields()) {
-            try {
-                stringBuffer.append(filed.getName()).append("=").append(filed.get(this)).append("\n");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        tvMessage.setText(toString());
+    }
 
-        tvMessage.setText(stringBuffer);
-
+    @Override
+    public String toString() {
+        return "TestActivity{" +
+                "\nrouteUri='" + routeUri + '\'' +
+                ", \nstringArg='" + stringArg + '\'' +
+                ", \nstring64Arg='" + string64Arg + '\'' +
+                ", \nstringArrayArg=" + Arrays.toString(stringArrayArg) +
+                ", \nboolArg=" + boolArg +
+                ", \nbooleanArrayArg=" + Arrays.toString(booleanArrayArg) +
+                ", \nbyteArg=" + byteArg +
+                ", \nbyteArrayArg=" + Arrays.toString(byteArrayArg) +
+                ", \nshortArg=" + shortArg +
+                ", \nshortArrayArg=" + Arrays.toString(shortArrayArg) +
+                ", \nintArg=" + intArg +
+                ", \nintArrayArg=" + Arrays.toString(intArrayArg) +
+                ", \nlongArg=" + longArg +
+                ", \nlongArrayArg=" + Arrays.toString(longArrayArg) +
+                ", \ncharArg=" + charArg +
+                ", \ncharArrayArg=" + Arrays.toString(charArrayArg) +
+                ", \nfloatArg=" + floatArg +
+                ", \nfloatArrayArg=" + Arrays.toString(floatArrayArg) +
+                ", \ndoubleArg=" + doubleArg +
+                ", \ndoubleArrayArg=" + Arrays.toString(doubleArrayArg) +
+                ", \ncharacterArg=" + characterArg +
+                ", \nstringArrayListArg=" + stringArrayListArg +
+                ", \nintegerArrayListArg=" + integerArrayListArg +
+                ", \ncharSequenceArrayListArg=" + charSequenceArrayListArg +
+                ", \nparcelableArrayListArg=" + parcelableArrayListArg +
+                ", \nparcelableParam=" + parcelableParam +
+                ", \njsonParam=" + jsonParam +
+                ", \nbase64jsonParam=" + base64jsonParam +
+                '}';
     }
 }
