@@ -9,7 +9,14 @@ if (project.hasProperty("android")) { // Android libraries
     }
 
     task javadoc(type: Javadoc) {
+        failOnError = false
         source = android.sourceSets.main.java.srcDirs
+        options {
+            encoding 'utf-8'
+            charSet 'utf-8'
+            links 'http://docs.oracle.com/javase/7/docs/api/'
+            linksOffline "https://developer.android.com/reference", "${android.sdkDirectory}/docs/reference"
+        }
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     }
 } else { // Java libraries
