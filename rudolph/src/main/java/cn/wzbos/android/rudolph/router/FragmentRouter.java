@@ -1,7 +1,6 @@
 package cn.wzbos.android.rudolph.router;
 
-import android.util.Log;
-
+import cn.wzbos.android.rudolph.RLog;
 import cn.wzbos.android.rudolph.exception.ErrorCode;
 import cn.wzbos.android.rudolph.exception.ErrorMessage;
 import cn.wzbos.android.rudolph.exception.RudolphException;
@@ -43,7 +42,7 @@ public class FragmentRouter<R> extends Router<R> {
             if (callback != null) {
                 callback.onError(this, new RudolphException(ErrorCode.FRAGMENT_CREATE_FAILED, "Fragment 创建失败！", e));
             } else {
-                Log.e("rudolph", "Fragment 创建失败！", e);
+                RLog.e("FragmentRouter", "Fragment 创建失败！", e);
             }
         }
         return null;

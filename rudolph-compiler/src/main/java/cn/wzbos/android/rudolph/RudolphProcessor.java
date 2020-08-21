@@ -34,24 +34,19 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Component;
-import cn.wzbos.android.rudolph.annotations.Exclude;
 import cn.wzbos.android.rudolph.annotations.Export;
+import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Route;
 
 import static cn.wzbos.android.rudolph.Consts.RAW_URI;
-import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PRIVATE;
 import static javax.lang.model.element.Modifier.PUBLIC;
@@ -292,24 +287,28 @@ public class RudolphProcessor extends AbstractProcessor {
         List<Element> arrays = new ArrayList<>();
         if (element.getKind() == ElementKind.CLASS) {
             builder.addCode(
-                    "\n\n$T.addRoute(new $T().routeType($T." + routetype + ")\n.destination($T.class)\n.path($S)\n.tag($S)",
+                    "\n\n$T.addRoute(new $T().routeType($T." + routetype + ")\n.target($S)\n.path($S)",
                     rudolph,
                     ClassName.get(RouteInfo.Builder.class), //RouteInfo.Builder
                     ClassName.get(RouteType.class),        //RouteType
                     target,
-                    getRoutePath(element, route), route.tag());
+                    getRoutePath(element, route));
             arrays.addAll(element.getEnclosedElements());
         } else {
             ExecutableElement method = (ExecutableElement) element;
             builder.addCode(
-                    "\n\n$T.addRoute(new $T().routeType($T." + routetype + ")\n.destination($T.class)\n.path($S)\n.tag($S)",
+                    "\n\n$T.addRoute(new $T().routeType($T." + routetype + ")\n.target($S)\n.path($S)",
                     rudolph,
                     ClassName.get(RouteInfo.Builder.class),//RouteInfo.Builder
                     ClassName.get(RouteType.class),//RouteType
                     target,
-                    getRoutePath(element, route), route.tag());
+                    getRoutePath(element, route));
 
             arrays.addAll(method.getParameters());
+        }
+
+        if (StringUtils.isNotEmpty(route.tag())) {
+            builder.addCode("\n.tag($S)", route.tag());
         }
 
         for (Element field : arrays) {
@@ -318,17 +317,9 @@ public class RudolphProcessor extends AbstractProcessor {
                 continue;
 
             String argName = getArgName(field, param);
-            String clsName = ClassName.get(field.asType()).toString();
-            if (clsName.contains("<") && clsName.contains(">")) {
-                builder.addCode("\n.putParam($S,new $T<$T>(){}.getType())",
-                        argName,
-                        TypeToken,
-                        ClassName.get(field.asType()));
-            } else {
-                builder.addCode("\n.putParam($S,$T.class)",
-                        argName,
-                        ClassName.get(field.asType()));
-            }
+            builder.addCode("\n.putParam($S,$S)",
+                    argName,
+                    ClassName.get(field.asType()));
         }
         builder.addCode(".build());");
     }
@@ -382,13 +373,15 @@ public class RudolphProcessor extends AbstractProcessor {
                 .addJavadoc(Constant.WARNING_TIPS)
                 .addModifiers(PUBLIC);
 
-        //生成单例
         if (routeType == RouteType.SERVICE) {
+
             if (interfaceClsName == null) {
                 logger.error("@Route clazz:" + route.clazz().getName() + " 不存在！");
                 return;
             }
+
             if (route.singleton()) {
+                //生成单例
                 clsRouterBuilder.addField(interfaceClsName, "instance", PRIVATE, VOLATILE, STATIC);
                 clsRouterBuilder.addMethod(MethodSpec.methodBuilder("get")
                         .returns(interfaceClsName)
@@ -397,7 +390,10 @@ public class RudolphProcessor extends AbstractProcessor {
                                 .beginControlFlow("if (instance == null)")
                                 .beginControlFlow("synchronized (" + clsName + ".class)")
                                 .beginControlFlow("if (instance == null)")
-                                .addStatement("instance = builder().build().open()")
+                                .addStatement("Object result = $T.builder($S).build().open()", rudolph, getRoutePath(element, route))
+                                .beginControlFlow("if(result instanceof $T)", interfaceClsName)
+                                .addStatement("instance = ($T)result", interfaceClsName)
+                                .endControlFlow()
                                 .endControlFlow()
                                 .addStatement("return instance")
                                 .endControlFlow()
@@ -405,19 +401,29 @@ public class RudolphProcessor extends AbstractProcessor {
                                 .addStatement("return instance")
                                 .build())
                         .build());
+            } else {
+                clsRouterBuilder.addMethod(MethodSpec.methodBuilder("newInstance")
+                        .addJavadoc("create new instance\n")
+                        .returns(interfaceClsName)
+                        .addModifiers(PUBLIC, STATIC)
+                        .addStatement("return builder()")
+                        .build());
             }
         }
 
-        ClassName routerBuilderClsName = ClassName.get(clsName, "Builder");
-        TypeSpec builderTypeSpec = generate(interfaceClsName, routerBuilderClsName, element, routeType);
-        clsRouterBuilder.addType(builderTypeSpec);
-        //构件构造方法(Context context, Class<?> clazz)
-        clsRouterBuilder.addMethod(MethodSpec.methodBuilder("builder")
-                .addModifiers(PUBLIC, STATIC)
-                .returns(routerBuilderClsName)
-                .addStatement("return new $T()", routerBuilderClsName)
-                .build());
+        if (routeType != RouteType.SERVICE && !route.singleton()) {
+            ClassName routerBuilderClsName = ClassName.get(clsName, "Builder");
+            TypeSpec builderTypeSpec = generate(interfaceClsName, routerBuilderClsName, element, routeType);
+            clsRouterBuilder.addType(builderTypeSpec);
+            //构件构造方法(Context context, Class<?> clazz)
+            clsRouterBuilder.addMethod(MethodSpec.methodBuilder("builder")
+                    .addModifiers(PUBLIC, STATIC)
+                    .returns(routerBuilderClsName)
+                    .addStatement("return new $T()", routerBuilderClsName)
+                    .build());
 //        logger.error("getExportApiPackageName:"+getExportApiPackageName(element));
+        }
+
 
         try {
             JavaFile file = JavaFile.builder(getExportApiPackageName(element, export != null), clsRouterBuilder.build())
@@ -510,7 +516,6 @@ public class RudolphProcessor extends AbstractProcessor {
                 continue;
 //            logger.error("field:"+field.getSimpleName().toString());
 
-
             String fieldName = field.getSimpleName().toString();
             String argName = getArgName(field, param);
 
@@ -576,82 +581,6 @@ public class RudolphProcessor extends AbstractProcessor {
         String qualifiedName = element.getQualifiedName().toString();
         return qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
     }
-
-    /**
-     * 生成路由服务类的接口
-     */
-    private ClassName generateServiceInterface(TypeElement element, boolean export) {
-
-        String interfaceName = "I" + element.getSimpleName();
-
-
-        TypeSpec.Builder clsRouterBuilder = TypeSpec.interfaceBuilder(interfaceName)
-                //增加注释
-                .addJavadoc(Constant.WARNING_TIPS)
-                .addSuperinterface(ClassName.get(serviceTm))
-                .addModifiers(PUBLIC);
-
-        List<? extends Element> elements = element.getEnclosedElements();
-
-        for (Element e : elements) {
-            if (e.getModifiers().contains(Modifier.PUBLIC)) {
-                if (e.getAnnotation(Exclude.class) == null) {
-                    if (e instanceof ExecutableElement) {
-                        ExecutableElement executableElement = (ExecutableElement) e;
-                        if (executableElement.getKind() != ElementKind.CONSTRUCTOR) {
-                            MethodSpec.Builder builder = MethodSpec.methodBuilder(executableElement.getSimpleName().toString());
-                            builder.addModifiers(PUBLIC, ABSTRACT);
-                            if (executableElement.getReturnType().getKind() != TypeKind.VOID) {
-                                builder.returns(ClassName.get(executableElement.getReturnType()));
-                            }
-                            for (VariableElement variableElement : executableElement.getParameters()) {
-                                builder.addParameter(ClassName.get(variableElement.asType()), variableElement.getSimpleName().toString());
-                            }
-                            clsRouterBuilder.addMethod(builder.build());
-                        }
-                    }
-                }
-            }
-        }
-
-        try {
-
-            ClassName className = ClassName.get(getExportApiPackageName(element, export), interfaceName);
-            JavaFile file = JavaFile.builder(getExportApiPackageName(element, export), clsRouterBuilder.build())
-                    .build();
-            File out_directory;
-            if (export && (out_directory = getOutputDirectory()) != null) {
-                logger.warning("output:" + out_directory.getAbsolutePath());
-                file.writeTo(out_directory);
-            } else {
-                file.writeTo(mFiler);
-            }
-            return className;
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-        }
-        return null;
-    }
-
-//    /**
-//     * generate extend class from service
-//     */
-//    private ClassName generateServiceEx(TypeElement element, ClassName interfaceTypeName) throws IOException {
-//        String clsName = element.getSimpleName() + "Provider";
-//        TypeSpec.Builder clsRouterBuilder = TypeSpec.classBuilder(clsName)
-//                //增加注释
-//                .addJavadoc(Constant.WARNING_TIPS)
-//                .superclass(ClassName.get(element))
-//                .addSuperinterface(interfaceTypeName)
-//                .addModifiers(PUBLIC);
-//
-//        String pkgName = getPackageName(element);
-//        JavaFile.builder(pkgName, clsRouterBuilder.build())
-//                .build().writeTo(mFiler);
-//
-//        return ClassName.get(pkgName, clsName);
-//    }
 
 
     /**
@@ -759,6 +688,8 @@ public class RudolphProcessor extends AbstractProcessor {
                     varCode = "args.getFloat(" + extraName + ")";
                 } else if ("java.lang.Double".equals(cls) || "double".equals(cls)) {
                     varCode = "args.getDouble(" + extraName + ")";
+                } else if ("android.os.Bundle".equals(cls)) {
+                    varCode = "args.getBundle(" + extraName + ")";
                 } else {
                     if (types.isSubtype(typeMirror, parcelableTM)) {
                         varCode = "args.getParcelable(" + extraName + ")";

@@ -4,12 +4,10 @@ package cn.wzbos.android.rudolph.router;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +18,7 @@ import java.util.Map;
 import cn.wzbos.android.rudolph.Consts;
 import cn.wzbos.android.rudolph.IRouteBuilder;
 import cn.wzbos.android.rudolph.OnRouteListener;
+import cn.wzbos.android.rudolph.RLog;
 import cn.wzbos.android.rudolph.RouteInfo;
 import cn.wzbos.android.rudolph.RouteType;
 import cn.wzbos.android.rudolph.Rudolph;
@@ -29,9 +28,10 @@ import cn.wzbos.android.rudolph.utils.TypeUtils;
  * Bundle IBuilder
  * Created by wuzongbo on 2017/9/13.
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked cast")
 public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Router<?>> implements IRouteBuilder<RouteBuilder<B, R>, R> {
 
+    private static final String TAG = "RouteBuilder";
 
     Bundle args;
 
@@ -47,7 +47,7 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
 
     String routeTag;
 
-    Map<String, Type> queryParameters;
+    Map<String, String> queryParameters;
 
 
     @Override
@@ -259,19 +259,23 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
             RouteInfo routeInfo = Rudolph.getRouter(getPath());
             if (null == routeInfo) {
                 if (Rudolph.getRouters() == null || Rudolph.getRouters().size() == 0) {
-                    Log.e("Rudolph", "错误：没有匹配到相关路由:" + rawUrl + ",当前路由表为空,请确认是否已进行 Rudolph.init() 初始化操作！");
+                    RLog.e(TAG, "错误：没有匹配到相关路由:" + rawUrl + ",当前路由表为空,请确认是否已进行 Rudolph.init() 初始化操作！");
                 } else {
-                    Log.e("Rudolph", "错误：没有匹配到相关路由:" + rawUrl);
+                    RLog.e(TAG, "错误：没有匹配到相关路由:" + rawUrl);
                 }
                 return;
             }
 
-            this.target = routeInfo.getTarget();
+            try {
+                this.target = Class.forName(routeInfo.getTarget());
+            } catch (ClassNotFoundException e) {
+                RLog.e(TAG, "错误：路由类加载失败！" + target, e);
+            }
+
             this.routePath = routeInfo.getPath();
             this.routeTag = routeInfo.getTag();
             this.routeType = routeInfo.getRouteType();
             this.queryParameters = routeInfo.getParams();
-
             //返回的所有的地址参数与查询参数值
             Map<String, String> resultMap = getUriAllParams();
 
@@ -288,7 +292,7 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
 
     private void addParams(String key, String val) {
         if (queryParameters != null && !queryParameters.isEmpty() && queryParameters.containsKey(key)) {
-            Type type = queryParameters.get(key);
+            String type = queryParameters.get(key);
             if (!android.text.TextUtils.isEmpty(val)) {
                 TypeUtils.getObject(null, key, val, type, this);
             }
@@ -326,7 +330,7 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
                     segments.add(URLDecoder.decode(val, "utf-8"));
                 }
             } catch (UnsupportedEncodingException e) {
-                Log.e("rudolph", "getSegments failed!", e);
+                RLog.e(TAG, "getSegments failed!", e);
             }
         }
         return segments;
@@ -385,7 +389,7 @@ public abstract class RouteBuilder<B extends RouteBuilder<B, R>, R extends Route
                         String value = URLDecoder.decode(kv[1], "utf-8");
                         params.put(name, value);
                     } catch (Exception e) {
-                        Log.e("rudolph", "getUriAllParams failed!", e);
+                        RLog.e(TAG, "getUriAllParams failed!", e);
                     }
                 }
             }

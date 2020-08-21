@@ -47,7 +47,6 @@ public class TestService implements ITestService {
 
     @Override
     public void init(Bundle bundle) {
-        Log.d("TestService", "afterInject");
         Rudolph.bind(TestService.this, bundle);
     }
 }

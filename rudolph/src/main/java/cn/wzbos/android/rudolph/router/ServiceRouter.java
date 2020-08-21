@@ -1,11 +1,10 @@
 package cn.wzbos.android.rudolph.router;
 
 
-import android.util.Log;
-
 import java.lang.reflect.Constructor;
 
 import cn.wzbos.android.rudolph.IRouteService;
+import cn.wzbos.android.rudolph.RLog;
 import cn.wzbos.android.rudolph.exception.ErrorCode;
 import cn.wzbos.android.rudolph.exception.ErrorMessage;
 import cn.wzbos.android.rudolph.exception.RudolphException;
@@ -41,7 +40,6 @@ public class ServiceRouter<R> extends Router<R> {
             }
 
             if (!constructor.isAccessible()) {
-                Log.w("rudolph", "警告：构造方法 " + target.getName() + " 为私有!");
                 constructor.setAccessible(true);
             }
             Object instance = constructor.newInstance();
@@ -56,7 +54,7 @@ public class ServiceRouter<R> extends Router<R> {
             if (callback != null) {
                 callback.onError(this, new RudolphException(ErrorCode.SERVICE_CREATE_FAILED, "创建服务失败！", e));
             } else {
-                Log.e("rudolph", "创建服务失败!");
+                RLog.e("ServiceRouter", "创建服务失败!");
             }
         }
         return null;

@@ -6,14 +6,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import cn.wzbos.android.rudolph.Interceptor;
-import cn.wzbos.android.rudolph.OnRouteListener;
-import cn.wzbos.android.rudolph.Rudolph;
-import cn.wzbos.android.rudolph.RouteType;
-
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+
+import cn.wzbos.android.rudolph.Interceptor;
+import cn.wzbos.android.rudolph.OnRouteListener;
+import cn.wzbos.android.rudolph.RouteType;
+import cn.wzbos.android.rudolph.Rudolph;
 
 public abstract class Router<T> {
 
@@ -24,7 +23,7 @@ public abstract class Router<T> {
     String routePath;
     RouteType routeType;
     String routeTag;
-    Map<String, Type> queryParameters;
+    Map<String, String> queryParameters;
 
     public String getRawUrl() {
         return rawUrl;
@@ -50,7 +49,7 @@ public abstract class Router<T> {
         return routeTag;
     }
 
-    public Map<String, Type> getQueryParameters() {
+    public Map<String, String> getQueryParameters() {
         return queryParameters;
     }
 

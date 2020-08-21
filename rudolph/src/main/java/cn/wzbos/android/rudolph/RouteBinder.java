@@ -1,7 +1,6 @@
 package cn.wzbos.android.rudolph;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.util.LruCache;
 
 
@@ -40,7 +39,7 @@ class RouteBinder {
             binder.bind(instance, bundle);
             classCache.put(className, binder);
         } catch (Exception ex) {
-            Log.e("Rudolph", "Unable to find binder for " + className);
+            RLog.e("RouteBinder", "Unable to find binder for " + className);
             ex.printStackTrace();
         }
     }

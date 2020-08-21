@@ -1,11 +1,10 @@
 package cn.wzbos.android.rudolph.utils;
 
 import android.content.Context;
-import android.util.Log;
 
+
+import cn.wzbos.android.rudolph.RLog;
 import cn.wzbos.android.rudolph.router.RouteBuilder;
-
-import java.lang.reflect.Type;
 
 
 /**
@@ -91,58 +90,58 @@ public class TypeUtils {
         return val;
     }
 
-    public static Object getObject(Context context, String name, String value, Type type) {
-        return getObject(context, name, value, type, null);
+    public static Object getObject(Context context, String name, String value, String target) {
+        return getObject(context, name, value, target, null);
     }
 
-    public static Object getObject(Context context, String name, String value, Type type, RouteBuilder<?,?> builder) {
-        Log.d("TypeUtils", name + " = " + value + ", type:" + type + ", bundle:" + builder);
+    public static Object getObject(Context context, String name, String value, String target, RouteBuilder<?, ?> builder) {
+        RLog.d("TypeUtils", name + " = " + value + ", target:" + target + ", bundle:" + builder);
 
-        if (type == String.class || type == CharSequence.class) {  //String、CharSequence
+        if ("java.lang.String".equals(target) || "java.lang.CharSequence".equals(target)) {  //String、CharSequence
             if (builder != null)
                 builder.putExtra(name, value);
             return value;
-        } else if (type == int.class || type == Integer.class) {    //int、Integer
+        } else if ("int".equals(target) || "java.lang.Integer".equals(target)) {    //int、Integer
             int val = toInteger(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == boolean.class || type == Boolean.class) {//boolean、Boolean
+        } else if ("boolean".equals(target) || "java.lang.Boolean".equals(target)) {//boolean、Boolean
             boolean val = toBoolean(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == double.class || type == Double.class) {  //double、Double
+        } else if ("double".equals(target) || "java.lang.Double".equals(target)) {  //double、Double
             double val = toDouble(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == float.class || type == Float.class) {    //float、Float
+        } else if ("float".equals(target) || "java.lang.Float".equals(target)) {    //float、Float
             float val = toFloat(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == long.class || type == Long.class) {      //long、Long
+        } else if ("long".equals(target) || "java.lang.Long".equals(target)) {      //long、Long
             long val = toLong(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == short.class || type == Short.class) {    //short、Short
+        } else if ("short".equals(target) || "java.lang.Short".equals(target)) {    //short、Short
             short val = toShort(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == byte.class || type == Byte.class) {      //byte、Byte
+        } else if ("byte".equals(target) || "java.lang.Byte".equals(target)) {      //byte、Byte
             byte val = toByte(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == char.class || type == Character.class) { //char、Character
+        } else if ("char".equals(target) || "java.lang.Character".equals(target)) { //char、Character
             char val = toChar(value);
             if (builder != null)
                 builder.putExtra(name, val);
             return val;
-        } else if (type == Context.class) {                         //Context
+        } else if ("android.content.Context".equals(target)) {                         //Context
             return context;
         } else {                                                    //Object
             if (builder != null)

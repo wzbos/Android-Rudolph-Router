@@ -32,7 +32,6 @@ public class TestActivity extends AppCompatActivity {
     @Extra("stringArray")
     String[] stringArrayArg;
 
-
     @Extra("boolArg")
     boolean boolArg;
 
@@ -97,8 +96,8 @@ public class TestActivity extends AppCompatActivity {
     @Extra(value = "parcelableArrayList")
     ArrayList<Broker> parcelableArrayListArg;
 
-    @Extra(value = "serialized")
-    Broker serializedParam;
+    @Extra(value = "parcelable")
+    Broker parcelableParam;
 
     //json
     @Extra(value = "json", json = true)

@@ -1,6 +1,5 @@
 package cn.wzbos.android.rudolph;
 
-import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -10,8 +9,8 @@ import java.util.Map;
  */
 public class RouteInfo {
     private String path;
-    private Class<?> target;
-    private Map<String, Type> params;
+    private String target;
+    private Map<String, String> params;
     private RouteType routeType;
     private String tag;
 
@@ -19,7 +18,7 @@ public class RouteInfo {
         return tag;
     }
 
-    public Class<?> getTarget() {
+    public String getTarget() {
         return target;
     }
 
@@ -31,7 +30,7 @@ public class RouteInfo {
         return path;
     }
 
-    public Map<String, Type> getParams() {
+    public Map<String, String> getParams() {
         return params;
     }
 
@@ -49,7 +48,7 @@ public class RouteInfo {
 
     private RouteInfo(Builder builder) {
         this.path = builder.path;
-        this.target = builder.destination;
+        this.target = builder.target;
         this.routeType = builder.routeType;
         this.params = builder.params;
         this.tag = builder.tag;
@@ -81,8 +80,8 @@ public class RouteInfo {
 
     public static class Builder {
         private String path;
-        private Class<?> destination;   // Destination
-        private Map<String, Type> params;
+        private String target;
+        private Map<String, String> params;
         private RouteType routeType;
         private String tag;
 
@@ -91,12 +90,12 @@ public class RouteInfo {
             return this;
         }
 
-        public Builder destination(Class<?> destination) {
-            this.destination = destination;
+        public Builder target(String target) {
+            this.target = target;
             return this;
         }
 
-        public Builder putParam(String key, Type type) {
+        public Builder putParam(String key, String type) {
             if (this.params == null) {
                 this.params = new LinkedHashMap<>();
             }

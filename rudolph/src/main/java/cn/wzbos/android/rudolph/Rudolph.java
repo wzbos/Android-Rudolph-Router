@@ -8,19 +8,17 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
-
-import cn.wzbos.android.rudolph.annotations.Extra;
-import cn.wzbos.android.rudolph.router.UriRouter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.wzbos.android.rudolph.annotations.Extra;
+import cn.wzbos.android.rudolph.router.UriRouter;
 
 /**
  * Rudolph
  * Created by wuzongbo on 17/4/10.
  */
-@SuppressWarnings("unused")
 public class Rudolph {
 
     private final static String TAG = "Rudolph";
@@ -29,6 +27,7 @@ public class Rudolph {
     private static Application app;
     private static String scheme;
     private static Boolean initialized = false;
+    static ILogger logger;
 
     public static Application getApplication() {
         return app;
@@ -45,7 +44,7 @@ public class Rudolph {
      * @param application Application
      */
     public static void init(Application application) {
-        Log.v(TAG, "init");
+        RLog.v(TAG, "init");
         if (initialized)
             return;
 
@@ -62,14 +61,23 @@ public class Rudolph {
                             iGroupInstance.init(application);
                         }
                     } catch (ClassNotFoundException e) {
-                        Log.e(TAG, "初始化\"" + className + "\"组件失败，请检查包名是否正确！", e);
+                        RLog.e(TAG, "初始化\"" + className + "\"组件失败，请检查包名是否正确！", e);
                     }
                 }
             }
             initialized = true;
         } catch (Exception e) {
-            Log.e(TAG, "路由初始化异常！", e);
+            RLog.e(TAG, "路由初始化异常！", e);
         }
+    }
+
+    /**
+     * 设置日志
+     *
+     * @param iLogger ILogger
+     */
+    public static void setLogger(ILogger iLogger) {
+        logger = iLogger;
     }
 
     /**

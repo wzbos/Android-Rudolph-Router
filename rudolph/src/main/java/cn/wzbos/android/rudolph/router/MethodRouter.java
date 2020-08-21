@@ -2,21 +2,20 @@ package cn.wzbos.android.rudolph.router;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
-import cn.wzbos.android.rudolph.Rudolph;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import cn.wzbos.android.rudolph.Consts;
+import cn.wzbos.android.rudolph.RLog;
+import cn.wzbos.android.rudolph.Rudolph;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.android.rudolph.exception.ErrorCode;
 import cn.wzbos.android.rudolph.exception.ErrorMessage;
 import cn.wzbos.android.rudolph.exception.RudolphException;
 import cn.wzbos.android.rudolph.utils.TypeUtils;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class MethodRouter extends Router<Object> {
 
@@ -50,20 +49,20 @@ public class MethodRouter extends Router<Object> {
                 if (route != null && route.value().equalsIgnoreCase(this.routePath)) {
                     List<Object> values = new ArrayList<>();
 
-                    Map<String, Type> params = this.queryParameters;
+                    Map<String, String> params = this.queryParameters;
 
                     if (null != params && params.size() > 0) {
 
-                        for (Map.Entry<String, Type> kv : params.entrySet()) {
+                        for (Map.Entry<String, String> kv : params.entrySet()) {
                             String argName = kv.getKey();
-                            Type argType = kv.getValue();
+                            String argType = kv.getValue();
                             Object argValue = null;
                             if (Consts.RAW_URI.equals(argName)) {
                                 argValue = rawUrl;
                             } else {
-                                if (kv.getValue() == Application.class) {
+                                if (Application.class.getName().equals(kv.getValue())) {
                                     argValue = Rudolph.getApplication();
-                                } else if (kv.getValue() == Context.class) {
+                                } else if (Context.class.getName().equals(kv.getValue())) {
                                     argValue = (null != context) ? context : Rudolph.getApplication();
                                 } else {
                                     for (Map.Entry<String, String> uriKv : uriKvs.entrySet()) {
@@ -91,7 +90,7 @@ public class MethodRouter extends Router<Object> {
             if (null != callback) {
                 callback.onError(this, new RudolphException(ErrorCode.METHOD_INVOKE_FAILED, "方法调用异常!", e));
             } else {
-                Log.e("rudolph", "方法调用异常!", e);
+                RLog.e("MethodRouter", "方法调用异常!", e);
             }
         }
         return null;

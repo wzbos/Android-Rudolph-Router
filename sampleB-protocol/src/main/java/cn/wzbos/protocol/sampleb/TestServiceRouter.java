@@ -1,7 +1,6 @@
 package cn.wzbos.protocol.sampleb;
 
-import cn.wzbos.android.rudolph.router.ServiceRouter;
-import java.lang.String;
+import cn.wzbos.android.rudolph.Rudolph;
 
 /**
  * Generated code from Rudolph. Do not modify!
@@ -13,31 +12,14 @@ public class TestServiceRouter {
     if (instance == null) {
       synchronized (TestServiceRouter.class) {
         if (instance == null) {
-          instance = builder().build().open();
+          Object result = Rudolph.builder("/service/test").build().open();
+          if(result instanceof ITestService) {
+            instance = (ITestService)result;
+          }
         }
         return instance;
       }
     }
     return instance;
-  }
-
-  public static TestServiceRouter.Builder builder() {
-    return new TestServiceRouter.Builder();
-  }
-
-  public static class Builder extends ServiceRouter.Builder<TestServiceRouter.Builder, ITestService> {
-    Builder() {
-      super("/service/test");
-    }
-
-    public TestServiceRouter.Builder userId(int val) {
-      super.putExtra("userId",val);
-      return this;
-    }
-
-    public TestServiceRouter.Builder userName(String val) {
-      super.putExtra("userName",val);
-      return this;
-    }
   }
 }

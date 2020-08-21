@@ -145,8 +145,8 @@ public class TestActivityRouter {
       return this;
     }
 
-    public TestActivityRouter.Builder serializedParam(Broker val) {
-      super.putExtra("serialized",val);
+    public TestActivityRouter.Builder parcelableParam(Broker val) {
+      super.putExtra("parcelable",val);
       return this;
     }
 

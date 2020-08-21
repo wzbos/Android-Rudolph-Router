@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         .integerArrayListArg(integerArrayListArg)
                         .charSequenceArrayListArg(charSequenceArrayListArg)
                         .parcelableArrayListArg(parcelableArrayListArg)
-                        .serializedParam(new Broker("Jim", 28))
+                        .parcelableParam(new Broker("Jim", 28))
                         .jsonParam(new User<>("Midlife crisis!", new Broker("Wrinkly", 30)))
                         .base64jsonParam(new User<>("Happy new year！", new Broker("Merry Christmas!", 60)))
                         .build()
