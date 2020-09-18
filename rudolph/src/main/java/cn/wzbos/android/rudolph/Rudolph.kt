@@ -51,16 +51,23 @@ object Rudolph {
         try {
             val list = assetManager.list("rudolph")
             if (null != list && list.isNotEmpty()) {
+                val tables: MutableList<IRouteTable> = ArrayList()
                 for (className in list) {
                     try {
                         val clazz = Class.forName("cn.wzbos.android.rudolph.routes.$className")
                         if (IRouteTable::class.java.isAssignableFrom(clazz)) {
-                            val iGroupInstance = clazz.newInstance() as IRouteTable
-                            iGroupInstance.init(application)
+                            val iRouteTable = clazz.newInstance() as IRouteTable
+                            iRouteTable.register()
+                            tables.add(iRouteTable)
                         }
                     } catch (e: ClassNotFoundException) {
                         RLog.e(TAG, "初始化\"$className\"组件失败，请检查包名是否正确！", e)
                     }
+                }
+
+                //待所有组件注册完成后再进行初始化，防止组件之间相互访问
+                for (iRouteTable in tables) {
+                    iRouteTable.init(application)
                 }
             }
             this.isInitialized = true

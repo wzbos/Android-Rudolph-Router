@@ -1,16 +1,18 @@
 package cn.wzbos.samplea;
 
-import android.app.Application;
+import android.content.Context;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
+import cn.wzbos.android.rudolph.IRouteComponent;
 import cn.wzbos.android.rudolph.annotations.Component;
-import cn.wzbos.android.rudolph.IRouteTable;
 
 @Component
-public class TestComponent implements IRouteTable {
+public class TestComponent implements IRouteComponent {
 
     @Override
-    public void init(Application application) {
-        Toast.makeText(application.getApplicationContext(), "Module A initialized！", Toast.LENGTH_SHORT).show();
+    public void init(@NotNull Context context) {
+        Toast.makeText(context.getApplicationContext(), "Module A initialized！", Toast.LENGTH_SHORT).show();
     }
 }

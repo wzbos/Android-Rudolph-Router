@@ -6,7 +6,6 @@ import cn.wzbos.android.rudolph.annotations.Component
 import cn.wzbos.android.rudolph.annotations.Export
 import cn.wzbos.android.rudolph.annotations.Extra
 import cn.wzbos.android.rudolph.annotations.Route
-import com.google.auto.service.AutoService
 import com.squareup.javapoet.*
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
@@ -28,7 +27,6 @@ import javax.tools.StandardLocation
  * Router Processor
  * Created by wuzongbo on 2017/5/30.
  */
-@AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes(Constant.ANNOTATION_TYPE_ROUTE, Constant.ANNOTATION_TYPE_COMPONENT)
 class RudolphProcessor : AbstractProcessor() {
@@ -54,7 +52,7 @@ class RudolphProcessor : AbstractProcessor() {
         private val Gson = ClassName.get("com.google.gson", "Gson")
         private val Base64 = ClassName.get("android.util", "Base64")
         private val TypeToken = ClassName.get("com.google.gson.reflect", "TypeToken")
-        private val clsApplication = ClassName.get("android.app", "Application")
+        private val clsContext = ClassName.get("android.content", "Context")
         private val Bundle = ClassName.get("android.os", "Bundle")
     }
 
@@ -95,17 +93,31 @@ class RudolphProcessor : AbstractProcessor() {
     override fun process(annotations: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
         if (CollectionUtils.isNotEmpty(annotations)) {
             try {
-                //构件路由表类的初始化方法 init(Application application)
-                val builder = MethodSpec.methodBuilder("init")
+
+                val clsName = routeClsName
+                val superInterfaceType = elements!!.getTypeElement(Constant.ROUTE_TABLE)
+
+                val clsBuilder = TypeSpec.classBuilder(clsName)
+                        .addJavadoc(Constant.WARNING_TIPS)
+                        .addSuperinterface(ClassName.get(superInterfaceType))
+                        .addModifiers(Modifier.PUBLIC);
+
+                //构件路由表类的初始化方法 init(Context context)
+                val initMethodBuilder = MethodSpec.methodBuilder("init")
                         .addAnnotation(Override::class.java)
                         .addModifiers(Modifier.PUBLIC)
-                        .addParameter(ParameterSpec.builder(clsApplication, "application").build())
+                        .addParameter(ParameterSpec.builder(clsContext, "context").build())
                 val components = roundEnvironment.getElementsAnnotatedWith(Component::class.java)
                 if (CollectionUtils.isNotEmpty(components)) {
                     for (element in components) {
-                        builder.addStatement("new \$T().init(application)", element)
+                        initMethodBuilder.addStatement("new \$T().init(context)", element)
                     }
                 }
+
+                //构件路由表类的初始化方法 register()
+                val registerMethodBuilder = MethodSpec.methodBuilder("register")
+                        .addAnnotation(Override::class.java)
+                        .addModifiers(Modifier.PUBLIC)
                 val routers = roundEnvironment.getElementsAnnotatedWith(Route::class.java)
                 if (CollectionUtils.isNotEmpty(routers)) {
                     var routetype: RouteType
@@ -144,18 +156,13 @@ class RudolphProcessor : AbstractProcessor() {
                             logger.error("UnKnown route type:$kind")
                             continue
                         }
-                        generateRouteTable(builder, element, target, route, routetype)
+                        generateRouteTable(registerMethodBuilder, element, target, route, routetype)
                     }
                 }
-                val superInterfaceType = elements!!.getTypeElement(Constant.ROUTE_TABLE)
-                val clsName = routeClsName
-                JavaFile.builder(Constant.PACKAGE_NAME,
-                        TypeSpec.classBuilder(clsName)
-                                .addJavadoc(Constant.WARNING_TIPS)
-                                .addSuperinterface(ClassName.get(superInterfaceType))
-                                .addModifiers(Modifier.PUBLIC)
-                                .addMethod(builder.build())
-                                .build()
+                JavaFile.builder(Constant.PACKAGE_NAME, clsBuilder
+                        .addMethod(registerMethodBuilder.build())
+                        .addMethod(initMethodBuilder.build())
+                        .build()
                 ).build().writeTo(mFiler)
                 writeClsNameToAssets(clsName)
                 logger.info(">>> Generated $clsName <<<")
@@ -344,13 +351,13 @@ class RudolphProcessor : AbstractProcessor() {
                         .addJavadoc("create new instance\n")
                         .returns(interfaceClsName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addStatement("return builder()")
+                        .addStatement("return (\$T) builder().build().open()", interfaceClsName)
                         .build())
             }
         }
 
 
-        if (routeType != RouteType.SERVICE && !route.singleton) {
+        if (routeType != RouteType.SERVICE || !route.singleton) {
             val routerBuilderClsName = ClassName.get(clsName, "Builder")
             val builderTypeSpec = generate(interfaceClsName, routerBuilderClsName, element, routeType)
             clsRouterBuilder.addType(builderTypeSpec)

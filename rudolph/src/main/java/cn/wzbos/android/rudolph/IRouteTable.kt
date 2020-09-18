@@ -1,15 +1,12 @@
 package cn.wzbos.android.rudolph
 
-import android.app.Application
-
 /**
  * 路由表接口
  */
-interface IRouteTable {
+interface IRouteTable : IRouteComponent {
+
     /**
-     * 初始化方法
-     *
-     * @param application Application
+     * 注册路由
      */
-    fun init(application: Application?)
+    fun register()
 }

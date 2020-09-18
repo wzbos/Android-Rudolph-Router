@@ -39,8 +39,8 @@ dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "com.android.support:appcompat-v7:${appcompat_v7_version}"
     api "com.google.code.gson:gson:${gson_version}"
-//    api "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
     api project(':rudolph-annotations')
+//    api "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
 }
 
 apply from: '../install.gradle'
