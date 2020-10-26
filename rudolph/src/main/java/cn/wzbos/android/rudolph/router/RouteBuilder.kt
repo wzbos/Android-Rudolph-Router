@@ -1,5 +1,6 @@
 package cn.wzbos.android.rudolph.router
 
+import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.TextUtils
@@ -251,23 +252,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> : IRouteBui
 
     val path: String
         get() {
-            val n = rawUrl!!.indexOf("://")
-            val stx: Int
-            val etx: Int
-            if (n > -1) {
-                stx = n + 3
-                etx = rawUrl!!.indexOf("?", stx)
-            } else {
-                stx = 0
-                etx = rawUrl!!.indexOf("?")
-            }
-            val path: String
-            path = if (etx > -1) {
-                rawUrl!!.substring(stx, etx)
-            } else {
-                rawUrl!!.substring(stx)
-            }
-            return path
+            return Uri.parse(rawUrl).path
         }
 
     private val segments: List<String>

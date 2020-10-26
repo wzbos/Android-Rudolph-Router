@@ -54,13 +54,14 @@ object Rudolph {
                 val tables: MutableList<IRouteTable> = ArrayList()
                 for (className in list) {
                     try {
+                        RLog.i(TAG, "init Router: $className")
                         val clazz = Class.forName("cn.wzbos.android.rudolph.routes.$className")
                         if (IRouteTable::class.java.isAssignableFrom(clazz)) {
                             val iRouteTable = clazz.newInstance() as IRouteTable
                             iRouteTable.register()
                             tables.add(iRouteTable)
                         }
-                    } catch (e: ClassNotFoundException) {
+                    } catch (e: Exception) {
                         RLog.e(TAG, "初始化\"$className\"组件失败，请检查包名是否正确！", e)
                     }
                 }
