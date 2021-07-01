@@ -1,71 +1,129 @@
-apply plugin: 'com.jfrog.bintray'
+if (!rudolph_version.contains("SNAPSHOT")) {
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'com.github.dcendents.android-maven'
+    version = rudolph_version
+    group = publishedGroupId                               // Maven Group ID for the artifact
 
-version = rudolph_version
+    install {
+        repositories.mavenInstaller {
+            // This generates POM.xml with proper parameters
+            pom {
+                project {
+                    packaging 'aar'
+                    groupId publishedGroupId
+                    artifactId artifact
 
-if (project.hasProperty("android")) {
-    // Android libraries
-    task sourcesJar(type: Jar) {
-        archiveClassifier.set('sources')
-        from android.sourceSets.main.java.srcDirs
-    }
+                    // Add your description here
+                    name libraryName
+                    description libraryDescription
+                    url siteUrl
 
-    task javadoc(type: Javadoc) {
-        failOnError = false
-        source = android.sourceSets.main.java.srcDirs
-        options {
-            encoding 'utf-8'
-            charSet 'utf-8'
-            links 'http://docs.oracle.com/javase/7/docs/api/'
-            linksOffline "https://developer.android.com/reference", "${android.sdkDirectory}/docs/reference"
+                    // Set your license
+                    licenses {
+                        license {
+                            name licenseName
+                            url licenseUrl
+                        }
+                    }
+                    developers {
+                        developer {
+                            id developerId
+                            name developerName
+                            email developerEmail
+                        }
+                    }
+                    scm {
+                        connection gitUrl
+                        developerConnection gitUrl
+                        url siteUrl
+
+                    }
+                }
+            }
         }
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     }
-} else {
-    // Java libraries
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier.set('sources')
-        from sourceSets.main.allSource
+
+    if (project.hasProperty("android")) {
+        // Android libraries
+        task sourcesJar(type: Jar) {
+            archiveClassifier.set('sources')
+            from android.sourceSets.main.java.srcDirs
+        }
+
+        task javadoc(type: Javadoc) {
+            failOnError = false
+            source = android.sourceSets.main.java.srcDirs
+            options {
+                encoding 'utf-8'
+                charSet 'utf-8'
+                links 'http://docs.oracle.com/javase/7/docs/api/'
+                linksOffline "https://developer.android.com/reference", "${android.sdkDirectory}/docs/reference"
+            }
+            classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+        }
+    } else {
+        // Java libraries
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            archiveClassifier.set('sources')
+            from sourceSets.main.allSource
+        }
     }
-}
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier.set('javadoc')
-    from javadoc.destinationDir
-}
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        archiveClassifier.set('javadoc')
+        from javadoc.destinationDir
+    }
 
-artifacts {
-    archives javadocJar
-    archives sourcesJar
-}
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
+    }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 // bintray
-bintray {
-    user = properties.getProperty('bintray.user')
-    key = properties.getProperty('bintray.apikey')
-    //    userOrg = properties.getProperty("bintray.org")
+    bintray {
+        user = properties.getProperty('bintray.user')
+        key = properties.getProperty('bintray.apikey')
+        //    userOrg = properties.getProperty("bintray.org")
 
-    configurations = ['archives']
-    override = true
+        configurations = ['archives']
+        override = true
 
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        //        userOrg = userOrg
-        licenses = ["Apache-2.0"]
-        publish = true
-        publicDownloadNumbers = true
-        dryRun = false
-        version {
-            name = libraryVersion
+        pkg {
+            repo = bintrayRepo
+            name = bintrayName
             desc = libraryDescription
-            released = new Date()
-            vcsTag = libraryVersion
+            websiteUrl = siteUrl
+            vcsUrl = gitUrl
+            //        userOrg = userOrg
+            licenses = ["Apache-2.0"]
+            publish = true
+            publicDownloadNumbers = true
+            dryRun = false
+            version {
+                name = libraryVersion
+                desc = libraryDescription
+                released = new Date()
+                vcsTag = libraryVersion
+            }
+        }
+    }
+} else {
+    apply plugin: 'maven'
+    uploadArchives {
+        try {
+            repositories {
+                mavenDeployer {
+                    snapshotRepository(url: uri("${System.getenv('HOME')}/repository/maven-snapshots"))
+                    pom.groupId = publishedGroupId
+                    pom.artifactId = artifact
+                    pom.version = chihiro_version
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace()
         }
     }
 }

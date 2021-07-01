@@ -20,6 +20,9 @@ class ActivityRouter : Router<Any?> {
         private set
     var exitAnim = -1
         private set
+    var requestCode = -1
+        private set
+
 
     internal constructor(builder: RouteBuilder<*, *>) : super(builder)
     private constructor(builder: Builder<*>) : super(builder) {
@@ -81,6 +84,7 @@ class ActivityRouter : Router<Any?> {
      * startForResult for android.app.Fragment
      */
     fun startForResult(fragment: Fragment, requestCode: Int) {
+        this.requestCode = requestCode
         if (super.intercept(fragment.activity)) return
         val intent = getIntent(fragment.activity) ?: return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -95,6 +99,7 @@ class ActivityRouter : Router<Any?> {
      * startForResult for android.support.v4.app.Fragment
      */
     fun startForResult(fragmentV4: android.support.v4.app.Fragment, requestCode: Int) {
+        this.requestCode = requestCode
         if (super.intercept(fragmentV4.context)) return
         val intent = getIntent(fragmentV4.context) ?: return
         fragmentV4.startActivityForResult(intent, requestCode)
@@ -105,6 +110,7 @@ class ActivityRouter : Router<Any?> {
      * startForResult for Activity
      */
     fun startForResult(activity: Activity, requestCode: Int) {
+        this.requestCode = requestCode
         if (super.intercept(activity)) return
         val intent = getIntent(activity) ?: return
         activity.startActivityForResult(intent, requestCode, options)
@@ -123,13 +129,13 @@ class ActivityRouter : Router<Any?> {
      */
     @Suppress("UNCHECKED_CAST")
     open class Builder<T : Builder<T>?> : RouteBuilder<Builder<T>?, ActivityRouter?> {
-         var options: Bundle? = null
+        var options: Bundle? = null
             private set
-         var flags = -1
+        var flags = -1
             private set
         var enterAnim = 0
             private set
-         var exitAnim = 0
+        var exitAnim = 0
             private set
 
 

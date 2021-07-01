@@ -26,5 +26,4 @@ dependencies {
 //    implementation "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
 }
 
-apply from: '../install.gradle'
 apply from: '../bintray.gradle'
