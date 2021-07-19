@@ -26,11 +26,11 @@ public class TestFragment extends Fragment {
 * 1.引用方式调用
 
 ```java
-Fragment fragment = TestFragmentRouter.builder().userId(11).userName("John").build().open();
+Fragment fragment = TestFragmentRouter.builder().userId(11).userName("John").execute();
 ```
 
 * 2.URL方式调用
 
 ```java
-Rudolph.builder("/fragment/user?userId=11&userName=John").build().open();
+Rudolph.builder("/fragment/user?userId=11&userName=John").execute();
 ```

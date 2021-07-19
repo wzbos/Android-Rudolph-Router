@@ -2,10 +2,12 @@ package cn.wzbos.android.rudolph
 
 import android.app.Activity
 import android.app.Application
-import android.app.Fragment
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.router.UriRouter
 import java.util.*
 
@@ -22,7 +24,7 @@ object Rudolph {
     @JvmStatic
     var logger: ILogger? = null
 
-    var application: Application? = null
+    var context: Application? = null
         private set
 
     /**
@@ -30,6 +32,12 @@ object Rudolph {
      */
     @JvmStatic
     var scheme: String? = null
+
+    /**
+     * host
+     */
+    @JvmStatic
+    var host: String? = null
 
     /**
      * 获取是否已初始化路由表
@@ -40,14 +48,33 @@ object Rudolph {
     /**
      * Rudolph 初始化,建议方法application中
      *
-     * @param application Application
+     * @param context Context
      */
     @JvmStatic
-    fun init(application: Application) {
+    fun init(context: Application) {
+        init(context, null, null)
+    }
+
+    /**
+     * Rudolph 初始化,建议方法application中
+     *
+     * @param context Context
+     * @param scheme scheme
+     * @param host host
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun init(
+        context: Context,
+        scheme: String? = null,
+        host: String? = null,
+    ) {
         RLog.v(TAG, "init")
         if (this.isInitialized) return
-        this.application = application
-        val assetManager = application.resources.assets
+        this.scheme = scheme
+        this.host = host
+        this.context = context.applicationContext as Application
+        val assetManager = context.resources.assets
         try {
             val list = assetManager.list("rudolph")
             if (null != list && list.isNotEmpty()) {
@@ -68,7 +95,7 @@ object Rudolph {
 
                 //待所有组件注册完成后再进行初始化，防止组件之间相互访问
                 for (iRouteTable in tables) {
-                    iRouteTable.init(application)
+                    iRouteTable.init(context)
                 }
             }
             this.isInitialized = true
@@ -88,7 +115,7 @@ object Rudolph {
      * @return Interceptor集合
      */
     @JvmStatic
-    val interceptors: List<Interceptor>?
+    val interceptors: MutableList<Interceptor>?
         get() = mInterceptors
 
     /**
@@ -101,7 +128,20 @@ object Rudolph {
         if (null == mInterceptors) {
             mInterceptors = ArrayList()
         }
-        mInterceptors!!.add(interceptor)
+        mInterceptors?.add(interceptor)
+    }
+
+    /**
+     * 添加多个拦截器
+     *
+     * @param interceptors 拦截器集合
+     */
+    @JvmStatic
+    fun addInterceptor(interceptors: MutableList<Interceptor>) {
+        if (null == mInterceptors) {
+            mInterceptors = ArrayList()
+        }
+        mInterceptors?.addAll(interceptors)
     }
 
     /**
@@ -111,9 +151,7 @@ object Rudolph {
      */
     @JvmStatic
     fun removeInterceptor(interceptor: Interceptor) {
-        if (null != mInterceptors) {
-            mInterceptors!!.remove(interceptor)
-        }
+        mInterceptors?.remove(interceptor)
     }
 
     /**
@@ -147,7 +185,6 @@ object Rudolph {
      * 将 @Extra 注解的字段赋值
      *
      * @param activity Activity
-     * @see Extra
      */
     @JvmStatic
     fun bind(activity: Activity) {
@@ -159,7 +196,6 @@ object Rudolph {
      *
      * @param activity Activity
      * @param intent   Intent
-     * @see Extra
      */
     @JvmStatic
     fun onNewIntent(activity: Activity, intent: Intent) {
@@ -170,7 +206,6 @@ object Rudolph {
      * 将 @Extra 注解的字段赋值
      *
      * @param fragment Fragment
-     * @see Extra
      */
     @JvmStatic
     fun bind(fragment: Fragment) {
@@ -180,20 +215,8 @@ object Rudolph {
     /**
      * 将 @Extra 注解的字段赋值
      *
-     * @param fragment Fragment
-     * @see Extra
-     */
-    @JvmStatic
-    fun bind(fragment: android.support.v4.app.Fragment) {
-        RouteBinder.instance?.bind(fragment, fragment.arguments)
-    }
-
-    /**
-     * 将 @Extra 注解的字段赋值
-     *
      * @param service IRouteService
      * @param bundle  Bundle
-     * @see Extra
      */
     @JvmStatic
     fun bind(service: IRouteService, bundle: Bundle?) {

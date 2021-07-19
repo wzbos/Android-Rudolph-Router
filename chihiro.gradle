@@ -1,0 +1,19 @@
+/**
+ * Chihiro-Plugin setting
+ * github:https://github.com/wzbos/chihiro
+ */
+
+Properties properties = new Properties()
+properties.load(file('local.properties').newDataInputStream())
+def WECHAT_ROBOT_URL = properties.getProperty('WECHAT_ROBOT_URL')
+
+chihiro {
+    // true: 打印调式日志,false: 不打印调式日志
+    log = true
+    // 开启Maven上传功能
+    maven = true
+    //微信机器人key
+    wechat {
+        url WECHAT_ROBOT_URL
+    }
+}

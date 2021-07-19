@@ -1,8 +1,8 @@
 package cn.wzbos.android.rudolph
 
 import android.os.Bundle
-import android.util.Log
 import android.util.LruCache
+import cn.wzbos.android.rudolph.logger.RLog
 
 /**
  * Created by wuzongbo on 2017/6/4.

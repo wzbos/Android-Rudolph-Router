@@ -1,24 +1,15 @@
-apply plugin: 'java'
-apply plugin: 'kotlin'
-
-
-ext {
-    bintrayName = 'rudolph-annotations'
-    artifact = bintrayName
-    libraryName = 'rudolph annotations'
-    libraryDescription = 'The annotations used in rudolph'
-    libraryVersion = rudolph_version
+plugins {
+    id 'java'
+    id 'kotlin'
+    id 'chihiro'
 }
 
-
-compileJava {
+java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.20"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
-apply from: '../bintray.gradle'

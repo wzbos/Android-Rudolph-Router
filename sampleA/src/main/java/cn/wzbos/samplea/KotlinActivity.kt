@@ -1,7 +1,7 @@
 package cn.wzbos.samplea
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.Consts.RAW_URI
 import cn.wzbos.android.rudolph.annotations.Extra

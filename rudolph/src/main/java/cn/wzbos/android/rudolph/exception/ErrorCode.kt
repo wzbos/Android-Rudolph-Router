@@ -1,6 +1,6 @@
 package cn.wzbos.android.rudolph.exception
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 
 
 /**

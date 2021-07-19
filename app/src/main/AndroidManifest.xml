@@ -15,7 +15,8 @@
         <activity
             android:name=".SplashActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor"
+            android:exported="true">
             <intent-filter>
                 <data android:scheme="rudolph" />
                 <action android:name="android.intent.action.VIEW" />

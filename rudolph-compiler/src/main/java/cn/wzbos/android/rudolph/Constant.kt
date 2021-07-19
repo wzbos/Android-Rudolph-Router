@@ -3,7 +3,7 @@ package cn.wzbos.android.rudolph
 object Constant {
     // Generate
     private const val PROJECT = "Rudolph"
-    const val WARNING_TIPS = "Generated code from Rudolph. Do not modify!\n"
+    const val WARNING_TIPS ="Generated code from Rudolph. Do not modify!\n"
     const val PACKAGE = "cn.wzbos.android.rudolph"
     const val PACKAGE_NAME = "$PACKAGE.routes"
     const val ROUTER_BINDER = "$PACKAGE.IRouteBinder"

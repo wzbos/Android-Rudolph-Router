@@ -2,8 +2,9 @@
 
 Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
-[![Download](https://api.bintray.com/packages/wuzongbo/maven/rudolph/images/download.svg)](https://bintray.com/wuzongbo/maven/rudolph/_latestVersion)
-[![Maven](https://img.shields.io/badge/Jcenter-Android--Rudolph--Router-green.svg?style=true)](https://jcenter.bintray.com/cn/wzbos/android)
+[![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Maven-Central-Release](https://img.shields.io/maven-central/v/cn.wzbos.android/Android--Rudolph--Router)](https://s01.oss.sonatype.org/content/repositories/releases/cn/wzbos/android/rudolph/)
+[![Maven-Central-Snapshot](https://img.shields.io/nexus/s/cn.wzbos.android/Android--Rudolph--Router?server=https%3A%2F%2Fs01.oss.sonatype.org)](https://s01.oss.sonatype.org/content/repositories/snapshots/cn/wzbos/android/rudolph/)
 
 [版本更新记录](https://github.com/wzbos/Android-Rudolph-Router/releases/)
 

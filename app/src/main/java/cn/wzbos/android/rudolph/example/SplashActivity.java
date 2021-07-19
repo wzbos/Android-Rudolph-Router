@@ -1,12 +1,17 @@
 package cn.wzbos.android.rudolph.example;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import cn.wzbos.android.rudolph.Rudolph;
+import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.samplea.MainActivityRouter;
 
+@SuppressLint("CustomSplashScreen")
+@Route
 public class SplashActivity extends AppCompatActivity {
 
     @Override
@@ -16,11 +21,10 @@ public class SplashActivity extends AppCompatActivity {
 
         Uri uri = getIntent().getData();
         if (uri != null) {
-            Rudolph.builder(uri).build().open(SplashActivity.this);
+            Rudolph.builder(uri).delayFinish().execute(SplashActivity.this);
         } else {
-            MainActivityRouter.builder().build().start(this);
+            MainActivityRouter.builder().delayFinish().buildStart(this);
         }
-        finish();
     }
 
 }

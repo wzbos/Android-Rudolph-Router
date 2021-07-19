@@ -2,9 +2,8 @@ package cn.wzbos.android.rudolph.utils
 
 import android.content.Context
 import android.text.TextUtils
-import cn.wzbos.android.rudolph.RLog
+import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.router.RouteBuilder
-import java.util.*
 
 /**
  * Created by wuzongbo on 2017/6/21.
@@ -13,7 +12,7 @@ object TypeUtils {
     private fun toInteger(value: String): Int {
         var ret = 0
         if (!TextUtils.isEmpty(value)) {
-            ret = if (value.toLowerCase(Locale.getDefault()).startsWith("0x")) {
+            ret = if (value.startsWith("0x", true)) {
                 Integer.valueOf(value.substring(2), 16)
             } else {
                 value.toInt()
@@ -25,11 +24,12 @@ object TypeUtils {
     private fun toBoolean(value: String): Boolean {
         var ret = false
         if (!TextUtils.isEmpty(value)) {
-            ret = if (value.toLowerCase(Locale.getDefault()) == "true" || value.toLowerCase(Locale.getDefault()) == "false") {
-                java.lang.Boolean.parseBoolean(value)
-            } else {
-                value.toInt() > 0
-            }
+            ret =
+                if (value.equals("true", true) || value.equals("false", true)) {
+                    java.lang.Boolean.parseBoolean(value)
+                } else {
+                    value.toInt() > 0
+                }
         }
         return ret
     }
@@ -55,7 +55,7 @@ object TypeUtils {
     private fun toShort(value: String): Short {
         var ret: Short = 0
         if (!TextUtils.isEmpty(value)) {
-            ret = if (value.toLowerCase(Locale.getDefault()).startsWith("0x")) {
+            ret = if (value.startsWith("0x", true)) {
                 value.substring(2).toShort(16)
             } else {
                 value.toShort()
@@ -67,7 +67,7 @@ object TypeUtils {
     private fun toByte(value: String): Byte {
         var ret: Byte = 0
         if (!TextUtils.isEmpty(value)) {
-            ret = if (value.toLowerCase(Locale.getDefault()).startsWith("0x")) {
+            ret = if (value.startsWith("0x", true)) {
                 java.lang.Byte.valueOf(value.substring(2), 16)
             } else {
                 value.toByte()
@@ -86,7 +86,13 @@ object TypeUtils {
         return getObject(context, name, value, type, null)
     }
 
-    fun getObject(context: Context?, name: String, value: String, target: String, builder: RouteBuilder<*, *>?): Any? {
+    fun getObject(
+        context: Context?,
+        name: String,
+        value: String,
+        target: String,
+        builder: RouteBuilder<*, *>?
+    ): Any? {
         RLog.d("TypeUtils", "$name = $value, target:$target, bundle:$builder")
         return when (target) {
             "java.lang.String", "java.lang.CharSequence" -> {  //String、CharSequence

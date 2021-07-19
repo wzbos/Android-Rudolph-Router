@@ -46,13 +46,13 @@ public class TestService implements ITestService{
 * 1.引用方式调用
 
 ```java
-ITestService service = TestServiceRouter.builder().userId(1).userName("Tom").build().open();
+ITestService service = TestServiceRouter.builder().userId(1).userName("Tom").execute();
 service.showMessage(MainActivity.this, "Hello Provider!");
 ```
 
 * 2.URL方式调用
 
 ```java
-ITestService service = (ITestService)Rudolph.builder("/service/test?userId=11&userName=John").build().open();
+ITestService service = (ITestService)Rudolph.builder("/service/test?userId=11&userName=John").execute();
 service.showMessage(MainActivity.this, "Hello Provider!");
 ```

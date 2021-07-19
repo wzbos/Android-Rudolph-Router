@@ -1,14 +1,7 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
-
-ext {
-    bintrayName = 'rudolph'
-    artifact = bintrayName
-    libraryName = 'rudolph'
-    libraryDescription = 'rudolph runtime'
-    libraryVersion = rudolph_version
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'chihiro'
 }
 
 android {
@@ -17,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion ANDROID_MIN_SDK
         targetSdkVersion ANDROID_TARGET_SDK
-        versionName = rudolph_version
+        versionName = PROJ_VERSION
         versionCode = 1
         consumerProguardFiles 'proguard-rules.pro'
     }
@@ -36,13 +29,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api "com.android.support:appcompat-v7:${appcompat_v7_version}"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api "androidx.appcompat:appcompat:$appcompat_version"
     api "com.google.code.gson:gson:${gson_version}"
-    api project(':rudolph-annotations')
-//    api "${publishedGroupId}:rudolph-annotations:${rudolph_version}"
+    api dynamic(':rudolph-annotations')
 }
-
-apply from: '../bintray.gradle'
-//apply from: 'publish.gradle'
 

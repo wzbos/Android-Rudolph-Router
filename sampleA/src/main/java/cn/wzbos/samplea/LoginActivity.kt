@@ -1,8 +1,8 @@
 package cn.wzbos.samplea
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.annotations.Extra
 import cn.wzbos.android.rudolph.annotations.Route
@@ -29,9 +29,8 @@ class LoginActivity : AppCompatActivity() {
             AppUserRouter.get().isLogin = true
             Toast.makeText(this, "login success!", Toast.LENGTH_SHORT).show()
             to?.also {
-                Rudolph.builder(to).putExtra(toExtras).build().open(this)
+                Rudolph.builder(to).putExtra(toExtras).delayFinish().execute(this)
             }
-            finish()
         }
     }
 

@@ -27,49 +27,49 @@ public class TestActivity extends AppCompatActivity {
 * 1.引用方式调用
 
 ```java
-UserActivityRouter.builder().userId(11).userName("John").build().start(context);
+UserActivityRouter.builder().userId(11).userName("John").buildStart(context);
 ```
 
 * 2.URL方式调用
 
 ```java
-Rudolph.builder("/user?userId=11&userName=John").build().open(context);
+Rudolph.builder("/user?userId=11&userName=John").execute(context);
 ```
 
 
 ## 添加动画
 
 ```java
-UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).build().start(context);
+UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).buildStart(context);
 ```
 
 or
 
 ```java
-Rudolph.builder("/user?userId=11&userName=John").transition(R.anim.in_left,R.anim.out_right).build().open(context);
+Rudolph.builder("/user?userId=11&userName=John").transition(R.anim.in_left,R.anim.out_right).execute(context);
 ```
 
 ## RequestCode
 
 ```java
-UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).build().start(context);
+UserActivityRouter.builder().userId(11).userName("John").transition(R.anim.in_left,R.anim.out_right).buildStart(context);
 ```
 
 or
 
 ```java
 private static final int requestCode = 10001;
-Rudolph.builder("/user?userId=11&userName=John").build().open(context,requestCode);
+Rudolph.builder("/user?userId=11&userName=John").execute(context,requestCode);
 ```
 
 ## 传递扩展参数
 
 ```java
-UserActivityRouter.builder().userId(11).userName("John").putExtra("extra1","hello").build().start(context);
+UserActivityRouter.builder().userId(11).userName("John").putExtra("extra1","hello").buildStart(context);
 ```
 
 ```java
-Rudolph.builder("/user?userId=11&userName=John").putExtra("extra1","hello").build().open(context);
+Rudolph.builder("/user?userId=11&userName=John").putExtra("extra1","hello").execute(context);
 ```
 
 

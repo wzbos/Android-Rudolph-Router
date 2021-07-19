@@ -26,7 +26,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:${appcompat_v7_version}"
+    api "androidx.appcompat:appcompat:$appcompat_version"
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
     implementation project(':rudolph')
     implementation project(':sampleA')
     implementation project(':sampleB')

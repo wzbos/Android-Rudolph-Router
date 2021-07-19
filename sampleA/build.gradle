@@ -1,25 +1,28 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'chihiro'
+}
 
 android {
     compileSdkVersion ANDROID_COMPILE_SDK
     defaultConfig {
         minSdkVersion ANDROID_MIN_SDK
         targetSdkVersion ANDROID_TARGET_SDK
+    }
 
-        versionName "0.0.1"
-
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [
-                        export_api_name   : project.getName() + "-protocol",
-                        export_api_package: "cn.wzbos.protocol.samplea"
-                ]
-                includeCompileClasspath = true
-            }
+    kapt {
+        arguments {
+            arg("export_api_name", project.name + "-protocol")
+            arg("export_api_package", "cn.wzbos.protocol.samplea")
         }
+    }
+    kotlinOptions {
+        //Support @JvmDefault
+        freeCompilerArgs = ['-Xjvm-default=enable'] //enable or compatibility
+        jvmTarget = "1.8"
     }
 
     buildTypes {
@@ -27,6 +30,8 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        lintOptions { abortOnError false }
+
     }
 
     lintOptions {
@@ -37,19 +42,14 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:${appcompat_v7_version}"
     implementation "com.google.code.gson:gson:${gson_version}"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlin_version}"
-    api project(':sampleA-protocol')
-    api project(':sampleB-protocol')
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api dynamic(':sampleA-protocol')
+    api dynamic(':sampleB-protocol')
 
     //rudolph
-    implementation project(':rudolph')
-    kapt project(':rudolph-compiler')
-
+    implementation dynamic(':rudolph')
+    kapt dynamic(':rudolph-compiler')
 }
-repositories {
-    mavenCentral()
-}
-
 

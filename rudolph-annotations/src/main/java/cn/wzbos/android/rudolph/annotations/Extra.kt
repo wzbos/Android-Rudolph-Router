@@ -5,4 +5,9 @@ package cn.wzbos.android.rudolph.annotations
  */
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-annotation class Extra(val value: String = "", val export: Boolean = true, val json: Boolean = false, val base64: Boolean = false)
+annotation class Extra(
+    val value: String = "",
+    val export: Boolean = true,
+    val json: Boolean = false,
+    val base64: Boolean = false
+)

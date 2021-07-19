@@ -1,7 +1,6 @@
 package cn.wzbos.sampleb;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import cn.wzbos.android.rudolph.Rudolph;
@@ -12,6 +11,8 @@ import cn.wzbos.android.rudolph.annotations.Route;
 import java.util.Locale;
 
 import static cn.wzbos.android.rudolph.Consts.RAW_URI;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 @Route(value = "/user", tag = "isNeedLogin")
 @Export

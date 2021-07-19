@@ -1,7 +1,6 @@
 package cn.wzbos.samplea;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -15,6 +14,8 @@ import cn.wzbos.protocol.samplea.bean.Broker;
 import cn.wzbos.protocol.samplea.bean.User;
 
 import static cn.wzbos.android.rudolph.Consts.RAW_URI;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 
 @Route(value = "/activity/test")

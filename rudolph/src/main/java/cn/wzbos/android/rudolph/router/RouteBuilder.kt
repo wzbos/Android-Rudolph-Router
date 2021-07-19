@@ -8,6 +8,7 @@ import android.util.SparseArray
 import cn.wzbos.android.rudolph.*
 import cn.wzbos.android.rudolph.Rudolph.getRouter
 import cn.wzbos.android.rudolph.Rudolph.routers
+import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.utils.TypeUtils
 import java.io.Serializable
 import java.io.UnsupportedEncodingException
@@ -19,8 +20,12 @@ import java.util.*
  * Created by wuzongbo on 2017/9/13.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> : IRouteBuilder<RouteBuilder<B, R>?, R> {
-    private val TAG = "RouteBuilder"
+abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> :
+    IRouteBuilder<RouteBuilder<B, R>?, R> {
+    companion object {
+        const val TAG = "RouteBuilder"
+    }
+
     override var extras: Bundle = Bundle()
     var callback: OnRouteListener? = null
         private set
@@ -240,9 +245,9 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> : IRouteBui
     }
 
     private fun addParams(key: String, value: String?) {
-        if (extraTypes != null && extraTypes!!.isNotEmpty() && extraTypes!!.containsKey(key)) {
-            val type = extraTypes!![key]
-            if (value != null && value.isNotEmpty() && type != null) {
+        if (extraTypes?.containsKey(key) == true) {
+            val type = extraTypes?.get(key)
+            if (!value.isNullOrEmpty() && type != null) {
                 TypeUtils.getObject(null, key, value, type, this)
             }
         } else {
@@ -250,7 +255,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> : IRouteBui
         }
     }
 
-    val path: String
+    val path: String?
         get() {
             return Uri.parse(rawUrl).path
         }
@@ -258,11 +263,11 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> : IRouteBui
     private val segments: List<String>
         get() {
             val segments: MutableList<String> = ArrayList()
-            val values = path.split("/".toRegex()).toTypedArray()
-            for (v: String in values) {
+            val values = path?.split("/".toRegex())?.toTypedArray()
+            values?.forEach {
                 try {
-                    if (!TextUtils.isEmpty(v)) {
-                        segments.add(URLDecoder.decode(v, "utf-8"))
+                    if (!TextUtils.isEmpty(it)) {
+                        segments.add(URLDecoder.decode(it, "utf-8"))
                     }
                 } catch (e: UnsupportedEncodingException) {
                     RLog.e(TAG, "getSegments failed!", e)
@@ -273,12 +278,14 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> : IRouteBui
 
     private val encodedQuery: String?
         get() {
-            val n = rawUrl!!.indexOf("?")
-            return if (n > -1) {
-                rawUrl!!.substring(n + 1)
-            } else {
-                null
+            rawUrl?.indexOf("?")?.let {
+                return if (it > -1) {
+                    rawUrl?.substring(it + 1)
+                } else {
+                    null
+                }
             }
+            return null
         }
 
     /**
@@ -289,11 +296,11 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> : IRouteBui
     val uriAllParams: MutableMap<String, String?>?
         get() {
             val params: MutableMap<String, String?> = LinkedHashMap()
-            val routeSegments = routePath!!.substring(1).split("/".toRegex()).toTypedArray()
+            val routeSegments = routePath?.substring(1)?.split("/".toRegex())?.toTypedArray()
             val pathSegments = segments
 
             //segments个数不匹配
-            if (routeSegments.size != pathSegments.size) return null
+            if (routeSegments?.size != pathSegments.size) return null
             //raw uri
             params[Consts.RAW_URI] = rawUrl
             //path params

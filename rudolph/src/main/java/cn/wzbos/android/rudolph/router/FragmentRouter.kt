@@ -1,30 +1,35 @@
 package cn.wzbos.android.rudolph.router
 
-import android.app.Fragment
-import android.util.Log
-import cn.wzbos.android.rudolph.RLog
+import androidx.fragment.app.Fragment
 import cn.wzbos.android.rudolph.exception.ErrorCode
 import cn.wzbos.android.rudolph.exception.ErrorMessage
 import cn.wzbos.android.rudolph.exception.RudolphException
+import cn.wzbos.android.rudolph.logger.RLog
 
-@Suppress("UNCHECKED_CAST")
 class FragmentRouter<R> : Router<R?> {
     internal constructor(builder: RouteBuilder<*, *>) : super(builder)
     private constructor(builder: Builder<*, *>) : super(builder)
 
-
-    override fun open(): R? {
+    @Suppress("UNCHECKED_CAST")
+    override fun execute(): R? {
         if (super.intercept(null)) return null
         if (target == null) {
-            callback?.onError(this, RudolphException(ErrorCode.NOT_FOUND, ErrorMessage.NOT_FOUND_ERROR))
+            callback?.onError(
+                this,
+                RudolphException(ErrorCode.NOT_FOUND, ErrorMessage.NOT_FOUND_ERROR)
+            )
             return null
         }
 
         try {
+            val constructor = target?.getConstructor()
+            if (constructor == null) {
+                RLog.e("FragmentRouter", "$target 必须提供一个无参的构造函数！")
+                return null
+            }
+
             val instance = target?.getConstructor()?.newInstance()
             if (instance is Fragment) {
-                instance.arguments = extras
-            } else if (instance is android.support.v4.app.Fragment) {
                 instance.arguments = extras
             }
 
@@ -32,7 +37,10 @@ class FragmentRouter<R> : Router<R?> {
             return instance as R
         } catch (e: Exception) {
             if (callback != null) {
-                callback?.onError(this, RudolphException(ErrorCode.FRAGMENT_CREATE_FAILED, "Fragment 创建失败！", e))
+                callback?.onError(
+                    this,
+                    RudolphException(ErrorCode.FRAGMENT_CREATE_FAILED, "Fragment 创建失败！", e)
+                )
             } else {
                 RLog.e("FragmentRouter", "Fragment 创建失败！", e)
             }
@@ -46,6 +54,10 @@ class FragmentRouter<R> : Router<R?> {
 
         override fun build(): FragmentRouter<R> {
             return FragmentRouter(this)
+        }
+
+        fun execute(): R? {
+            return build().execute()
         }
     }
 }

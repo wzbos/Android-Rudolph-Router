@@ -28,11 +28,11 @@ class RouteInfo private constructor(builder: Builder) {
         if (currPath.isNullOrEmpty())
             return false
         //path params
-        val segments = path!!.split("/".toRegex()).toTypedArray()
+        val segments = path?.split("/".toRegex())?.toTypedArray()
         val currSegments = currPath.split("/".toRegex()).toTypedArray()
 
         //segments
-        if (segments.size != currSegments.size) {
+        if (segments?.size != currSegments.size) {
             return false
         }
         for (i in segments.indices) {

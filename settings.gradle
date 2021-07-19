@@ -6,3 +6,17 @@ include ':sampleA'
 include ':sampleA-protocol'
 include ':sampleB'
 include ':sampleB-protocol'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    }
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+    dependencies {
+        classpath "cn.wzbos.android:chihiro-plugin:1.0.10-SNAPSHOT"
+    }
+}
+apply plugin: 'chihiro-settings'

@@ -1,5 +1,10 @@
-apply plugin: 'com.android.library'
-
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'chihiro'
+}
 
 
 android {
@@ -25,7 +30,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:${appcompat_v7_version}"
-    implementation project(':rudolph')
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation dynamic(':rudolph')
 }
 

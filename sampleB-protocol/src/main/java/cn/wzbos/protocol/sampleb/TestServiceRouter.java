@@ -12,7 +12,7 @@ public class TestServiceRouter {
     if (instance == null) {
       synchronized (TestServiceRouter.class) {
         if (instance == null) {
-          Object result = Rudolph.builder("/service/test").build().open();
+          Object result = Rudolph.builder("/service/test").execute();
           if(result instanceof ITestService) {
             instance = (ITestService)result;
           }
