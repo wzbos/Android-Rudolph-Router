@@ -28,11 +28,16 @@ class ActivityRouter : Router<Any?> {
     var delayFinish: Long = -1
         private set
 
-    internal constructor(builder: RouteBuilder<*, *>) : super(builder) {
-
-    }
 
     private constructor(builder: Builder<*>) : super(builder) {
+        options = builder.options
+        flags = builder.flags
+        enterAnim = builder.enterAnim
+        exitAnim = builder.exitAnim
+        delayFinish = builder.delayFinish
+    }
+
+     constructor(builder: UriRouter.Builder<*>) : super(builder) {
         options = builder.options
         flags = builder.flags
         enterAnim = builder.enterAnim

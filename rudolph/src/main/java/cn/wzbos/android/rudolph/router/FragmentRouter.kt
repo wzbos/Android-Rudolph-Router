@@ -7,8 +7,8 @@ import cn.wzbos.android.rudolph.exception.RudolphException
 import cn.wzbos.android.rudolph.logger.RLog
 
 class FragmentRouter<R> : Router<R?> {
-    internal constructor(builder: RouteBuilder<*, *>) : super(builder)
     private constructor(builder: Builder<*, *>) : super(builder)
+    constructor(builder: UriRouter.Builder<*>) : super(builder)
 
     @Suppress("UNCHECKED_CAST")
     override fun execute(): R? {

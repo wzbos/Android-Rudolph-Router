@@ -9,8 +9,8 @@ import java.lang.reflect.Constructor
 
 @Suppress("UNCHECKED_CAST")
 open class ServiceRouter<R> : Router<R?> {
-    internal constructor(builder: RouteBuilder<*, *>) : super(builder)
     protected constructor(builder: Builder<*, out IRouteService?>) : super(builder)
+    constructor(builder: UriRouter.Builder<*>) : super(builder)
 
     override fun execute(): R? {
         if (super.intercept(null)) return null

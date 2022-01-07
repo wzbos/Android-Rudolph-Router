@@ -3,8 +3,8 @@
 Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
 [![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Maven-Central-Release](https://img.shields.io/maven-central/v/cn.wzbos.android/Android--Rudolph--Router)](https://s01.oss.sonatype.org/content/repositories/releases/cn/wzbos/android/rudolph/)
-[![Maven-Central-Snapshot](https://img.shields.io/nexus/s/cn.wzbos.android/Android--Rudolph--Router?server=https%3A%2F%2Fs01.oss.sonatype.org)](https://s01.oss.sonatype.org/content/repositories/snapshots/cn/wzbos/android/rudolph/)
+[![Maven-Central-Release](https://img.shields.io/maven-central/v/cn.wzbos.android/rudolph)](https://s01.oss.sonatype.org/content/repositories/releases/cn/wzbos/android/rudolph/)
+[![Maven-Central-Snapshot](https://img.shields.io/nexus/s/cn.wzbos.android/rudolph?server=https%3A%2F%2Fs01.oss.sonatype.org)](https://s01.oss.sonatype.org/content/repositories/snapshots/cn/wzbos/android/rudolph/)
 
 [版本更新记录](https://github.com/wzbos/Android-Rudolph-Router/releases/)
 
@@ -38,12 +38,19 @@ Java:
 
 ``` groovy
 repositories {
-   jcenter()
+   // Rudolph 正式版仓库地址
+   mavenCentral()
+   // Rudolph SNAPSHOT版本仓库地址
+   maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
   implementation "cn.wzbos.android:rudolph:1.x.x"
   annotationProcessor "cn.wzbos.android:rudolph-compiler:1.x.x"
+}
+
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor(0, 'seconds')
 }
 ```
 
@@ -54,7 +61,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 repositories {
-   jcenter()
+   mavenCentral()
 }
 
 dependencies {
