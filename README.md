@@ -8,6 +8,57 @@ Rudolph Android Router Framework（鲁道夫安卓路由框架组件）
 
 [版本更新记录](https://github.com/wzbos/Android-Rudolph-Router/releases/)
 
+### 调用实例
+
+* Activity
+```java
+UserActivityRouter.builder()
+        .userId(11)
+        .userName("John")
+        .transition(R.anim.in_left,R.anim.out_right)
+        .buildStart(context);
+```
+
+```java
+Rudolph.builder("/user")
+        .userId(11)
+        .userName("John")
+        .extra("age",11)
+        .transition(R.anim.in_left,R.anim.out_right)
+        .execute(context);
+```
+
+```java
+String url="/user?userId=11&userName=John&age=11"
+        Rudolph.builder(url)
+        .transition(R.anim.in_left,R.anim.out_right)
+        .execute(context);
+```
+
+* Fragment
+```java
+Fragment fragment=TestFragmentRouter.builder()
+        .userId(11)
+        .userName("John")
+        .execute();
+```
+
+* Method
+```java
+Object result=Rudolph.builder("/methodRouter")
+        .build()
+        .execute(context);
+```
+
+* Service
+```java
+ITestService service = TestServiceRouter.builder()
+        .userId(1)
+        .userName("Tom")
+        .execute();
+service.showMessage(MainActivity.this,"Hello Provider!");
+```
+
 ### 框架特性
 
 - 支持组件API模块自动生成
