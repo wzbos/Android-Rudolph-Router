@@ -14,7 +14,7 @@ import static cn.wzbos.android.rudolph.Consts.RAW_URI;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-@Route(value = "/user", tag = "isNeedLogin")
+@Route(urls = "/user", tag = "isNeedLogin")
 @Export
 public class UserActivity extends AppCompatActivity {
     @Extra(RAW_URI)

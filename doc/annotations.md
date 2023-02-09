@@ -14,7 +14,7 @@
 	- export：是否导出API，一般组件化刚才才会用
 
 ```java
-@Route(value = "/user",export = true)
+@Route(urls =  "/user",export = true)
 public class UserActivity extends AppCompatActivity {
 }
 ```
@@ -29,7 +29,7 @@ public class UserActivity extends AppCompatActivity {
 	- json：标识此参数是否为json格式
 
 ```java
-@Route(value = "/user",export = true)
+@Route(urls =  "/user",export = true)
 public class UserActivity extends AppCompatActivity {
 	@Extra("userId")
 	int userId;

@@ -10,7 +10,7 @@ import cn.wzbos.android.rudolph.annotations.Extra;
 import cn.wzbos.android.rudolph.annotations.Route;
 import cn.wzbos.protocol.sampleb.ITestService;
 
-@Route(value = "/service/test", clazz = ITestService.class, singleton = true)
+@Route(urls = "/service/test", clazz = ITestService.class, singleton = true)
 @Export
 public class TestService implements ITestService {
 

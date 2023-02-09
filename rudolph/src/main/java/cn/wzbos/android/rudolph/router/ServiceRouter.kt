@@ -52,10 +52,8 @@ open class ServiceRouter<R> : Router<R?> {
         return null
     }
 
-    open class Builder<T : Builder<T, R>?, R : IRouteService?> :
-        RouteBuilder<Builder<T, R>?, ServiceRouter<R>?> {
-        constructor(target: Class<*>?) : super(target)
-        constructor(path: String) : super(path)
+    open class Builder<T : Builder<T, R>?, R : IRouteService?>(path: String) :
+        RouteBuilder<Builder<T, R>?, ServiceRouter<R>?>(path) {
 
         override fun build(): ServiceRouter<R> {
             return ServiceRouter(this)

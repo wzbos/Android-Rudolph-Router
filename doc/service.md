@@ -18,7 +18,7 @@ public interface ITestService extends IRouteService {
 
 ### 定义服务
 ```java
-@Route(value = "/service/test", clazz = ITestService.class, singleton = true)
+@Route(urls =  "/service/test", clazz = ITestService.class, singleton = true)
 public class TestService implements ITestService{
 
     @Extra

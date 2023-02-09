@@ -48,9 +48,8 @@ class FragmentRouter<R> : Router<R?> {
         return null
     }
 
-    open class Builder<T, R> : RouteBuilder<Builder<T, R>?, FragmentRouter<R>?> {
-        constructor(cls: Class<*>?) : super(cls)
-        constructor(path: String) : super(path)
+    open class Builder<T, R>(path: String) :
+        RouteBuilder<Builder<T, R>?, FragmentRouter<R>?>(path) {
 
         override fun build(): FragmentRouter<R> {
             return FragmentRouter(this)

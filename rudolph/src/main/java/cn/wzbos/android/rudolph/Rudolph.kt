@@ -9,6 +9,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.router.UriRouter
+import cn.wzbos.android.rudolph.utils.match
 import java.util.*
 
 
@@ -18,7 +19,10 @@ import java.util.*
  */
 object Rudolph {
     private const val TAG = "Rudolph"
-    private var mInterceptors: MutableList<Interceptor>? = null
+
+    var globalInterceptors: MutableList<Interceptor>? = null
+        private set
+
     private val routes: MutableList<RouteInfo> = ArrayList()
 
     @JvmStatic
@@ -109,39 +113,48 @@ object Rudolph {
         routes.add(routeInfo)
     }
 
+
     /**
-     * 获取所有拦截器
+     * 获取全局拦截器
      *
      * @return Interceptor集合
      */
     @JvmStatic
-    val interceptors: MutableList<Interceptor>?
-        get() = mInterceptors
+    @Deprecated(
+        "已过期请使用 globalInterceptors",
+        replaceWith = ReplaceWith("globalInterceptors")
+    )
+    val interceptors: MutableList<Interceptor>? = globalInterceptors
 
     /**
-     * 添加拦截器
+     * 添加全局拦截器
      *
      * @param interceptor 拦截器
      */
     @JvmStatic
+    @Deprecated(
+        "此方法已过期，请使用 registerGlobalInterceptor",
+        replaceWith = ReplaceWith("registerGlobalInterceptor(interceptor)")
+    )
     fun addInterceptor(interceptor: Interceptor) {
-        if (null == mInterceptors) {
-            mInterceptors = ArrayList()
-        }
-        mInterceptors?.add(interceptor)
+        registerGlobalInterceptor(interceptor)
     }
 
+
     /**
-     * 添加多个拦截器
+     * 添加多个全局拦截器
      *
      * @param interceptors 拦截器集合
      */
     @JvmStatic
+    @Deprecated(
+        "此方法已过期，请使用 registerGlobalInterceptor",
+        replaceWith = ReplaceWith("registerGlobalInterceptor(interceptors)")
+    )
     fun addInterceptor(interceptors: MutableList<Interceptor>) {
-        if (null == mInterceptors) {
-            mInterceptors = ArrayList()
+        interceptors.forEach {
+            registerGlobalInterceptor(it)
         }
-        mInterceptors?.addAll(interceptors)
     }
 
     /**
@@ -150,9 +163,38 @@ object Rudolph {
      * @param interceptor 通过 addInterceptor 添加的拦截器
      */
     @JvmStatic
+    @Deprecated(
+        "此方法已过期，请使用 unregisterGlobalInterceptor",
+        replaceWith = ReplaceWith("unregisterGlobalInterceptor(interceptor)")
+    )
     fun removeInterceptor(interceptor: Interceptor) {
-        mInterceptors?.remove(interceptor)
+        unregisterGlobalInterceptor(interceptor)
     }
+
+
+    /**
+     * 注册全局拦截器
+     *
+     * @param interceptor 拦截器
+     */
+    @JvmStatic
+    fun registerGlobalInterceptor(interceptor: Interceptor) {
+        if (null == globalInterceptors) {
+            globalInterceptors = mutableListOf()
+        }
+        globalInterceptors?.add(interceptor)
+    }
+
+    /**
+     * 取消注册全局拦截器
+     *
+     * @param interceptor 通过 addInterceptor 添加的拦截器
+     */
+    @JvmStatic
+    fun unregisterGlobalInterceptor(interceptor: Interceptor) {
+        globalInterceptors?.remove(interceptor)
+    }
+
 
     /**
      * 获取已加载所有路由信息
@@ -170,10 +212,10 @@ object Rudolph {
      * @return RouteInfo
      */
     @JvmStatic
-    fun getRouter(path: String?): RouteInfo? {
+    fun getRouter(url: String?): RouteInfo? {
         routes.forEach { info ->
             run {
-                if (info.equalPath(path)) {
+                if (info.match(url)) {
                     return info
                 }
             }

@@ -1,9 +1,11 @@
 package cn.wzbos.android.rudolph.annotations
 
+import cn.wzbos.android.rudolph.RouteInterceptor
+import java.util.*
 import kotlin.reflect.KClass
 
 @MustBeDocumented
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 @Target(
     AnnotationTarget.ANNOTATION_CLASS,
     AnnotationTarget.CLASS,
@@ -13,8 +15,14 @@ import kotlin.reflect.KClass
 )
 annotation class Route(
     /**
-     * 当前路由地址
+     * 完整的路由地址，
+     * 例如:
+     * 完整形式："app://www.wzbos.cn/home"
+     * 纯路径形式："/home"
+     * 正则表达式："^[http|https]://"
      */
+    val urls: Array<String> = [],
+
     val value: String = "",
 
     /**
@@ -32,5 +40,11 @@ annotation class Route(
      *
      * @return true:单例，false:非单例
      */
-    val singleton: Boolean = false
+    val singleton: Boolean = false,
+
+    /**
+     * 拦截器
+     */
+    val interceptors: Array<KClass<out RouteInterceptor>> = [],
 )
+

@@ -7,7 +7,7 @@ import androidx.annotation.IntDef
  * 错误码
  */
 @IntDef(ErrorCode.NOT_FOUND, ErrorCode.METHOD_INVOKE_FAILED, ErrorCode.SERVICE_CREATE_FAILED, ErrorCode.FRAGMENT_CREATE_FAILED)
-@kotlin.annotation.Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.SOURCE)
 annotation class ErrorCode {
     companion object {
         /**

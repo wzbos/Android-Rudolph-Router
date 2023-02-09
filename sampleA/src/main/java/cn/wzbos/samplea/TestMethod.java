@@ -8,7 +8,7 @@ import cn.wzbos.android.rudolph.annotations.Route;
 
 public class TestMethod {
 
-    @Route("/method/test")
+    @Route(urls = "/method/test")
     public static String Test(@Extra Context context, @Extra int userId, @Extra String userName) {
         return "Hello Method!\nPackageName:" + context.getPackageName() + "\nuserId:" + userId + ",userName:" + userName;
     }

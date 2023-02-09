@@ -7,7 +7,7 @@ import cn.wzbos.android.rudolph.Consts.RAW_URI
 import cn.wzbos.android.rudolph.annotations.Extra
 import cn.wzbos.android.rudolph.annotations.Route
 
-@Route("/kotlin/test")
+@Route(urls =  ["/kotlin/test"])
 class KotlinActivity : AppCompatActivity() {
 
     @Extra(RAW_URI)

@@ -16,7 +16,7 @@ buildscript {
         resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
     }
     dependencies {
-        classpath "cn.wzbos.android:chihiro-plugin:1.0.10-SNAPSHOT"
+        classpath "cn.wzbos.android:chihiro-plugin:1.0.10"
     }
 }
 apply plugin: 'chihiro-settings'

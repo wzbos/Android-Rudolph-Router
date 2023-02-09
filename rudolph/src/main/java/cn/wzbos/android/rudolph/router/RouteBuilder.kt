@@ -3,15 +3,13 @@ package cn.wzbos.android.rudolph.router
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
-import android.text.TextUtils
 import android.util.SparseArray
 import cn.wzbos.android.rudolph.*
 import cn.wzbos.android.rudolph.Rudolph.getRouter
-import cn.wzbos.android.rudolph.Rudolph.routers
 import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.utils.TypeUtils
 import java.io.Serializable
-import java.io.UnsupportedEncodingException
+import java.lang.reflect.Type
 import java.net.URLDecoder
 import java.util.*
 
@@ -20,27 +18,36 @@ import java.util.*
  * Created by wuzongbo on 2017/9/13.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> :
+abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl: String) :
     IRouteBuilder<RouteBuilder<B, R>?, R> {
     companion object {
         const val TAG = "RouteBuilder"
     }
 
+
     override var extras: Bundle = Bundle()
+    var scheme: MutableList<String>? = null
+    var host: MutableList<String>? = null
+    var path: MutableList<String>? = null
+
     var callback: OnRouteListener? = null
         private set
     var target: Class<*>? = null
-        private set
-    var rawUrl: String? = null
-        private set
-    var routePath: String? = null
         private set
     var routeType: RouteType? = null
         private set
     var routeTag: String? = null
         private set
-    var extraTypes: MutableMap<String, String>? = null
+    var extraTypes: MutableMap<String, Type>? = null
         private set
+    var interceptors: MutableList<Class<out RouteInterceptor>>? = null
+        private set
+
+    private var encodedQuery: String? = null
+
+//    constructor(routeInfo: RouteInfo) : this(routeInfo.target) {
+//        setRouterInfo(routeInfo)
+//    }
 
     override fun putExtra(map: Bundle?): B {
         extras.putAll(map)
@@ -107,7 +114,10 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> :
         return this as B
     }
 
-    override fun putParcelableArrayListExtra(key: String?, value: ArrayList<out Parcelable?>?): B {
+    override fun putParcelableArrayListExtra(
+        key: String?,
+        value: ArrayList<out Parcelable?>?,
+    ): B {
         extras.putParcelableArrayList(key, value)
         return this as B
     }
@@ -127,7 +137,10 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> :
         return this as B
     }
 
-    override fun putCharSequenceArrayListExtra(key: String?, value: ArrayList<CharSequence?>?): B {
+    override fun putCharSequenceArrayListExtra(
+        key: String?,
+        value: ArrayList<CharSequence?>?,
+    ): B {
         extras.putCharSequenceArrayList(key, value)
         return this as B
     }
@@ -198,49 +211,11 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> :
     }
 
 
-    private constructor() {
-        extras = Bundle()
-    }
-
-    constructor(target: Class<*>?) : this() {
-        this.target = target
-    }
-
-    constructor(rawUrl: String) : this() {
-        this.rawUrl = rawUrl
-        if (!TextUtils.isEmpty(rawUrl)) {
-            val routeInfo = getRouter(path)
-            if (null == routeInfo) {
-                if (routers.isEmpty()) {
-                    RLog.e(TAG, "错误：没有匹配到相关路由:$rawUrl,当前路由表为空,请确认是否已进行 Rudolph.init() 初始化操作！")
-                } else {
-                    RLog.e(TAG, "错误：没有匹配到相关路由:$rawUrl")
-                }
-                return
-            }
-
-            routeInfo.target?.also {
-                try {
-                    target = Class.forName(it)
-                } catch (e: ClassNotFoundException) {
-                    RLog.e(TAG, "错误：路由类加载失败！$target", e)
-                }
-            }
-
-
-            routePath = routeInfo.path
-            routeTag = routeInfo.tag
-            routeType = routeInfo.type
-            extraTypes = routeInfo.extras
-
-            //返回的所有的地址参数与查询参数值
-            val resultMap = uriAllParams
-            if (resultMap != null) {
-                //页面接收参数
-                for (kv: Map.Entry<String, String?> in resultMap.entries) {
-                    addParams(kv.key, kv.value)
-                }
-            }
+    private fun putUriAllParams() {
+        //返回的所有的地址参数与查询参数值
+        val resultMap = uriAllParams
+        for (kv: Map.Entry<String, String?> in resultMap.entries) {
+            addParams(kv.key, kv.value)
         }
     }
 
@@ -255,68 +230,65 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?> :
         }
     }
 
-    val path: String?
-        get() {
-            return Uri.parse(rawUrl).path
-        }
 
-    private val segments: List<String>
-        get() {
-            val segments: MutableList<String> = ArrayList()
-            val values = path?.split("/".toRegex())?.toTypedArray()
-            values?.forEach {
-                try {
-                    if (!TextUtils.isEmpty(it)) {
-                        segments.add(URLDecoder.decode(it, "utf-8"))
-                    }
-                } catch (e: UnsupportedEncodingException) {
-                    RLog.e(TAG, "getSegments failed!", e)
-                }
+    init {
+        RLog.i(TAG, "rawUrl=${rawUrl}")
+
+        if (rawUrl.isNotBlank()) {
+            val uri = Uri.parse(rawUrl)
+            uri.path?.let {
+                this.path = mutableListOf(it)
             }
-            return segments
-        }
 
-    private val encodedQuery: String?
-        get() {
-            rawUrl?.indexOf("?")?.let {
-                return if (it > -1) {
-                    rawUrl?.substring(it + 1)
+            encodedQuery = rawUrl.indexOf("?").let {
+                if (it > -1) {
+                    rawUrl.substring(it + 1)
                 } else {
                     null
                 }
             }
-            return null
+            val info = getRouter(rawUrl)
+            if (info != null) {
+                setRouterInfo(info)
+            }else{
+                RLog.e(TAG, "没有路由信息，rawUrl=${rawUrl}")
+            }
+            putUriAllParams()
         }
+    }
+
+    private fun setRouterInfo(it: RouteInfo) {
+        val targetName = it.target
+        if (!targetName.isNullOrEmpty()) {
+            try {
+                target = Class.forName(targetName)
+            } catch (e: ClassNotFoundException) {
+                RLog.e(TAG, "错误：路由类加载失败！$target", e)
+            }
+        } else {
+            target = it.targetClass
+        }
+        routeTag = it.tag
+        routeType = it.type
+        extraTypes = it.extras
+        interceptors = it.interceptors
+    }
+
 
     /**
      * 获取当前URL地址的所有参数
      *
      * @return 返回参数kv集合
      */
-    val uriAllParams: MutableMap<String, String?>?
+    val uriAllParams: MutableMap<String, String?>
         get() {
             val params: MutableMap<String, String?> = LinkedHashMap()
-            val routeSegments = routePath?.substring(1)?.split("/".toRegex())?.toTypedArray()
-            val pathSegments = segments
-
-            //segments个数不匹配
-            if (routeSegments?.size != pathSegments.size) return null
             //raw uri
             params[Consts.RAW_URI] = rawUrl
-            //path params
-            for (i in routeSegments.indices) {
-                if (routeSegments[i].startsWith(":")) {
-                    //put path params
-                    params[routeSegments[i].substring(1)] = pathSegments[i]
-                    continue
-                }
-                if (!routeSegments[i].equals(pathSegments[i], ignoreCase = true)) return null
-            }
-
             //put query params
             val query = encodedQuery
-            if (!TextUtils.isEmpty(query)) {
-                val queryParameters = query!!.split("&".toRegex()).toTypedArray()
+            if (!query.isNullOrEmpty()) {
+                val queryParameters = query.split("&".toRegex()).toTypedArray()
                 for (str: String in queryParameters) {
                     val kv = str.split("=".toRegex()).toTypedArray()
                     if (kv.size == 2) {

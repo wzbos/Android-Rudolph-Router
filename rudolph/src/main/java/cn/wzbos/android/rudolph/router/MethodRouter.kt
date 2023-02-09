@@ -10,7 +10,7 @@ import cn.wzbos.android.rudolph.exception.ErrorMessage
 import cn.wzbos.android.rudolph.exception.RudolphException
 import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.utils.TypeUtils
-import java.util.*
+import cn.wzbos.android.rudolph.utils.match
 
 class MethodRouter internal constructor(builder: UriRouter.Builder<*>) : Router<Any?>(builder) {
     companion object {
@@ -40,7 +40,7 @@ class MethodRouter internal constructor(builder: UriRouter.Builder<*>) : Router<
         try {
             target?.methods?.forEach { m ->
                 val route = m.getAnnotation(Route::class.java)
-                if (route != null && route.value.equals(routePath, ignoreCase = true)) {
+                if (route != null && route.match(rawUrl)) {
                     val values: MutableList<Any?> = ArrayList()
                     val params = extraTypes
                     params?.forEach { (argName, argType) ->
@@ -49,10 +49,10 @@ class MethodRouter internal constructor(builder: UriRouter.Builder<*>) : Router<
                             argValue = rawUrl
                         } else {
                             when {
-                                Application::class.java.name == argType -> {
+                                Application::class.java == argType -> {
                                     argValue = Rudolph.context
                                 }
-                                Context::class.java.name == argType -> {
+                                Context::class.java == argType -> {
                                     argValue = context ?: Rudolph.context
                                 }
                                 else -> {

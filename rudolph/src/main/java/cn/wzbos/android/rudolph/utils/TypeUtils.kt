@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.router.RouteBuilder
+import java.lang.reflect.Type
 
 /**
  * Created by wuzongbo on 2017/6/21.
@@ -82,7 +83,7 @@ object TypeUtils {
         return ret
     }
 
-    fun getObject(context: Context?, name: String, value: String, type: String): Any? {
+    fun getObject(context: Context?, name: String, value: String, type: Type): Any? {
         return getObject(context, name, value, type, null)
     }
 
@@ -90,56 +91,56 @@ object TypeUtils {
         context: Context?,
         name: String,
         value: String,
-        target: String,
-        builder: RouteBuilder<*, *>?
+        type: Type,
+        builder: RouteBuilder<*, *>?,
     ): Any? {
-        RLog.d("TypeUtils", "$name = $value, target:$target, bundle:$builder")
-        return when (target) {
-            "java.lang.String", "java.lang.CharSequence" -> {  //String、CharSequence
+        RLog.d("TypeUtils", "$name = $value, type:$type, bundle:$builder")
+        return when (type) {
+            String::class.java, CharSequence::class.java -> {  //String、CharSequence
                 builder?.putExtra(name, value)
                 value
             }
-            "int", "java.lang.Integer" -> {    //int、Integer
+            Int::class.java, Integer::class.java -> {    //int、Integer
                 val ret = toInteger(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "boolean", "java.lang.Boolean" -> { //boolean、Boolean
+            Boolean::class.java -> { //boolean、Boolean
                 val ret = toBoolean(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "double", "java.lang.Double" -> {  //double、Double
+            Double::class.java -> {  //double、Double
                 val ret = toDouble(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "float", "java.lang.Float" -> {    //float、Float
+            Float::class.java -> {    //float、Float
                 val ret = toFloat(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "long", "java.lang.Long" -> {      //long、Long
+            Long::class.java -> {      //long、Long
                 val ret = toLong(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "short", "java.lang.Short" -> {    //short、Short
+            Short::class.java -> {    //short、Short
                 val ret = toShort(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "byte", "java.lang.Byte" -> {      //byte、Byte
+            Byte::class.java -> {      //byte、Byte
                 val ret = toByte(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "char", "java.lang.Character" -> { //char、Character
+            Char::class.java -> { //char、Character
                 val ret = toChar(value)
                 builder?.putExtra(name, ret)
                 ret
             }
-            "android.content.Context" -> {      //Context
+            Context::class.java -> {      //Context
                 context
             }
             else -> {                           //Object

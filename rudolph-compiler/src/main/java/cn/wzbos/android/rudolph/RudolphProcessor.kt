@@ -2,10 +2,7 @@ package cn.wzbos.android.rudolph
 
 import cn.wzbos.android.rudolph.AndroidModuleUtil.createApiModule
 import cn.wzbos.android.rudolph.RudolphBuildInfo.Companion.load
-import cn.wzbos.android.rudolph.annotations.Component
-import cn.wzbos.android.rudolph.annotations.Export
-import cn.wzbos.android.rudolph.annotations.Extra
-import cn.wzbos.android.rudolph.annotations.Route
+import cn.wzbos.android.rudolph.annotations.*
 import com.squareup.javapoet.*
 import org.apache.commons.collections4.CollectionUtils
 import org.apache.commons.lang3.StringUtils
@@ -97,7 +94,7 @@ class RudolphProcessor : AbstractProcessor() {
 
     override fun process(
         annotations: Set<TypeElement>,
-        roundEnvironment: RoundEnvironment
+        roundEnvironment: RoundEnvironment,
     ): Boolean {
         if (CollectionUtils.isNotEmpty(annotations)) {
             try {
@@ -105,16 +102,15 @@ class RudolphProcessor : AbstractProcessor() {
                 val clsName = routeClsName
                 val superInterfaceType = elements!!.getTypeElement(Constant.ROUTE_TABLE)
 
-                val clsBuilder = TypeSpec.classBuilder(clsName)
-                    .addJavadoc(Constant.WARNING_TIPS)
+                val clsBuilder = TypeSpec.classBuilder(clsName).addJavadoc(Constant.WARNING_TIPS)
                     .addSuperinterface(ClassName.get(superInterfaceType))
                     .addModifiers(Modifier.PUBLIC)
 
                 //构件路由表类的初始化方法 init(Context context)
-                val initMethodBuilder = MethodSpec.methodBuilder("init")
-                    .addAnnotation(Override::class.java)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addParameter(ParameterSpec.builder(clsContext, "context").build())
+                val initMethodBuilder =
+                    MethodSpec.methodBuilder("init").addAnnotation(Override::class.java)
+                        .addModifiers(Modifier.PUBLIC)
+                        .addParameter(ParameterSpec.builder(clsContext, "context").build())
                 val components = roundEnvironment.getElementsAnnotatedWith(Component::class.java)
                 if (CollectionUtils.isNotEmpty(components)) {
                     for (element in components) {
@@ -123,9 +119,9 @@ class RudolphProcessor : AbstractProcessor() {
                 }
 
                 //构件路由表类的初始化方法 register()
-                val registerMethodBuilder = MethodSpec.methodBuilder("register")
-                    .addAnnotation(Override::class.java)
-                    .addModifiers(Modifier.PUBLIC)
+                val registerMethodBuilder =
+                    MethodSpec.methodBuilder("register").addAnnotation(Override::class.java)
+                        .addModifiers(Modifier.PUBLIC)
                 val routers = roundEnvironment.getElementsAnnotatedWith(Route::class.java)
                 if (CollectionUtils.isNotEmpty(routers)) {
                     var routetype: RouteType
@@ -180,10 +176,9 @@ class RudolphProcessor : AbstractProcessor() {
                     }
                 }
                 JavaFile.builder(
-                    Constant.PACKAGE_NAME, clsBuilder
-                        .addMethod(registerMethodBuilder.build())
-                        .addMethod(initMethodBuilder.build())
-                        .build()
+                    Constant.PACKAGE_NAME,
+                    clsBuilder.addMethod(registerMethodBuilder.build())
+                        .addMethod(initMethodBuilder.build()).build()
                 ).build().writeTo(mFiler)
                 writeClsNameToAssets(clsName)
                 logger.info(">>> Generated $clsName <<<")
@@ -242,6 +237,30 @@ class RudolphProcessor : AbstractProcessor() {
             return null
         }
 
+
+    private fun Array<String>.split(): String {
+        var splitStr = ""
+        this.forEachIndexed { index, item ->
+            if (index > 0) splitStr += ","
+            splitStr += "\"$item\""
+        }
+        return splitStr
+    }
+
+    private fun getRouteUrl(element: Element?, route: Route): String {
+        val urls = if (route.value.isNotBlank()) {
+            arrayOf(*route.urls).plus(route.value)
+        } else {
+            route.urls
+        }
+
+        return if (urls.isEmpty()) {
+            "\"/" + element.toString().lowercase(Locale.getDefault()) + "\""
+        } else {
+            urls.split()
+        }
+    }
+
     /**
      * 生成路由表类
      * <pre>
@@ -263,48 +282,65 @@ class RudolphProcessor : AbstractProcessor() {
      */
     private fun generateRouteTable(
         builder: MethodSpec.Builder,
-        element: Element?,
+        element: Element,
         target: ClassName,
         route: Route,
-        routetype: RouteType
+        routeType: RouteType,
     ) {
 
-//        logger.error(">>>>>>> " + element.getSimpleName() + " <<<<<<<<<<<");
         val arrays: MutableList<Element> = ArrayList()
-        if (element!!.kind == ElementKind.CLASS) {
-            builder.addCode(
-                "\n\n\$T.addRoute(new \$T().routeType(\$T.$routetype)\n.target(\$S)\n.path(\$S)",
-                rudolph,
-                ClassName.get(RouteInfo.Builder::class.java),  //RouteInfo.Builder
-                ClassName.get(RouteType::class.java),  //RouteType
-                target,
-                getRoutePath(element, route)
-            )
+
+        builder.addCode(
+            "\n\n\$T.addRoute(new \$T()"
+                    + "\n\t.routeType(\$T.$routeType)"
+                    + "\n\t.targetClass(\$T.class)",
+            rudolph,
+            ClassName.get(RouteInfo.Builder::class.java),  //RouteInfo.Builder
+            ClassName.get(RouteType::class.java),  //RouteType
+            target
+        )
+
+
+        builder.addCode("\n\t.url(${getRouteUrl(element, route)})")
+
+        if (route.tag.isNotEmpty()) {
+            builder.addCode("\n\t.tag(\$S)", route.tag)
+        }
+
+        try {
+            route.interceptors
+        } catch (e: MirroredTypesException) {
+            if (!e.typeMirrors.isNullOrEmpty()) {
+                builder.addCode("\n\t.interceptors(")
+                e.typeMirrors.forEachIndexed { index, interceptor ->
+                    if (index > 0) builder.addCode(", ")
+                    builder.addCode("\$T.class", interceptor)
+                }
+                builder.addCode(")")
+            }
+        }
+
+        if (element.kind == ElementKind.CLASS) {
             arrays.addAll(element.enclosedElements)
         } else {
             val method = element as ExecutableElement?
-            builder.addCode(
-                "\n\n\$T.addRoute(new \$T().routeType(\$T.$routetype)\n.target(\$S)\n.path(\$S)",
-                rudolph,
-                ClassName.get(RouteInfo.Builder::class.java),  //RouteInfo.Builder
-                ClassName.get(RouteType::class.java),  //RouteType
-                target,
-                getRoutePath(element, route)
-            )
             arrays.addAll(method!!.parameters)
         }
 
-        if (route.tag.isNotEmpty()) {
-            builder.addCode("\n.tag(\$S)", route.tag)
-        }
         for (field in arrays) {
             val param = field.getAnnotation(Extra::class.java) ?: continue
             val argName = getArgName(field, param)
-            builder.addCode(
-                "\n.extra(\$S,\$S)",
-                argName,
-                ClassName.get(field.asType())
-            )
+            val clsName: String = ClassName.get(field.asType()).toString()
+            if (clsName.contains("<") && clsName.contains(">")) {
+                builder.addCode(
+                    "\n\t.extra(\$S,new \$T<\$T>(){}.getType())",
+                    argName,
+                    TypeToken,
+                    ClassName.get(field.asType())
+                )
+            } else {
+                builder.addCode("\n\t.extra(\$S,\$T.class)", argName, ClassName.get(field.asType()))
+            }
         }
         builder.addCode(".build());")
     }
@@ -351,8 +387,7 @@ class RudolphProcessor : AbstractProcessor() {
             export.value
         }
         val clsRouterBuilder = TypeSpec.classBuilder(clsName) //增加注释
-            .addJavadoc(Constant.WARNING_TIPS)
-            .addModifiers(Modifier.PUBLIC)
+            .addJavadoc(Constant.WARNING_TIPS).addModifiers(Modifier.PUBLIC)
 
         //处理路由服务类型
         if (routeType == RouteType.SERVICE) {
@@ -369,12 +404,10 @@ class RudolphProcessor : AbstractProcessor() {
                     Modifier.STATIC
                 )
                 clsRouterBuilder.addMethod(
-                    MethodSpec.methodBuilder("get")
-                        .returns(interfaceClsName)
+                    MethodSpec.methodBuilder("get").returns(interfaceClsName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                         .addCode(
-                            CodeBlock.builder()
-                                .beginControlFlow("if (instance == null)")
+                            CodeBlock.builder().beginControlFlow("if (instance == null)")
                                 .beginControlFlow("synchronized ($clsName.class)")
                                 .beginControlFlow("if (instance == null)")
                                 .addStatement(
@@ -385,23 +418,16 @@ class RudolphProcessor : AbstractProcessor() {
                                 .beginControlFlow("if(result instanceof \$T)", interfaceClsName)
                                 .addStatement("instance = (\$T)result", interfaceClsName)
                                 .endControlFlow()
-                                .endControlFlow()
-                                .addStatement("return instance")
-                                .endControlFlow()
-                                .endControlFlow()
-                                .addStatement("return instance")
-                                .build()
-                        )
-                        .build()
+                                .endControlFlow().addStatement("return instance").endControlFlow()
+                                .endControlFlow().addStatement("return instance").build()
+                        ).build()
                 )
             } else {
                 clsRouterBuilder.addMethod(
                     MethodSpec.methodBuilder("newInstance")
-                        .addJavadoc("create new instance\n")
-                        .returns(interfaceClsName)
+                        .addJavadoc("create new instance\n").returns(interfaceClsName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addStatement("return (\$T) builder().execute()", interfaceClsName)
-                        .build()
+                        .addStatement("return (\$T) builder().execute()", interfaceClsName).build()
                 )
             }
         }
@@ -415,10 +441,8 @@ class RudolphProcessor : AbstractProcessor() {
             //构件构造方法(Context context, Class<?> clazz)
             clsRouterBuilder.addMethod(
                 MethodSpec.methodBuilder("builder")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .returns(routerBuilderClsName)
-                    .addStatement("return new \$T()", routerBuilderClsName)
-                    .build()
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC).returns(routerBuilderClsName)
+                    .addStatement("return new \$T()", routerBuilderClsName).build()
             )
             //        logger.error("getExportApiPackageName:"+getExportApiPackageName(element));
         }
@@ -427,8 +451,7 @@ class RudolphProcessor : AbstractProcessor() {
             val file = JavaFile.builder(
                 getExportApiPackageName(element, export != null),
                 clsRouterBuilder.build()
-            )
-                .build()
+            ).build()
             val outDirectory: File? = outputDirectory
             if (export != null && outputDirectory != null) {
                 file.writeTo(outDirectory)
@@ -445,8 +468,7 @@ class RudolphProcessor : AbstractProcessor() {
         try {
             route.clazz
         } catch (mte: MirroredTypesException) {
-            if (mte.typeMirrors.size > 0)
-                return mte.typeMirrors[0]
+            if (mte.typeMirrors.size > 0) return mte.typeMirrors[0]
         }
         return null
     }
@@ -470,9 +492,14 @@ class RudolphProcessor : AbstractProcessor() {
     }
 
     private fun getRoutePath(element: Element?, route: Route): String {
-        return if (StringUtils.isEmpty(route.value)) "/" + element.toString()
-            .lowercase(Locale.getDefault()) else route.value.lowercase(Locale.getDefault())
+        val url = route.value
+        return if (url.isEmpty()) {
+            "/" + element.toString().lowercase(Locale.getDefault())
+        } else {
+            route.value.first().lowercase(Locale.getDefault())
+        }
     }
+
 
     private fun getArgName(element: Element, param: Extra): String {
         return if (StringUtils.isEmpty(param.value)) element.simpleName.toString() else param.value
@@ -486,7 +513,7 @@ class RudolphProcessor : AbstractProcessor() {
         interfaceClsName: TypeName?,
         builderType: ClassName,
         element: TypeElement?,
-        routeType: RouteType
+        routeType: RouteType,
     ): TypeSpec {
         val route = element!!.getAnnotation(Route::class.java)
         val builder = TypeSpec.classBuilder(builderType.simpleName())
@@ -588,10 +615,8 @@ class RudolphProcessor : AbstractProcessor() {
                 }
             }
             val extraName = getArgName(field, param)
-            val msBuilder = MethodSpec.methodBuilder(fieldName)
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(ParameterSpec.builder(typeName, "val").build())
-                .returns(builderType)
+            val msBuilder = MethodSpec.methodBuilder(fieldName).addModifiers(Modifier.PUBLIC)
+                .addParameter(ParameterSpec.builder(typeName, "val").build()).returns(builderType)
             var argValName = "val"
             if (param.json) {
                 msBuilder.addStatement("String json = new \$T().toJson(val)", Gson)
@@ -643,14 +668,11 @@ class RudolphProcessor : AbstractProcessor() {
     private fun generateRouteBinderCls(element: TypeElement?, target: ClassName) {
         val clsName = target.simpleName() + "Binder"
         logger.info("generate <<< $clsName >>>")
-        val clsRouterBuilder = TypeSpec.classBuilder(clsName)
-            .addJavadoc(Constant.WARNING_TIPS)
-            .addSuperinterface(ClassName.get(type_IBind))
-            .addModifiers(Modifier.PUBLIC)
+        val clsRouterBuilder = TypeSpec.classBuilder(clsName).addJavadoc(Constant.WARNING_TIPS)
+            .addSuperinterface(ClassName.get(type_IBind)).addModifiers(Modifier.PUBLIC)
 
         //generate bind method
-        val bindBuilder = MethodSpec.methodBuilder("bind")
-            .addAnnotation(Override::class.java)
+        val bindBuilder = MethodSpec.methodBuilder("bind").addAnnotation(Override::class.java)
             .addModifiers(Modifier.PUBLIC)
             .addParameter(ParameterSpec.builder(TypeName.OBJECT, "target").build())
             .addParameter(ParameterSpec.builder(Bundle, "args").build())
@@ -659,8 +681,8 @@ class RudolphProcessor : AbstractProcessor() {
         val clsElements = element!!.enclosedElements
         if (clsElements != null && clsElements.size > 0) {
             var targetName: String = target.simpleName()
-            targetName = targetName.substring(0, 1)
-                .lowercase(Locale.getDefault()) + targetName.substring(1)
+            targetName =
+                targetName.substring(0, 1).lowercase(Locale.getDefault()) + targetName.substring(1)
             bindBuilder.addStatement("\$T $targetName = (\$T)target", target, target)
             val codeBlockBuilder = CodeBlock.builder()
             codeBlockBuilder.beginControlFlow("if (args != null)")
@@ -767,10 +789,9 @@ class RudolphProcessor : AbstractProcessor() {
             bindBuilder.addCode(codeBlockBuilder.build())
         }
         clsRouterBuilder.addMethod(bindBuilder.build())
-        JavaFile.builder(getPackageName(element), clsRouterBuilder.build())
-            .build()
-            .writeTo(mFiler)
+        JavaFile.builder(getPackageName(element), clsRouterBuilder.build()).build().writeTo(mFiler)
     }
+
 
     /**
      * 判断当前工程是否为kotlin工程

@@ -18,7 +18,7 @@ import static cn.wzbos.android.rudolph.Consts.RAW_URI;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-@Route(value = "/activity/test")
+@Route(urls = {"/activity/test"})
 @Export
 public class TestActivity extends AppCompatActivity {
     @Extra(RAW_URI)

@@ -27,7 +27,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:7.0.4"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
-        classpath "cn.wzbos.android:chihiro-plugin:1.0.10-SNAPSHOT"
+        classpath "cn.wzbos.android:chihiro-plugin:1.0.10"
     }
 }
 

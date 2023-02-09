@@ -8,7 +8,7 @@ import cn.wzbos.android.rudolph.annotations.Extra
 import cn.wzbos.android.rudolph.annotations.Route
 import kotlinx.android.synthetic.main.activity_login.*
 
-@Route("/kotlin/login")
+@Route(urls =  ["/kotlin/login"])
 class LoginActivity : AppCompatActivity() {
 
     @Extra

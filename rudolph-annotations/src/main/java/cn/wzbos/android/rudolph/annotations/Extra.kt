@@ -4,7 +4,7 @@ package cn.wzbos.android.rudolph.annotations
  * Created by wuzongbo on 2017/5/30.
  */
 @Target(AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FIELD)
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.RUNTIME)
 annotation class Extra(
     val value: String = "",
     val export: Boolean = true,

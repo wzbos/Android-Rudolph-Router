@@ -28,6 +28,9 @@ class ActivityRouter : Router<Any?> {
     var delayFinish: Long = -1
         private set
 
+    fun buildUpon(): RouteBuilder<*, *> {
+        return Builder(this)
+    }
 
     private constructor(builder: Builder<*>) : super(builder) {
         options = builder.options
@@ -37,7 +40,7 @@ class ActivityRouter : Router<Any?> {
         delayFinish = builder.delayFinish
     }
 
-     constructor(builder: UriRouter.Builder<*>) : super(builder) {
+    constructor(builder: UriRouter.Builder<*>) : super(builder) {
         options = builder.options
         flags = builder.flags
         enterAnim = builder.enterAnim
@@ -94,10 +97,12 @@ class ActivityRouter : Router<Any?> {
         }
 
         val intent = getIntent(context)
-        context.startActivity(intent, options)
-        startOver(context)
-        if (context is Activity)
-            finish(context)
+        if (intent != null) {
+            context.startActivity(intent, options)
+            startOver(context)
+            if (context is Activity)
+                finish(context)
+        }
     }
 
     /**
@@ -167,8 +172,15 @@ class ActivityRouter : Router<Any?> {
         var delayFinish: Long = -1
             private set
 
-        constructor(cls: Class<*>?) : super(cls)
         constructor(url: String) : super(url)
+//        constructor(target: Class<*>) : super(target: Class<*>)
+        constructor(router: ActivityRouter) : super(router.rawUrl) {
+            this.options = router.options
+            this.flags = router.flags
+            this.enterAnim = router.enterAnim
+            this.exitAnim = router.exitAnim
+            this.delayFinish = router.delayFinish
+        }
 
         /**
          * 设置Activity的启动标识
@@ -273,4 +285,6 @@ class ActivityRouter : Router<Any?> {
 
 
     }
+
+
 }

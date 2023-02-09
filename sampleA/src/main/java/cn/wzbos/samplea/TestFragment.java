@@ -17,7 +17,7 @@ import cn.wzbos.android.rudolph.annotations.Route;
 import java.util.Locale;
 
 
-@Route("/fragment/test")
+@Route(urls = "/fragment/test")
 public class TestFragment extends Fragment {
     @Extra(Consts.RAW_URI)
     String routeUri;

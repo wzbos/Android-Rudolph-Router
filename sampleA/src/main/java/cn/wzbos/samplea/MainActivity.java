@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-@Route
+@Route(interceptors = {LoginInterceptor.class})
 public class MainActivity extends AppCompatActivity {
 
     @Extra("index")
