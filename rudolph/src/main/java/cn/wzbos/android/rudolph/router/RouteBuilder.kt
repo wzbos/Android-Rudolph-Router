@@ -9,7 +9,6 @@ import cn.wzbos.android.rudolph.Rudolph.getRouter
 import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.utils.TypeUtils
 import java.io.Serializable
-import java.lang.reflect.Type
 import java.net.URLDecoder
 import java.util.*
 
@@ -24,7 +23,6 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
         const val TAG = "RouteBuilder"
     }
 
-
     override var extras: Bundle = Bundle()
     var scheme: MutableList<String>? = null
     var host: MutableList<String>? = null
@@ -38,16 +36,13 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
         private set
     var routeTag: String? = null
         private set
-    var extraTypes: MutableMap<String, Type>? = null
+    var extraTypes: MutableMap<String, ExtraType>? = null
         private set
     var interceptors: MutableList<Class<out RouteInterceptor>>? = null
         private set
 
     private var encodedQuery: String? = null
 
-//    constructor(routeInfo: RouteInfo) : this(routeInfo.target) {
-//        setRouterInfo(routeInfo)
-//    }
 
     override fun putExtra(map: Bundle?): B {
         extras.putAll(map)
@@ -210,7 +205,6 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
         return this as B
     }
 
-
     private fun putUriAllParams() {
         //返回的所有的地址参数与查询参数值
         val resultMap = uriAllParams
@@ -226,10 +220,10 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
                 TypeUtils.getObject(null, key, value, type, this)
             }
         } else {
+            //未用 @Extra 注解声明的参数类型，
             extras.putString(key, value)
         }
     }
-
 
     init {
         RLog.i(TAG, "rawUrl=${rawUrl}")
@@ -250,7 +244,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
             val info = getRouter(rawUrl)
             if (info != null) {
                 setRouterInfo(info)
-            }else{
+            } else {
                 RLog.e(TAG, "没有路由信息，rawUrl=${rawUrl}")
             }
             putUriAllParams()
@@ -295,7 +289,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
                         try {
                             val name = URLDecoder.decode(kv[0], "utf-8")
                             val value = URLDecoder.decode(kv[1], "utf-8")
-                            params[name] = value
+                            params[name] = value.ifEmpty { null }
                         } catch (e: Exception) {
                             RLog.e(TAG, "getUriAllParams failed!", e)
                         }

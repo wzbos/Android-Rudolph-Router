@@ -14,6 +14,8 @@ import kotlin.reflect.KClass
     AnnotationTarget.PROPERTY_SETTER
 )
 annotation class Route(
+    val value: String = "",
+
     /**
      * 完整的路由地址，
      * 例如:
@@ -22,8 +24,6 @@ annotation class Route(
      * 正则表达式："^[http|https]://"
      */
     val urls: Array<String> = [],
-
-    val value: String = "",
 
     /**
      * 当前路由自定义标签

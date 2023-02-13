@@ -1,9 +1,7 @@
 package cn.wzbos.android.rudolph.router
 
-import android.app.Application
 import android.content.Context
-import cn.wzbos.android.rudolph.Consts
-import cn.wzbos.android.rudolph.Rudolph
+import cn.wzbos.android.rudolph.UnknownExtraType
 import cn.wzbos.android.rudolph.annotations.Route
 import cn.wzbos.android.rudolph.exception.ErrorCode
 import cn.wzbos.android.rudolph.exception.ErrorMessage
@@ -17,7 +15,7 @@ class MethodRouter internal constructor(builder: UriRouter.Builder<*>) : Router<
         const val TAG = "MethodRouter"
     }
 
-    private val uriKvs: MutableMap<String, String?>? = builder.uriAllParams
+    private val uriKvs: MutableMap<String, String?> = builder.uriAllParams
 
     @Deprecated(message = "use execute", replaceWith = ReplaceWith("execute(context)"))
     fun open(context: Context?): Any? {
@@ -42,40 +40,26 @@ class MethodRouter internal constructor(builder: UriRouter.Builder<*>) : Router<
                 val route = m.getAnnotation(Route::class.java)
                 if (route != null && route.match(rawUrl)) {
                     val values: MutableList<Any?> = ArrayList()
-                    val params = extraTypes
-                    params?.forEach { (argName, argType) ->
-                        var argValue: Any? = null
-                        if (Consts.RAW_URI == argName) {
-                            argValue = rawUrl
-                        } else {
-                            when {
-                                Application::class.java == argType -> {
-                                    argValue = Rudolph.context
-                                }
-                                Context::class.java == argType -> {
-                                    argValue = context ?: Rudolph.context
-                                }
-                                else -> {
-                                    kotlin.run {
-                                        uriKvs?.forEach { (key, value) ->
-                                            if (argName.equals(key, ignoreCase = true)) {
-                                                argValue = if (value.isNullOrEmpty()) {
-                                                    null
-                                                } else {
-                                                    TypeUtils.getObject(
-                                                        context,
-                                                        argName,
-                                                        value,
-                                                        argType
-                                                    )
-                                                }
-                                                return@run
-                                            }
-                                        }
-                                    }
-                                }
+                    extraTypes?.onEachIndexed { index, entry ->
+                        //兼容2.1.0之前的版本，反射获取参数类型
+                        if (entry.value is UnknownExtraType) {
+                            entry.value.type = m.parameterTypes[index]
+                        }
+                    }?.forEach { (argName, argType) ->
+                        var value: String? = null
+                        for (element in uriKvs) {
+                            if (argName.equals(element.key, ignoreCase = true)) {
+                                value = element.value
+                                break
                             }
                         }
+
+                        val argValue: Any? = TypeUtils.getObject(
+                            context,
+                            argName,
+                            value,
+                            argType
+                        )
                         values.add(argValue)
                     }
                     val obj = m.invoke(null, *values.toTypedArray())

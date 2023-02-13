@@ -13,7 +13,7 @@ class RouteInfo(builder: Builder) {
     @Deprecated("请使用targetClass", replaceWith = ReplaceWith("targetClass"))
     val target: String?
     val targetClass: Class<*>?
-    val extras: MutableMap<String, Type>?
+    val extras: MutableMap<String, ExtraType>?
     var type: RouteType?
         private set
 
@@ -32,12 +32,12 @@ class RouteInfo(builder: Builder) {
         var url: MutableList<String>? = null
         var target: String? = null
         var targetClass: Class<*>? = null
-        var extras: MutableMap<String, Type>? = null
+        var extras: MutableMap<String, ExtraType>? = null
         var routeType: RouteType? = null
         var tag: String? = null
         var interceptors: MutableList<Class<out RouteInterceptor>>? = null
 
-        @Deprecated("已过期")
+        @Deprecated("已过期", replaceWith = ReplaceWith("url(path)"))
         fun path(path: String): Builder {
             this.url = mutableListOf(path)
             return this
@@ -48,7 +48,7 @@ class RouteInfo(builder: Builder) {
             return this
         }
 
-
+        @Deprecated("已过期", replaceWith = ReplaceWith("targetClass(target)"))
         fun target(target: String): Builder {
             this.target = target
             return this
@@ -59,27 +59,45 @@ class RouteInfo(builder: Builder) {
             return this
         }
 
+        @Deprecated("已过期")
         fun extra(key: String, className: String): Builder {
-            val type = when (className) {
-                Boolean::class.java.name -> Boolean::class.java
-                Byte::class.java.name -> Byte::class.java
-                Char::class.java.name -> Char::class.java
-                Short::class.java.name -> Short::class.java
-                Double::class.java.name -> Double::class.java
-                Float::class.java.name -> Float::class.java
-                Int::class.java.name -> Int::class.java
-                Long::class.java.name -> Long::class.java
-                else -> Class.forName(className)
+            return try {
+                val type = when (className) {
+                    Boolean::class.java.name -> Boolean::class.java
+                    Byte::class.java.name -> Byte::class.java
+                    Char::class.java.name -> Char::class.java
+                    Short::class.java.name -> Short::class.java
+                    Double::class.java.name -> Double::class.java
+                    Float::class.java.name -> Float::class.java
+                    Int::class.java.name -> Int::class.java
+                    Long::class.java.name -> Long::class.java
+                    Void::class.java.name -> Void::class.java
+                    else -> Class.forName(className)
+                }
+                extra(key, ExtraType(type))
+            } catch (e: Exception) {
+                println("类型转换失败! (target=${target}, key:${key}, className:${className})")
+                e.printStackTrace()
+                //兼容老版本，此处统一转换为Any类型
+                extra(key, UnknownExtraType(className))
             }
-            extra(key, type)
-            return this
         }
 
-        fun extra(key: String, cls: Type): Builder {
+        @JvmOverloads
+        fun extra(
+            key: String,
+            type: Type,
+            base64: Boolean = false,
+            json: Boolean = false
+        ): Builder {
+            return extra(key, ExtraType(type, base64 = base64, json = json))
+        }
+
+        fun extra(key: String, extraType: ExtraType): Builder {
             if (extras == null) {
                 extras = LinkedHashMap()
             }
-            extras?.put(key, cls)
+            extras?.put(key, extraType)
             return this
         }
 

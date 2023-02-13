@@ -17,7 +17,7 @@ abstract class Router<T> internal constructor(builder: RouteBuilder<*, *>) {
     var routePath: MutableList<String>? = builder.path
     var routeType: RouteType? = builder.routeType
     var routeTag: String? = builder.routeTag
-    var extraTypes: MutableMap<String, Type>? = builder.extraTypes
+    var extraTypes: MutableMap<String, ExtraType>? = builder.extraTypes
     var interceptors: MutableList<Class<out RouteInterceptor>>? = builder.interceptors
 
     val uriData: Uri

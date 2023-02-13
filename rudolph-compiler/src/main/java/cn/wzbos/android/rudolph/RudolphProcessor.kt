@@ -333,13 +333,17 @@ class RudolphProcessor : AbstractProcessor() {
             val clsName: String = ClassName.get(field.asType()).toString()
             if (clsName.contains("<") && clsName.contains(">")) {
                 builder.addCode(
-                    "\n\t.extra(\$S,new \$T<\$T>(){}.getType())",
+                    "\n\t.extra(\$S, new \$T<\$T>(){}.getType(), ${param.base64}, ${param.json})",
                     argName,
                     TypeToken,
                     ClassName.get(field.asType())
                 )
             } else {
-                builder.addCode("\n\t.extra(\$S,\$T.class)", argName, ClassName.get(field.asType()))
+                builder.addCode(
+                    "\n\t.extra(\$S, \$T.class, ${param.base64}, ${param.json})",
+                    argName,
+                    ClassName.get(field.asType())
+                )
             }
         }
         builder.addCode(".build());")
@@ -492,12 +496,13 @@ class RudolphProcessor : AbstractProcessor() {
     }
 
     private fun getRoutePath(element: Element?, route: Route): String {
-        val url = route.value
-        return if (url.isEmpty()) {
-            "/" + element.toString().lowercase(Locale.getDefault())
-        } else {
-            route.value.first().lowercase(Locale.getDefault())
+        if (route.urls.isNotEmpty()) {
+            return route.urls.first().lowercase(Locale.getDefault())
         }
+        if (route.value.isNotBlank()) {
+            return route.value.lowercase(Locale.getDefault())
+        }
+        return "/" + element.toString().lowercase(Locale.getDefault())
     }
 
 
