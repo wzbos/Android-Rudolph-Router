@@ -1,5 +1,7 @@
 package cn.wzbos.samplea
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -8,7 +10,7 @@ import cn.wzbos.android.rudolph.annotations.Extra
 import cn.wzbos.android.rudolph.annotations.Route
 import kotlinx.android.synthetic.main.activity_login.*
 
-@Route(urls =  ["/kotlin/login"])
+@Route(urls = ["/kotlin/login"])
 class LoginActivity : AppCompatActivity() {
 
     @Extra
@@ -28,9 +30,6 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener {
             AppUserRouter.get().isLogin = true
             Toast.makeText(this, "login success!", Toast.LENGTH_SHORT).show()
-            to?.also {
-                Rudolph.builder(to).putExtra(toExtras).delayFinish().execute(this)
-            }
         }
     }
 

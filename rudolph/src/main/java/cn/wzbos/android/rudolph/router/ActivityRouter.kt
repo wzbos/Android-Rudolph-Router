@@ -9,6 +9,10 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.AnimRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.exception.ErrorMessage
 import cn.wzbos.android.rudolph.exception.RudolphException
@@ -138,6 +142,29 @@ class ActivityRouter : Router<Any?> {
     }
 
 
+    /**
+     * startForResult for Activity
+     */
+    fun startForResult(
+        activity: FragmentActivity,
+        resultCallback: ActivityResultCallback
+    ) {
+        if (super.intercept(activity)) return
+        val intent = getIntent(activity) ?: return
+        this.requestCode = ActivityResultRegister.register(resultCallback)
+        activity.lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                if (Lifecycle.Event.ON_DESTROY == event) {
+                    ActivityResultRegister.remove(requestCode)
+                }
+            }
+        })
+        activity.startActivityForResult(intent, requestCode, options)
+        startOver(activity)
+        finish(activity)
+    }
+
+
     private fun startOver(context: Context?) {
         if (-1 != enterAnim && -1 != exitAnim && context is Activity) {
             context.overridePendingTransition(enterAnim, exitAnim)
@@ -173,7 +200,8 @@ class ActivityRouter : Router<Any?> {
             private set
 
         constructor(url: String) : super(url)
-//        constructor(target: Class<*>) : super(target: Class<*>)
+
+        //        constructor(target: Class<*>) : super(target: Class<*>)
         constructor(router: ActivityRouter) : super(router.rawUrl) {
             this.options = router.options
             this.flags = router.flags
@@ -283,8 +311,11 @@ class ActivityRouter : Router<Any?> {
             return build().startForResult(activity, requestCode)
         }
 
-
+        fun startForResult(
+            activity: FragmentActivity,
+            resultCallback: ActivityResultCallback
+        ) {
+            return build().startForResult(activity, resultCallback)
+        }
     }
-
-
 }

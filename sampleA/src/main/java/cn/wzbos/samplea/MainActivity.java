@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -157,6 +158,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
         });
 
+        array.put("Test Result", v -> {
+            KotlinActivityRouter.builder().build().startForResult(this, (resultCode, result) -> {
+                String testResult = result.getStringExtra("testResult");
+                Toast.makeText(MainActivity.this, "testResult=" + testResult, Toast.LENGTH_SHORT).show();
+            });
+        });
+
         for (Map.Entry<String, View.OnClickListener> entry : array.entrySet()) {
             Button btn = new Button(this);
             btn.setLayoutParams(new LinearLayout.LayoutParams(
@@ -174,5 +182,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Rudolph.onNewIntent(this, intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (!Rudolph.onActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

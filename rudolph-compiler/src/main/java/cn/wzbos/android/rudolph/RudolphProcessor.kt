@@ -431,7 +431,7 @@ class RudolphProcessor : AbstractProcessor() {
                     MethodSpec.methodBuilder("newInstance")
                         .addJavadoc("create new instance\n").returns(interfaceClsName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addStatement("return (\$T) builder().execute()", interfaceClsName).build()
+                        .addStatement("return (\$T) builder().build().execute()", interfaceClsName).build()
                 )
             }
         }

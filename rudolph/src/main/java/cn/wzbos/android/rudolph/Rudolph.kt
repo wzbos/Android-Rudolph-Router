@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import cn.wzbos.android.rudolph.logger.RLog
+import cn.wzbos.android.rudolph.router.ActivityResultRegister
 import cn.wzbos.android.rudolph.router.UriRouter
 import cn.wzbos.android.rudolph.utils.match
 import java.util.*
@@ -75,6 +76,7 @@ object Rudolph {
     ) {
         RLog.v(TAG, "init")
         if (this.isInitialized) return
+
         this.scheme = scheme
         this.host = host
         this.context = context.applicationContext as Application
@@ -287,6 +289,24 @@ object Rudolph {
         return UriRouter.Builder<Nothing>(url!!)
     }
 
+    /**
+     * 在startActivityForResult所属的Activity/Fragment调用
+     * 例如：
+     * @Override
+     * protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+     *     if (!Rudolph.onActivityResult(requestCode, resultCode, data)) {
+     *          super.onActivityResult(requestCode, resultCode, data);
+     *     }
+     * }
+     */
+    @JvmStatic
+    fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ): Boolean {
+        return ActivityResultRegister.dispatchResult(requestCode, resultCode, data)
+    }
 }
 
 
