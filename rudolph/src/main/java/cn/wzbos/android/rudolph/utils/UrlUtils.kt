@@ -6,11 +6,16 @@ import cn.wzbos.android.rudolph.annotations.Route
 import java.net.URI
 
 
-fun String.toURI(): URI {
-    return if (this.startsWith("/")) {
-        URI.create("//${this}")
-    } else {
-        URI.create(this)
+fun String.toURI(): URI? {
+    return try {
+        if (this.startsWith("/")) {
+            URI.create("//${this}")
+        } else {
+            URI.create(this)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
@@ -45,7 +50,7 @@ private fun match(
     if (openUrl.isNullOrBlank())
         return false
 
-    val uri = openUrl.toURI()
+    val uri = openUrl.toURI() ?: return false
     val scheme = if (uri.scheme.isNullOrBlank()) Rudolph.scheme else uri.scheme
     val host = if (uri.host.isNullOrBlank()) Rudolph.scheme else uri.scheme
     val path = uri.path
@@ -56,7 +61,7 @@ private fun match(
                 return true
             }
         } else {
-            val supportUri = it.toURI()
+            val supportUri = it.toURI() ?: return@forEach
             if (!supportUri.scheme.isNullOrEmpty()
                 && !supportUri.scheme.equals(scheme, true)
             ) {
