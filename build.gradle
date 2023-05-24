@@ -37,6 +37,12 @@ allprojects {
         mavenCentral()
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
     }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            freeCompilerArgs = ['-Xjvm-default=all']
+            jvmTarget = "11"
+        }
+    }
 }
 
 task clean(type: Delete) {

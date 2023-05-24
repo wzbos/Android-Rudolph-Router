@@ -3,7 +3,7 @@ package cn.wzbos.android.rudolph.utils
 import android.app.Application
 import android.content.Context
 import android.util.Base64
-import cn.wzbos.android.rudolph.ExtraType
+import cn.wzbos.android.rudolph.ExtraInfo
 import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.router.RouteBuilder
@@ -86,7 +86,7 @@ object TypeUtils {
         return ret
     }
 
-    fun getObject(context: Context?, name: String, value: String?, type: ExtraType): Any? {
+    fun getObject(context: Context?, name: String, value: String?, type: ExtraInfo): Any? {
         return getObject(context, name, value, type, null)
     }
 
@@ -94,7 +94,7 @@ object TypeUtils {
         context: Context?,
         name: String,
         value: String?,
-        extraType: ExtraType,
+        extraType: ExtraInfo,
         builder: RouteBuilder<*, *>?,
     ): Any? {
         RLog.d("TypeUtils", "$name = $value, type:$extraType, bundle:$builder")

@@ -6,6 +6,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import cn.wzbos.android.rudolph.ExtraType;
 import cn.wzbos.android.rudolph.Rudolph;
 import cn.wzbos.android.rudolph.annotations.Export;
 import cn.wzbos.android.rudolph.annotations.Extra;
@@ -97,15 +98,15 @@ public class TestActivity extends AppCompatActivity {
     @Extra(value = "parcelableArrayList")
     ArrayList<Broker> parcelableArrayListArg;
 
-    @Extra(value = "parcelable")
+    @Extra(value = "parcelable", paramsType = ExtraType.Serializable)
     Broker parcelableParam;
 
     //json
-    @Extra(value = "json", json = true)
+    @Extra(value = "json", paramsType = ExtraType.Json)
     User<Broker> jsonParam;
 
     //encode：json->base64，decode：base64->json
-    @Extra(value = "base64json", json = true, base64 = true)
+    @Extra(value = "base64json", paramsType = ExtraType.Base64Json)
     User<Broker> base64jsonParam;
 
     @Override

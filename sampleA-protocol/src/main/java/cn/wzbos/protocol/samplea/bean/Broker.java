@@ -3,10 +3,12 @@ package cn.wzbos.protocol.samplea.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 /**
  * Created by wuzongbo on 2017/4/11.
  */
-public class Broker implements Parcelable {
+public class Broker implements Parcelable, Serializable {
     private String sex;
     private int age;
 

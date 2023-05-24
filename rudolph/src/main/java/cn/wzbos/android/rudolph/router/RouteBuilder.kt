@@ -8,9 +8,12 @@ import cn.wzbos.android.rudolph.*
 import cn.wzbos.android.rudolph.Rudolph.getRouter
 import cn.wzbos.android.rudolph.logger.RLog
 import cn.wzbos.android.rudolph.utils.TypeUtils
+import com.google.gson.Gson
 import java.io.Serializable
 import java.net.URLDecoder
 import java.util.*
+import android.util.Base64
+
 
 /**
  * Bundle IBuilder
@@ -36,7 +39,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
         private set
     var routeTag: String? = null
         private set
-    var extraTypes: MutableMap<String, ExtraType>? = null
+    var extraTypes: MutableMap<String, ExtraInfo>? = null
         private set
     var interceptors: MutableList<Class<out RouteInterceptor>>? = null
         private set
@@ -106,6 +109,48 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
 
     override fun putExtra(key: String?, value: Array<Parcelable?>?): B {
         extras.putParcelableArray(key, value)
+        return this as B
+    }
+
+    override fun putSerializable(
+        key: String?,
+        value: Serializable?,
+    ): B {
+        extras.putSerializable(key, value)
+        return this as B
+    }
+
+    override fun putParcelable(
+        key: String?,
+        value: Parcelable?,
+    ): B {
+        extras.putParcelable(key, value)
+        return this as B
+    }
+
+
+    override fun putBase64(key: String?, value: String): B {
+        return putBase64(key, value.toByteArray())
+    }
+
+    override fun putBase64(key: String?, value: ByteArray): B {
+        val base64 =
+            String(Base64.encode(value, Base64.NO_PADDING or Base64.URL_SAFE))
+        extras.putString(key, base64)
+        return this as B
+    }
+
+    override fun putBase64Json(key: String?, value: Any): B {
+        val json = Gson().toJson(value)
+        val base64 =
+            String(Base64.encode(json.toByteArray(), Base64.NO_PADDING or Base64.URL_SAFE))
+        extras.putString(key, base64)
+        return this as B
+    }
+
+    override fun putJson(key: String?, value: Any): B {
+        val json = Gson().toJson(value)
+        extras.putString(key, json)
         return this as B
     }
 

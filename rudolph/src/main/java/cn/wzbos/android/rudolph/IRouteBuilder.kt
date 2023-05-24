@@ -61,4 +61,10 @@ interface IRouteBuilder<B : IRouteBuilder<B, R>?, R : Router<*>?> {
      */
     fun build(): R
 
+    fun putSerializable(key: String?, value: Serializable?): B
+    fun putParcelable(key: String?, value: Parcelable?): B
+    fun putBase64(key: String?, value: String): B
+    fun putBase64Json(key: String?, value: Any): B
+    fun putBase64(key: String?, value: ByteArray): B
+    fun putJson(key: String?, value: Any): B
 }

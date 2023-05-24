@@ -431,7 +431,8 @@ class RudolphProcessor : AbstractProcessor() {
                     MethodSpec.methodBuilder("newInstance")
                         .addJavadoc("create new instance\n").returns(interfaceClsName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addStatement("return (\$T) builder().build().execute()", interfaceClsName).build()
+                        .addStatement("return (\$T) builder().build().execute()", interfaceClsName)
+                        .build()
                 )
             }
         }
@@ -597,44 +598,47 @@ class RudolphProcessor : AbstractProcessor() {
 
 //            TypeKind typeKind = typeMirror.getKind();
 //            logger.error(fieldName + " [Class:" + ClassName.get(typeMirror).toString() + ",Kind:" + typeKind + ",Primitive:" + typeKind.isPrimitive() + "]");
-            var methodName = "putExtra"
-            if (typeName is ParameterizedTypeName) {
-                //                logger.error("rawType:" + parameterizedTypeName.rawType);
-                if ("java.util.ArrayList" == typeName.rawType.toString()) {
-                    val strTypeArguments = typeName.typeArguments.toString()
-                    //                    logger.error("typeArguments:" + parameterizedTypeName.typeArguments.toString());
-                    methodName = when (strTypeArguments) {
-                        "[java.lang.CharSequence]" -> {
-                            "putCharSequenceArrayListExtra"
+            val methodName = when (param.paramsType) {
+                ExtraType.Serializable -> "putSerializable"
+                ExtraType.Parcelable -> "putParcelable"
+                ExtraType.Base64 -> "putBase64"
+                ExtraType.Base64Json -> "putBase64Json"
+                ExtraType.Json -> "putJson"
+                ExtraType.CharSequenceArray -> "putCharSequenceArrayExtra"
+                ExtraType.CharSequenceArrayList -> "putCharSequenceArrayListExtra"
+                ExtraType.StringArrayList -> "putStringArrayListExtra"
+                ExtraType.StringArray -> "putStringArrayExtra"
+                ExtraType.IntegerArray -> "putIntegerArrayExtra"
+                ExtraType.IntegerArrayList -> "putIntegerArrayListExtra"
+                ExtraType.ParcelableArray -> "putParcelableArrayExtra"
+                ExtraType.ParcelableArrayList -> "putParcelableArrayListExtra"
+                else -> {
+                    if (typeName is ParameterizedTypeName && "java.util.ArrayList" == typeName.rawType.toString()) {
+                        //logger.error("typeArguments:" + parameterizedTypeName.typeArguments.toString());
+                        when (typeName.typeArguments.toString()) {
+                            "[java.lang.CharSequence]" -> {
+                                "putCharSequenceArrayListExtra"
+                            }
+                            "[java.lang.String]" -> {
+                                "putStringArrayListExtra"
+                            }
+                            "[java.lang.Integer]" -> {
+                                "putIntegerArrayListExtra"
+                            }
+                            else -> {
+                                "putParcelableArrayListExtra"
+                            }
                         }
-                        "[java.lang.String]" -> {
-                            "putStringArrayListExtra"
-                        }
-                        "[java.lang.Integer]" -> {
-                            "putIntegerArrayListExtra"
-                        }
-                        else -> {
-                            "putParcelableArrayListExtra"
-                        }
+                    } else {
+                        "putExtra"
                     }
                 }
             }
+
             val extraName = getArgName(field, param)
             val msBuilder = MethodSpec.methodBuilder(fieldName).addModifiers(Modifier.PUBLIC)
                 .addParameter(ParameterSpec.builder(typeName, "val").build()).returns(builderType)
-            var argValName = "val"
-            if (param.json) {
-                msBuilder.addStatement("String json = new \$T().toJson(val)", Gson)
-                argValName = "json"
-            }
-            if (param.base64) {
-                msBuilder.addStatement(
-                    "String base64 = new String(\$T.encode($argValName.getBytes(),Base64.NO_PADDING|Base64.URL_SAFE))",
-                    Base64
-                )
-                argValName = "base64"
-            }
-            msBuilder.addStatement("super.$methodName(\$S,$argValName)", extraName)
+            msBuilder.addStatement("super.$methodName(\$S,val)", extraName)
             msBuilder.addStatement("return this")
             builder.addMethod(msBuilder.build()).build()
         }
@@ -720,60 +724,123 @@ class RudolphProcessor : AbstractProcessor() {
                 codeBlockBuilder.beginControlFlow("if (args.containsKey($extraName))")
                 var varCode: String
                 var args = arrayOf<Any?>()
-                if ("java.lang.String" == cls || "java.lang.CharSequence" == cls) {
-                    if (field.base64) {
-                        varCode =
-                            "new String(\$T.decode(args.getString($extraName).getBytes(),Base64.NO_PADDING|Base64.URL_SAFE))"
-                        args = arrayOf(Base64)
-                    } else {
-                        varCode = "args.getString($extraName)"
+
+                args = arrayOf(ele.asType())
+                when (field.paramsType) {
+                    ExtraType.Serializable -> {
+                        varCode = "(\$T)args.getSerializable($extraName)"
                     }
-                } else if ("java.lang.Boolean" == cls || "boolean" == cls) {
-                    varCode = "args.getBoolean($extraName)"
-                } else if ("java.lang.Byte" == cls || "byte" == cls) {
-                    varCode = "args.getByte($extraName)"
-                } else if ("java.lang.Short" == cls || "short" == cls) {
-                    varCode = "args.getShort($extraName)"
-                } else if ("java.lang.Integer" == cls || "int" == cls) {
-                    varCode = "args.getInt($extraName)"
-                } else if ("java.lang.Long" == cls || "long" == cls) {
-                    varCode = "args.getLong($extraName)"
-                } else if ("java.lang.Character" == cls) {
-                    varCode = "(Character)args.getSerializable($extraName)"
-                } else if ("char" == cls) {
-                    varCode = "args.getChar($extraName)"
-                } else if ("java.lang.Float" == cls || "float" == cls) {
-                    varCode = "args.getFloat($extraName)"
-                } else if ("java.lang.Double" == cls || "double" == cls) {
-                    varCode = "args.getDouble($extraName)"
-                } else if ("android.os.Bundle" == cls) {
-                    varCode = "args.getBundle($extraName)"
-                } else {
-                    if (types?.isSubtype(typeMirror, parcelableTM) == true) {
-                        varCode = "args.getParcelable($extraName)"
-                    } else {
-                        if (field.json) {
-                            codeBlockBuilder.addStatement("String val = args.getString($extraName)")
-                            if (field.base64) {
-                                codeBlockBuilder.addStatement(
-                                    "val = new String(\$T.decode(val.getBytes(),Base64.NO_PADDING|Base64.URL_SAFE))",
-                                    Base64
-                                )
-                            }
-                            if (cls.contains("<") && cls.contains(">")) {
-                                varCode = "new \$T().fromJson(val, new \$T<\$T>(){}.getType())"
-                                args = arrayOf(Gson, TypeToken, ele.asType())
-                            } else {
-                                varCode = "new \$T().fromJson(val,\$T.class)"
-                                args = arrayOf(Gson, ele.asType())
-                            }
+                    ExtraType.Parcelable -> {
+                        varCode = "(\$T)args.getParcelable($extraName)"
+                    }
+                    ExtraType.CharSequenceArray -> {
+                        varCode =
+                            "(\$T)args.getCharSequenceArray($extraName)"
+                    }
+                    ExtraType.CharSequenceArrayList -> {
+                        varCode =
+                            "(\$T)args.getCharSequenceArrayList($extraName)"
+                    }
+                    ExtraType.StringArray -> {
+                        varCode = "(\$T)args.getStringArray($extraName)"
+                    }
+                    ExtraType.StringArrayList -> {
+                        varCode = "(\$T)args.getStringArrayList($extraName)"
+                    }
+                    ExtraType.IntegerArray -> {
+                        varCode = "(\$T)args.getIntegerArray($extraName)"
+                    }
+                    ExtraType.IntegerArrayList -> {
+                        varCode = "(\$T)args.getIntegerArrayList($extraName)"
+                    }
+                    ExtraType.ParcelableArray -> {
+                        varCode = "(\$T)args.getParcelableArray($extraName)"
+                    }
+                    ExtraType.ParcelableArrayList -> {
+                        varCode = "(\$T)args.getParcelableArrayList($extraName)"
+                    }
+                    ExtraType.Base64 -> {
+
+                        varCode = "getBase64(args,$extraName,$targetName.$fieldName)"
+                    }
+                    ExtraType.Base64Json -> {
+                        if (cls.contains("<") && cls.contains(">")) {
+                            varCode =
+                                "getBase64Json(args,$extraName,$targetName.$fieldName,new \$T<\$T>(){}.getType())"
+                            args = arrayOf(TypeToken, ele.asType())
                         } else {
-                            if (types?.isSubtype(typeMirror, serializableTM) == true) {
-                                varCode = "(\$T)args.getSerializable($extraName)"
-                                args = arrayOf(ele.asType())
+                            varCode =
+                                "getBase64Json(args,$extraName,$targetName.$fieldName,\$T)"
+                        }
+                    }
+                    ExtraType.Json -> {
+                        if (cls.contains("<") && cls.contains(">")) {
+                            varCode =
+                                "getJson(args,$extraName,$targetName.$fieldName,new \$T<\$T>(){}.getType())"
+                            args = arrayOf(TypeToken, ele.asType())
+                        } else {
+                            varCode =
+                                "getJson(args,$extraName,$targetName.$fieldName,\$T)"
+                        }
+                    }
+                    else -> {
+                        if ("java.lang.String" == cls || "java.lang.CharSequence" == cls) {
+                            if (field.base64) {
+                                varCode =
+                                    "new String(\$T.decode(args.getString($extraName).getBytes(),Base64.NO_PADDING|Base64.URL_SAFE))"
+                                args = arrayOf(Base64)
                             } else {
-                                logger.error("arg:${element.simpleName}.$argName no support!")
-                                continue
+                                varCode = "args.getString($extraName)"
+                            }
+                        } else if ("java.lang.Boolean" == cls || "boolean" == cls) {
+                            varCode = "args.getBoolean($extraName)"
+                        } else if ("java.lang.Byte" == cls || "byte" == cls) {
+                            varCode = "args.getByte($extraName)"
+                        } else if ("java.lang.Short" == cls || "short" == cls) {
+                            varCode = "args.getShort($extraName)"
+                        } else if ("java.lang.Integer" == cls || "int" == cls) {
+                            varCode = "args.getInt($extraName)"
+                        } else if ("java.lang.Long" == cls || "long" == cls) {
+                            varCode = "args.getLong($extraName)"
+                        } else if ("java.lang.Character" == cls) {
+                            varCode = "(Character)args.getSerializable($extraName)"
+                        } else if ("char" == cls) {
+                            varCode = "args.getChar($extraName)"
+                        } else if ("java.lang.Float" == cls || "float" == cls) {
+                            varCode = "args.getFloat($extraName)"
+                        } else if ("java.lang.Double" == cls || "double" == cls) {
+                            varCode = "args.getDouble($extraName)"
+                        } else if ("android.os.Bundle" == cls) {
+                            varCode = "args.getBundle($extraName)"
+                        } else {
+                            if (types?.isSubtype(typeMirror, parcelableTM) == true) {
+                                varCode = "args.getParcelable($extraName)"
+                            } else {
+                                if (field.json) {
+                                    codeBlockBuilder.addStatement("String val = args.getString($extraName)")
+                                    if (field.base64) {
+                                        codeBlockBuilder.addStatement(
+                                            "val = new String(\$T.decode(val.getBytes(),Base64.NO_PADDING|Base64.URL_SAFE))",
+                                            Base64
+                                        )
+                                    }
+                                    if (cls.contains("<") && cls.contains(">")) {
+                                        varCode =
+                                            "new \$T().fromJson(val, new \$T<\$T>(){}.getType())"
+                                        args = arrayOf(Gson, TypeToken, ele.asType())
+                                    } else {
+                                        varCode = "new \$T().fromJson(val,\$T.class)"
+                                        args = arrayOf(Gson, ele.asType())
+                                    }
+                                } else {
+                                    if (types?.isSubtype(typeMirror, serializableTM) == true) {
+                                        varCode = "(\$T)args.getSerializable($extraName)"
+                                        args = arrayOf(ele.asType())
+                                    } else {
+                                        logger.error("arg:${element.simpleName}.$argName no support!")
+                                        continue
+                                    }
+                                }
                             }
                         }
                     }
@@ -785,7 +852,10 @@ class RudolphProcessor : AbstractProcessor() {
                         }${fieldName.substring(1)}($varCode)", *args
                     )
                 } else {
-                    setCodeBlockBuilder.addStatement("\t$targetName.$fieldName = $varCode", *args)
+                    setCodeBlockBuilder.addStatement(
+                        "\t$targetName.$fieldName = $varCode",
+                        *args
+                    )
                 }
                 setCodeBlockBuilder.endControlFlow()
                 codeBlockBuilder.add(setCodeBlockBuilder.build())
@@ -794,7 +864,8 @@ class RudolphProcessor : AbstractProcessor() {
             bindBuilder.addCode(codeBlockBuilder.build())
         }
         clsRouterBuilder.addMethod(bindBuilder.build())
-        JavaFile.builder(getPackageName(element), clsRouterBuilder.build()).build().writeTo(mFiler)
+        JavaFile.builder(getPackageName(element), clsRouterBuilder.build()).build()
+            .writeTo(mFiler)
     }
 
 

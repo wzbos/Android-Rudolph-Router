@@ -13,7 +13,7 @@ class RouteInfo(builder: Builder) {
     @Deprecated("请使用targetClass", replaceWith = ReplaceWith("targetClass"))
     val target: String?
     val targetClass: Class<*>?
-    val extras: MutableMap<String, ExtraType>?
+    val extras: MutableMap<String, ExtraInfo>?
     var type: RouteType?
         private set
 
@@ -32,7 +32,7 @@ class RouteInfo(builder: Builder) {
         var url: MutableList<String>? = null
         var target: String? = null
         var targetClass: Class<*>? = null
-        var extras: MutableMap<String, ExtraType>? = null
+        var extras: MutableMap<String, ExtraInfo>? = null
         var routeType: RouteType? = null
         var tag: String? = null
         var interceptors: MutableList<Class<out RouteInterceptor>>? = null
@@ -74,7 +74,7 @@ class RouteInfo(builder: Builder) {
                     Void::class.java.name -> Void::class.java
                     else -> Class.forName(className)
                 }
-                extra(key, ExtraType(type))
+                extra(key, ExtraInfo(type))
             } catch (e: Exception) {
                 println("类型转换失败! (target=${target}, key:${key}, className:${className})")
                 e.printStackTrace()
@@ -90,10 +90,10 @@ class RouteInfo(builder: Builder) {
             base64: Boolean = false,
             json: Boolean = false
         ): Builder {
-            return extra(key, ExtraType(type, base64 = base64, json = json))
+            return extra(key, ExtraInfo(type, base64 = base64, json = json))
         }
 
-        fun extra(key: String, extraType: ExtraType): Builder {
+        fun extra(key: String, extraType: ExtraInfo): Builder {
             if (extras == null) {
                 extras = LinkedHashMap()
             }

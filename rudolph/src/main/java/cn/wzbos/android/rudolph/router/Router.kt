@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import cn.wzbos.android.rudolph.*
-import java.lang.reflect.Type
 
 abstract class Router<T> internal constructor(builder: RouteBuilder<*, *>) {
     //调用地址
@@ -17,7 +16,7 @@ abstract class Router<T> internal constructor(builder: RouteBuilder<*, *>) {
     var routePath: MutableList<String>? = builder.path
     var routeType: RouteType? = builder.routeType
     var routeTag: String? = builder.routeTag
-    var extraTypes: MutableMap<String, ExtraType>? = builder.extraTypes
+    var extraTypes: MutableMap<String, ExtraInfo>? = builder.extraTypes
     var interceptors: MutableList<Class<out RouteInterceptor>>? = builder.interceptors
 
     val uriData: Uri

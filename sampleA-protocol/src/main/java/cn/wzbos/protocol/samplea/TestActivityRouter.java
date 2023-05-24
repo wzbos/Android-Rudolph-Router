@@ -1,10 +1,8 @@
 package cn.wzbos.protocol.samplea;
 
-import android.util.Base64;
 import cn.wzbos.android.rudolph.router.ActivityRouter;
 import cn.wzbos.protocol.samplea.bean.Broker;
 import cn.wzbos.protocol.samplea.bean.User;
-import com.google.gson.Gson;
 import java.lang.CharSequence;
 import java.lang.Character;
 import java.lang.Integer;
@@ -30,8 +28,7 @@ public class TestActivityRouter {
     }
 
     public TestActivityRouter.Builder string64Arg(String val) {
-      String base64 = new String(Base64.encode(val.getBytes(),Base64.NO_PADDING|Base64.URL_SAFE));
-      super.putExtra("string64",base64);
+      super.putExtra("string64",val);
       return this;
     }
 
@@ -146,20 +143,17 @@ public class TestActivityRouter {
     }
 
     public TestActivityRouter.Builder parcelableParam(Broker val) {
-      super.putExtra("parcelable",val);
+      super.putSerializable("parcelable",val);
       return this;
     }
 
     public TestActivityRouter.Builder jsonParam(User<Broker> val) {
-      String json = new Gson().toJson(val);
-      super.putExtra("json",json);
+      super.putJson("json",val);
       return this;
     }
 
     public TestActivityRouter.Builder base64jsonParam(User<Broker> val) {
-      String json = new Gson().toJson(val);
-      String base64 = new String(Base64.encode(json.getBytes(),Base64.NO_PADDING|Base64.URL_SAFE));
-      super.putExtra("base64json",base64);
+      super.putBase64Json("base64json",val);
       return this;
     }
   }

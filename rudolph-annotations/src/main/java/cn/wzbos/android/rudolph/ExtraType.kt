@@ -1,13 +1,18 @@
 package cn.wzbos.android.rudolph
 
-import java.lang.reflect.Type
-
-open class ExtraType @JvmOverloads constructor(
-    var type: Type,
-    val base64: Boolean = false,
-    val json: Boolean = false
-)
-
-class UnknownExtraType(
-    val className: String,
-) : ExtraType(type = Any::class.java, json = true, base64 = true)
+enum class ExtraType {
+    Default,
+    Serializable,
+    Parcelable,
+    Base64,
+    Base64Json,
+    Json,
+    CharSequenceArray,
+    CharSequenceArrayList,
+    StringArray,
+    StringArrayList,
+    IntegerArray,
+    IntegerArrayList,
+    ParcelableArray,
+    ParcelableArrayList,
+}
