@@ -1,5 +1,5 @@
 package cn.wzbos.android.rudolph
 
 interface RouteInterceptor {
-    fun intercept(): Boolean
+    fun intercept(router: IRouter<*, *, *>): Boolean
 }

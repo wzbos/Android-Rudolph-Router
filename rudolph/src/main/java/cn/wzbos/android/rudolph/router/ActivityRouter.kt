@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import cn.wzbos.android.rudolph.IRouter
 import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.exception.ErrorMessage
 import cn.wzbos.android.rudolph.exception.RudolphException
@@ -31,7 +32,7 @@ class ActivityRouter : Router<Any?> {
         private set
     var delayFinish: Long = -1
         private set
-
+    var resultCallback: ActivityResultCallback? = null
     fun buildUpon(): RouteBuilder<*, *> {
         return Builder(this)
     }
@@ -52,6 +53,14 @@ class ActivityRouter : Router<Any?> {
         delayFinish = builder.delayFinish
     }
 
+    fun transform(activityRouter: ActivityRouter) {
+        super.transform(activityRouter)
+        options = activityRouter.options
+        flags = activityRouter.flags
+        enterAnim = activityRouter.enterAnim
+        exitAnim = activityRouter.exitAnim
+        delayFinish = activityRouter.delayFinish
+    }
 
     private fun getIntent(context: Context?): Intent? {
         val intent: Intent
@@ -76,7 +85,6 @@ class ActivityRouter : Router<Any?> {
         }
         return intent
     }
-
     override fun execute(): Any? {
         start(Rudolph.context)
         return null
@@ -84,11 +92,8 @@ class ActivityRouter : Router<Any?> {
 
 
     fun start(fragment: Fragment?) {
-        if (fragment == null) {
-            callback?.onError(this, RudolphException("fragment is null！"))
-            return
-        }
-        start(fragment.activity)
+        this.caller = fragment
+        startForResult(fragment)
     }
 
     fun start(context: Context?) {
@@ -110,20 +115,23 @@ class ActivityRouter : Router<Any?> {
     }
 
     /**
-     * startForResult for android.support.v4.app.Fragment
+     * startForResult for fragment
      */
-    fun startForResult(fragment: Fragment?, requestCode: Int) {
+    fun startForResult(fragment: Fragment?, requestCode: Int = -1) {
         this.requestCode = requestCode
-        if (super.intercept(fragment?.context))
+        if (super.intercept(fragment))
             return
 
         if (fragment == null) {
             callback?.onError(this, RudolphException("fragment is null！"))
             return
         }
-
         val intent = getIntent(fragment.context)
-        fragment.startActivityForResult(intent, requestCode)
+        if (requestCode != -1) {
+            fragment.startActivityForResult(intent, requestCode, options)
+        } else {
+            fragment.startActivity(intent, options)
+        }
         startOver(fragment.activity)
         finish(fragment.activity)
     }
@@ -131,12 +139,15 @@ class ActivityRouter : Router<Any?> {
     /**
      * startForResult for Activity
      */
-    fun startForResult(activity: Activity, requestCode: Int) {
+    fun startForResult(activity: Activity, requestCode: Int = -1) {
         this.requestCode = requestCode
         if (super.intercept(activity)) return
         val intent = getIntent(activity) ?: return
-
-        activity.startActivityForResult(intent, requestCode, options)
+        if (requestCode != -1) {
+            activity.startActivityForResult(intent, requestCode, options)
+        } else {
+            activity.startActivity(intent, options)
+        }
         startOver(activity)
         finish(activity)
     }
@@ -149,6 +160,7 @@ class ActivityRouter : Router<Any?> {
         activity: FragmentActivity,
         resultCallback: ActivityResultCallback
     ) {
+        this.resultCallback = resultCallback
         if (super.intercept(activity)) return
         val intent = getIntent(activity) ?: return
         this.requestCode = ActivityResultRegister.register(resultCallback)

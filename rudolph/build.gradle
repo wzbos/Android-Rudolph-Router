@@ -34,5 +34,6 @@ dependencies {
     api "androidx.appcompat:appcompat:$appcompat_version"
     api "com.google.code.gson:gson:${gson_version}"
     api dynamic(':rudolph-annotations')
+    implementation 'androidx.fragment:fragment-ktx:1.4.1'
 }
 

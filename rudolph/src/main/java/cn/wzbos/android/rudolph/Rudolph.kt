@@ -21,8 +21,9 @@ import java.util.*
 object Rudolph {
     private const val TAG = "Rudolph"
 
-    var globalInterceptors: MutableList<Interceptor>? = null
+    var globalInterceptors: MutableList<RouteInterceptor>? = null
         private set
+
 
     private val routes: MutableList<RouteInfo> = ArrayList()
 
@@ -83,7 +84,7 @@ object Rudolph {
         val assetManager = context.resources.assets
         try {
             val list = assetManager.list("rudolph")
-            if (null != list && list.isNotEmpty()) {
+            if (!list.isNullOrEmpty()) {
                 val tables: MutableList<IRouteTable> = ArrayList()
                 for (className in list) {
                     try {
@@ -115,72 +116,13 @@ object Rudolph {
         routes.add(routeInfo)
     }
 
-
-    /**
-     * 获取全局拦截器
-     *
-     * @return Interceptor集合
-     */
-    @JvmStatic
-    @Deprecated(
-        "已过期请使用 globalInterceptors",
-        replaceWith = ReplaceWith("globalInterceptors")
-    )
-    val interceptors: MutableList<Interceptor>? = globalInterceptors
-
-    /**
-     * 添加全局拦截器
-     *
-     * @param interceptor 拦截器
-     */
-    @JvmStatic
-    @Deprecated(
-        "此方法已过期，请使用 registerGlobalInterceptor",
-        replaceWith = ReplaceWith("registerGlobalInterceptor(interceptor)")
-    )
-    fun addInterceptor(interceptor: Interceptor) {
-        registerGlobalInterceptor(interceptor)
-    }
-
-
-    /**
-     * 添加多个全局拦截器
-     *
-     * @param interceptors 拦截器集合
-     */
-    @JvmStatic
-    @Deprecated(
-        "此方法已过期，请使用 registerGlobalInterceptor",
-        replaceWith = ReplaceWith("registerGlobalInterceptor(interceptors)")
-    )
-    fun addInterceptor(interceptors: MutableList<Interceptor>) {
-        interceptors.forEach {
-            registerGlobalInterceptor(it)
-        }
-    }
-
-    /**
-     * 移除拦截器
-     *
-     * @param interceptor 通过 addInterceptor 添加的拦截器
-     */
-    @JvmStatic
-    @Deprecated(
-        "此方法已过期，请使用 unregisterGlobalInterceptor",
-        replaceWith = ReplaceWith("unregisterGlobalInterceptor(interceptor)")
-    )
-    fun removeInterceptor(interceptor: Interceptor) {
-        unregisterGlobalInterceptor(interceptor)
-    }
-
-
     /**
      * 注册全局拦截器
      *
      * @param interceptor 拦截器
      */
     @JvmStatic
-    fun registerGlobalInterceptor(interceptor: Interceptor) {
+    fun registerGlobalInterceptor(interceptor: RouteInterceptor) {
         if (null == globalInterceptors) {
             globalInterceptors = mutableListOf()
         }
@@ -193,7 +135,7 @@ object Rudolph {
      * @param interceptor 通过 addInterceptor 添加的拦截器
      */
     @JvmStatic
-    fun unregisterGlobalInterceptor(interceptor: Interceptor) {
+    fun unregisterGlobalInterceptor(interceptor: RouteInterceptor) {
         globalInterceptors?.remove(interceptor)
     }
 

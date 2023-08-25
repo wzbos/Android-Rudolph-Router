@@ -28,7 +28,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
     var host: MutableList<String>? = null
     var path: MutableList<String>? = null
 
-    var callback: OnRouteListener? = null
+    var callback: IRouter.Callback? = null
         private set
     var target: Class<*>? = null
         private set
@@ -200,7 +200,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
         return this as B
     }
 
-    override fun onListener(callback: OnRouteListener?): B {
+    override fun onListener(callback: IRouter.Callback?): B {
         this.callback = callback
         return this as B
     }
@@ -217,7 +217,7 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
         if (extraTypes?.containsKey(key) == true) {
             val type = extraTypes?.get(key)
             if (!value.isNullOrEmpty() && type != null) {
-                TypeUtils.getObject(null, key, value, type, this)
+                TypeUtils.getObject(null, null, key, value, type, this)
             }
         } else {
             //未用 @Extra 注解声明的参数类型，

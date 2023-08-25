@@ -129,7 +129,18 @@ class UriRouter private constructor(builder: Builder<*>) : Router<Any?>(builder)
      * @param fragment fragment
      */
     fun execute(fragment: Fragment?): Any? {
-        return execute(fragment?.context)
+        return when (router) {
+            is ActivityRouter -> {
+                (router as ActivityRouter).start(fragment)
+                null
+            }
+            is MethodRouter -> {
+                (router as MethodRouter).execute(fragment)
+            }
+            else -> {
+                router?.execute()
+            }
+        }
     }
 
 

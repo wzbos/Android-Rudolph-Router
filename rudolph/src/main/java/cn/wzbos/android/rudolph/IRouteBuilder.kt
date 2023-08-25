@@ -52,7 +52,7 @@ interface IRouteBuilder<B : IRouteBuilder<B, R>?, R : Router<*>?> {
      * @param callback RouteCallback
      * @return IRouteBuilder
      */
-    fun onListener(callback: OnRouteListener?): B
+    fun onListener(callback: IRouter.Callback?): B
 
     /**
      * 生成Router

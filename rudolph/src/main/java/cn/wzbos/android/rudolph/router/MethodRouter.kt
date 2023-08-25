@@ -1,6 +1,7 @@
 package cn.wzbos.android.rudolph.router
 
 import android.content.Context
+import androidx.fragment.app.Fragment
 import cn.wzbos.android.rudolph.UnknownExtraType
 import cn.wzbos.android.rudolph.annotations.Route
 import cn.wzbos.android.rudolph.exception.ErrorCode
@@ -19,15 +20,26 @@ class MethodRouter internal constructor(builder: UriRouter.Builder<*>) : Router<
 
     @Deprecated(message = "use execute", replaceWith = ReplaceWith("execute(context)"))
     fun open(context: Context?): Any? {
-        return execute(context)
+        return invoke(context = context)
     }
 
     override fun execute(): Any? {
-        return execute(null)
+        return invoke()
+    }
+
+    fun execute(fragment: Fragment?): Any? {
+        return invoke(fragment = fragment)
     }
 
     fun execute(context: Context?): Any? {
-        if (super.intercept(context)) return null
+        return invoke(context = context)
+    }
+
+    private fun invoke(
+        context: Context? = null,
+        fragment: Fragment? = null
+    ): Any? {
+        if (super.intercept(fragment ?: context)) return null
         if (target == null) {
             callback?.onError(
                 this,
@@ -56,6 +68,7 @@ class MethodRouter internal constructor(builder: UriRouter.Builder<*>) : Router<
 
                         val argValue: Any? = TypeUtils.getObject(
                             context,
+                            fragment,
                             argName,
                             value,
                             argType

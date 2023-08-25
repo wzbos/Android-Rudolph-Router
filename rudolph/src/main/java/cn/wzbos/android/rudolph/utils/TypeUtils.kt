@@ -3,6 +3,7 @@ package cn.wzbos.android.rudolph.utils
 import android.app.Application
 import android.content.Context
 import android.util.Base64
+import androidx.fragment.app.Fragment
 import cn.wzbos.android.rudolph.ExtraType
 import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.logger.RLog
@@ -86,12 +87,19 @@ object TypeUtils {
         return ret
     }
 
-    fun getObject(context: Context?, name: String, value: String?, type: ExtraType): Any? {
-        return getObject(context, name, value, type, null)
+    fun getObject(
+        context: Context?,
+        fragment: Fragment?,
+        name: String,
+        value: String?,
+        type: ExtraType
+    ): Any? {
+        return getObject(context, fragment, name, value, type, null)
     }
 
     fun getObject(
         context: Context?,
+        fragment: Fragment?,
         name: String,
         value: String?,
         extraType: ExtraType,
@@ -105,6 +113,7 @@ object TypeUtils {
                     it
                 )
             }
+
             Int::class.java -> toInteger(value, 0)?.also { builder?.putExtra(name, it) }
             Boolean::class.java -> toBoolean(value, false)?.also { builder?.putExtra(name, it) }
             Double::class.java -> toDouble(value, 0.0)?.also { builder?.putExtra(name, it) }
@@ -123,6 +132,7 @@ object TypeUtils {
             java.lang.Character::class.java -> toChar(value)?.also { builder?.putExtra(name, it) }
             Application::class.java -> Rudolph.context
             Context::class.java -> context ?: Rudolph.context
+            Fragment::class.java -> fragment
             else -> {
                 var strValue = value
                 var ret: Any? = null
