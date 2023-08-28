@@ -5,7 +5,7 @@ import cn.wzbos.android.rudolph.RouteInterceptor
 
 class LoginInterceptor : RouteInterceptor {
 
-    override fun intercept(router: IRouter<*>): Boolean {
+    override fun intercept(router: IRouter<*,*,*>): Boolean {
         return false
     }
 }

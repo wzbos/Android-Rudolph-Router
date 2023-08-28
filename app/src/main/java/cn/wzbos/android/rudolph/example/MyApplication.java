@@ -26,7 +26,7 @@ public class MyApplication extends Application {
 
     private void InitRouter() {
         Rudolph.init(this);
-        Rudolph.registerGlobalInterceptor(( router) -> {
+        Rudolph.registerGlobalInterceptor((router) -> {
             if ("isNeedLogin".equals(router.getRouteTag()) && !AppUserRouter.get().isLogin()) {
                 if (router.getRouteType() == RouteType.ACTIVITY) {
                     ActivityRouter activityRouter = (ActivityRouter) router;
@@ -36,7 +36,7 @@ public class MyApplication extends Application {
                             .transition(activityRouter.getEnterAnim(), activityRouter.getExitAnim())
                             .flags(activityRouter.getFlags())
                             .options(activityRouter.getOptions())
-                            .buildStart(context);
+                            .buildStart(activityRouter.getContext());
                     return true;
                 }
             }
