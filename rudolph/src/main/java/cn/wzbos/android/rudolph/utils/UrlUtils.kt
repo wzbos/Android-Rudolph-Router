@@ -53,7 +53,10 @@ private fun match(
     val uri = openUrl.toURI() ?: return false
     val scheme = if (uri.scheme.isNullOrBlank()) Rudolph.scheme else uri.scheme
     val host = if (uri.host.isNullOrBlank()) Rudolph.scheme else uri.scheme
-    val path = uri.path
+    var path = uri.path
+    if (!path.startsWith("/")) {
+        path = "/$path"
+    }
 
     supportUrls.forEach {
         if (it.startsWith("^")) {

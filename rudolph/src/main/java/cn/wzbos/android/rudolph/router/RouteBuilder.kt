@@ -231,7 +231,11 @@ abstract class RouteBuilder<B : RouteBuilder<B, R>?, R : Router<*>?>(val rawUrl:
         if (rawUrl.isNotBlank()) {
             val uri = Uri.parse(rawUrl)
             uri.path?.let {
-                this.path = mutableListOf(it)
+                if (it.startsWith("/")) {
+                    this.path = mutableListOf(it)
+                } else {
+                    this.path = mutableListOf("/$it")
+                }
             }
 
             encodedQuery = rawUrl.indexOf("?").let {

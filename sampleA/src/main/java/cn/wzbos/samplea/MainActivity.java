@@ -2,6 +2,7 @@ package cn.wzbos.samplea;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -153,9 +154,11 @@ public class MainActivity extends AppCompatActivity {
 
         array.put("Invoke static method(URL)", v -> {
             String message = (String) Rudolph
-                    .builder("/method/test?userId=1&userName=John")
+                    .builder("method/test?userId=1&userName=John")
                     .execute();
-            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            if (!TextUtils.isEmpty(message)) {
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
         });
 
         array.put("Test Result", v -> {
