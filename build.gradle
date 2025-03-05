@@ -2,36 +2,29 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.6.0'
+        kotlin_version = '1.6.21'
         ANDROID_COMPILE_SDK = 31
         ANDROID_MIN_SDK = 16
         ANDROID_TARGET_SDK = 31
         gson_version = '2.8.2'
-        appcompat_version='1.3.0'
-
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-        MAVEN_SNAPSHOTS_URL = properties.getProperty('MAVEN_SNAPSHOTS_URL')
-        MAVEN_RELEASE_URL = properties.getProperty('MAVEN_RELEASE_URL')
-        MAVEN_USERNAME = properties.getProperty('MAVEN_USERNAME')
-        MAVEN_PWD = properties.getProperty('MAVEN_PWD')
+        appcompat_version = '1.3.0'
     }
-
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
     }
-
     dependencies {
-        classpath "com.android.tools.build:gradle:7.0.4"
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
-        classpath "cn.wzbos.android:chihiro-plugin:1.0.10"
+        classpath "cn.wzbos.android:chihiro-plugin:$CHIHIRO_PLUGIN_VERSION"
     }
 }
 
 allprojects {
+    configurations.configureEach {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
     repositories {
         google()
         mavenCentral()
@@ -39,6 +32,6 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }

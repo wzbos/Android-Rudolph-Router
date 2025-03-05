@@ -10,13 +10,13 @@ include ':sampleB-protocol'
 buildscript {
     repositories {
         mavenCentral()
-        maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
     }
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
     }
     dependencies {
-        classpath "cn.wzbos.android:chihiro-plugin:1.0.10"
+        classpath "cn.wzbos.android:chihiro-plugin:$CHIHIRO_PLUGIN_VERSION"
     }
 }
 apply plugin: 'chihiro-settings'

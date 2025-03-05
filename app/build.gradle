@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion ANDROID_COMPILE_SDK
+    compileSdk ANDROID_COMPILE_SDK
     defaultConfig {
         applicationId "cn.wzbos.android.rudolph.example"
         minSdkVersion ANDROID_MIN_SDK
@@ -22,7 +22,6 @@ android {
         abortOnError false
     }
 }
-
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')

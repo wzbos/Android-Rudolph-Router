@@ -70,7 +70,7 @@ internal object AndroidModuleUtil {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion ${info.compileSdkVersion}
+    compileSdk ${info.compileSdk}
 
     defaultConfig {
         minSdkVersion ${info.minSdkVersion}

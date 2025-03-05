@@ -2,10 +2,6 @@ package cn.wzbos.android.rudolph
 
 import org.apache.commons.collections4.MapUtils
 import org.apache.commons.lang3.StringUtils
-import java.io.BufferedReader
-import java.io.File
-import java.io.FileReader
-import java.io.IOException
 import javax.annotation.processing.Filer
 import javax.annotation.processing.ProcessingEnvironment
 import javax.tools.StandardLocation
@@ -15,7 +11,7 @@ import javax.tools.StandardLocation
  * Created by wuzongbo on 2018/12/20.
  */
 internal class RudolphBuildInfo private constructor(evn: ProcessingEnvironment) {
-    var compileSdkVersion: String? = null
+    var compileSdk: String? = null
     var minSdkVersion: String? = null
     var targetSdkVersion: String? = null
     var versionName: String? = null
@@ -34,7 +30,9 @@ internal class RudolphBuildInfo private constructor(evn: ProcessingEnvironment) 
     @JvmField
     var exportProtocolPackage: String? = null
     fun exportApi(): Boolean {
-        return StringUtils.isNotEmpty(exportProtocolName) && StringUtils.isNotEmpty(exportProtocolPackage)
+        return StringUtils.isNotEmpty(exportProtocolName) && StringUtils.isNotEmpty(
+            exportProtocolPackage
+        )
     }
 
     private fun getModulePath(filer: Filer): Boolean {
@@ -58,55 +56,6 @@ internal class RudolphBuildInfo private constructor(evn: ProcessingEnvironment) 
         return false
     }
 
-    private val gradleInfo: Unit
-        get() {
-            val gradle = File("$modulePath/build.gradle")
-            if (gradle.exists()) {
-                var fileReader: FileReader? = null
-                val bufferedReader: BufferedReader
-                try {
-                    fileReader = FileReader(gradle)
-                    bufferedReader = BufferedReader(fileReader)
-                    var findDefaultConfig = false
-
-                    bufferedReader.lines().forEach {
-                        if (it.contains("compileSdkVersion")) {
-                            compileSdkVersion = getGradleValue(it, "compileSdkVersion")
-                        } else if (it.contains("defaultConfig")) {
-                            findDefaultConfig = true
-                        } else if (findDefaultConfig && it.contains("minSdkVersion")) {
-                            minSdkVersion = getGradleValue(it, "minSdkVersion")
-                        } else if (findDefaultConfig && it.contains("targetSdkVersion")) {
-                            targetSdkVersion = getGradleValue(it, "targetSdkVersion")
-                        } else if (findDefaultConfig && it.contains("versionName")) {
-                            versionName = getGradleValue(it, "versionName")
-                        } else if (findDefaultConfig && it.contains("versionCode")) {
-                            versionCode = getGradleValue(it, "versionCode")
-                        }
-                    }
-                    fileReader.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } finally {
-                    if (fileReader != null) {
-                        try {
-                            fileReader.close()
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
-                }
-            }
-        }
-
-    private fun getGradleValue(str: String, key: String): String? {
-        var gradleVersion: String? = null
-        var n: Int
-        if (str.indexOf(key).also { n = it } > -1) {
-            gradleVersion = str.substring(n + key.length + 1).trim { it <= ' ' }
-        }
-        return gradleVersion
-    }
 
     companion object {
         private const val OPTION_EXPORT_API_NAME = "export_api_name"
@@ -128,8 +77,6 @@ internal class RudolphBuildInfo private constructor(evn: ProcessingEnvironment) 
             exportProtocolName = options[OPTION_EXPORT_API_NAME]
             exportProtocolPackage = options[OPTION_EXPORT_API_PACKAGE]
         }
-        if (getModulePath(evn.filer)) {
-            gradleInfo
-        }
+        getModulePath(evn.filer)
     }
 }
