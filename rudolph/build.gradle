@@ -23,6 +23,7 @@ android {
     lintOptions {
         abortOnError false
     }
+    namespace 'cn.wzbos.android.rudolph'
 }
 
 dependencies {

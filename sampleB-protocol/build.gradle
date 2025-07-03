@@ -13,6 +13,7 @@ android {
         minSdkVersion ANDROID_MIN_SDK
         targetSdkVersion ANDROID_TARGET_SDK
     }
+    namespace 'cn.wzbos.protocol.sampleb'
 }
 
 

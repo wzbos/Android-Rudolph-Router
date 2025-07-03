@@ -29,13 +29,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        lintOptions { abortOnError false }
 
     }
 
-    lintOptions {
-        abortOnError false
-    }
+
+    namespace 'cn.wzbos.samplea'
 }
 
 
