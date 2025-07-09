@@ -6,8 +6,13 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import cn.wzbos.android.rudolph.*
+import cn.wzbos.android.rudolph.ExtraType
+import cn.wzbos.android.rudolph.IRouter
+import cn.wzbos.android.rudolph.RouteInterceptor
+import cn.wzbos.android.rudolph.RouteType
+import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.logger.RLog
+import androidx.core.net.toUri
 
 abstract class Router<T> internal constructor(builder: RouteBuilder<*, *>) :
     IRouter<Router<T>, T, Bundle> {
@@ -54,10 +59,10 @@ abstract class Router<T> internal constructor(builder: RouteBuilder<*, *>) :
     val uriData: Uri
         get() {
             if (rawUrl.contains("://")) {
-                return Uri.parse(rawUrl)
+                return rawUrl.toUri()
             }
             if (!Rudolph.scheme.isNullOrBlank()) {
-                return Uri.parse(Rudolph.scheme + "://" + rawUrl)
+                return (Rudolph.scheme + "://" + rawUrl).toUri()
             }
             return Uri.EMPTY
         }

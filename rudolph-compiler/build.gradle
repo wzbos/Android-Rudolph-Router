@@ -3,6 +3,7 @@ plugins {
     id 'kotlin'
     id 'kotlin-kapt'
     id 'chihiro'
+    id 'org.jreleaser' version '1.19.0'
 }
 
 java {
@@ -16,4 +17,34 @@ dependencies {
     implementation 'org.apache.commons:commons-collections4:4.1'
     implementation dynamic(':rudolph-annotations')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+// https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
+jreleaser {
+    release {
+        github {
+            apiEndpoint = "https://api.github.com"
+        }
+    }
+    signing {
+        active = 'ALWAYS'
+        armored = true
+    }
+    project {
+        java {
+            groupId = CHIHIRO_GROUP_ID
+        }
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    namespace = CHIHIRO_GROUP_ID
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository(layout.buildDirectory.dir('staging-deploy').get().toString())
+                }
+            }
+        }
+    }
 }

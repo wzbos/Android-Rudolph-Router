@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-echo /--------------------------- Publish to JCenter Begin --------------------------/
-
-./gradlew install
-
-./gradlew bintrayUpload
-
-echo /---------------------------  Publish to JCenter End --------------------------/
+echo /--------------------------- Publish to MavenCenter Begin --------------------------/
+sdk list java
+sdk use java 17.0.14-tem
+java -version
+./gradlew clean
+./gradlew publish
+./gradlew jreleaserFullRelease --stacktrace
+echo /---------------------------  Publish to MavenCenter End --------------------------/
