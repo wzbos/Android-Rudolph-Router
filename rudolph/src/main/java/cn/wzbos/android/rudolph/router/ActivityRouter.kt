@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import cn.wzbos.android.rudolph.IRouter
 import cn.wzbos.android.rudolph.Rudolph
 import cn.wzbos.android.rudolph.exception.ErrorMessage
 import cn.wzbos.android.rudolph.exception.RudolphException
@@ -85,6 +84,7 @@ class ActivityRouter : Router<Any?> {
         }
         return intent
     }
+
     override fun execute(): Any? {
         start(Rudolph.context)
         return null
@@ -152,7 +152,6 @@ class ActivityRouter : Router<Any?> {
         finish(activity)
     }
 
-
     /**
      * startForResult for Activity
      */
@@ -161,9 +160,9 @@ class ActivityRouter : Router<Any?> {
         resultCallback: ActivityResultCallback
     ) {
         this.resultCallback = resultCallback
+        this.requestCode = ActivityResultRegister.register(resultCallback)
         if (super.intercept(activity)) return
         val intent = getIntent(activity) ?: return
-        this.requestCode = ActivityResultRegister.register(resultCallback)
         activity.lifecycle.addObserver(object : LifecycleEventObserver {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                 if (Lifecycle.Event.ON_DESTROY == event) {
