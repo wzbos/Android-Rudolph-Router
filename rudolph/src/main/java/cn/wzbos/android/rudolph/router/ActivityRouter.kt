@@ -204,9 +204,9 @@ class ActivityRouter : Router<Any?> {
             private set
         var flags = -1
             private set
-        var enterAnim = 0
+        var enterAnim = -1
             private set
-        var exitAnim = 0
+        var exitAnim = -1
             private set
         var delayFinish: Long = -1
             private set
