@@ -43,7 +43,7 @@ jreleaser {
                     namespace = CHIHIRO_GROUP_ID
                     active = 'ALWAYS'
                     url = 'https://central.sonatype.com/api/v1/publisher'
-                    stagingRepository(layout.buildDirectory.dir('staging-deploy').get().toString())
+                    stagingRepository(layout.buildDirectory.dir('chihiro-staging-deploy').get().toString())
                 }
             }
         }
