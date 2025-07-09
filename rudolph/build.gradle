@@ -57,6 +57,7 @@ dependencies {
 // https://jreleaser.org/guide/latest/examples/maven/maven-central.html#_gradle
 jreleaser {
     release {
+        gitRootSearch = true
         github {
             apiEndpoint = "https://api.github.com"
         }
